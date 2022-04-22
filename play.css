@@ -1,0 +1,859 @@
+main { background-color: slategray; }
+header { background-color: silver; }
+#role_Gray { background-color: #b7b2b0; }
+#role_Blue { background-color: #95b4ca; }
+#role_Tan { background-color: #e7cea7; }
+#role_Red { background-color: #d18e95; }
+#role_Black { background-color: #7b7979; }
+
+#log { background-color: ivory; }
+#log div { padding-left: 20px; text-indent: -12px; }
+#log div.i { padding-left: 32px; text-indent: -12px; font-style: italic; }
+#log .turn, #log .dc { font-style: italic; text-align: right; margin: 0; text-indent: 0; padding: 4px 8px; }
+#log .turn.Gray { background-color: #b7b2b0; }
+#log .turn.Blue { background-color: #95b4ca; }
+#log .turn.Tan { background-color: #e7cea7; }
+#log .turn.Red { background-color: #d18e95; }
+#log .turn.Black { background-color: #7b7979; }
+#log .dc.unsuccessful { background-color: #856781; color: lavenderblush; }
+#log .dc.Afghan { background-color: #5bbc93; }
+#log .dc.British { background-color: #e2a6ca; }
+#log .dc.Russian { background-color: #fff69a; }
+#log .tip { color: blue; }
+#log .tip:hover { text-decoration: underline; cursor: pointer; }
+
+main {
+	position: relative;
+	scrollbar-width: auto;
+}
+
+.action {
+	cursor: pointer;
+}
+
+#tooltip {
+	pointer-events: none;
+	position: fixed;
+	z-index: 100;
+	right: 240px;
+	top: 60px;
+	box-shadow: 0 0 20px black;
+}
+
+aside.hide + #tooltip {
+	right: 30px
+}
+
+#tooltip.focus { display: none; }
+body.shift #tooltip.focus { display: block; }
+
+#deck_info {
+	position: absolute;
+	right: 8px;
+	bottom: 5px;
+	white-space: pre-line;
+	font-family: "Source Serif SmText", "Georgia", serif;
+	font-size: 12px;
+	font-style: italic;
+}
+
+#popup {
+	position: fixed;
+	user-select: none;
+	background-color: white;
+	left: 10px;
+	top: 100px;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.3);
+	z-index: 300;
+	min-width: 20ex;
+	white-space: nowrap;
+	display: none;
+	border: 1px solid black;
+}
+#popup div { padding: 3pt 8pt; color: gray; display: none; }
+#popup div.enabled { color: black; display: block; }
+#popup div.enabled:hover { background-color: black; color: white; }
+#popup div.always { display: block; }
+#popup #menu_label { border-bottom: 1px solid silver; }
+
+#banner {
+	cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	user-select: none;
+	border-bottom: 1px solid black;
+	background-color: #856781;
+	height: 40px;
+}
+
+#banner > div {
+	flex-grow: 1;
+}
+
+.icon {
+	background-repeat: no-repeat;
+	background-size: auto 25px;
+	background-position: center;
+	filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+
+#favored_suit_banner.Political { background-image: url(icons/suit_political.svg) }
+#favored_suit_banner.Intelligence { background-image: url(icons/suit_intelligence.svg) }
+#favored_suit_banner.Economic { background-image: url(icons/suit_economic.svg) }
+#favored_suit_banner.Military { background-image: url(icons/suit_military.svg) }
+
+#map_banner { background-image: url(icons/treasure-map.svg) }
+#hand_banner { background-image: url(icons/hand.svg) }
+
+.role {
+	position: relative;
+}
+
+.role_name {
+	cursor: pointer;
+}
+
+.role_rupees_icon,
+.role_rupees_text,
+.role_loyalty_icon,
+.role_loyalty_text,
+.role_cylinders_icon,
+.role_cylinders_text {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	cursor: pointer;
+	top: 2px;
+	text-align: right;
+	background-repeat: no-repeat;
+}
+
+.role_rupees_text,
+.role_loyalty_text,
+.role_cylinders_text {
+	opacity: 0.8;
+}
+
+.role_loyalty_icon {
+	background-position: 0 -1px;
+	background-size: 24px 24px;
+	opacity: 0.4;
+}
+
+.role_cylinders_icon {
+	width: 16px;
+	background-position: 0 3px;
+	background-size: 16px 16px;
+	background-image: url(icons/cylinder.svg);
+	opacity: 0.3;
+}
+
+.role_rupees_icon {
+	width: 17px;
+	background-position: 0 3px;
+	background-size: 17px 17px;
+	background-image: url(icons/rupee.svg);
+	opacity: 0.4;
+}
+
+.role_loyalty_icon.Afghan { background-image: url(icons/eagle.svg) }
+.role_loyalty_icon.British { background-image: url(icons/lion.svg) }
+.role_loyalty_icon.Russian { background-image: url(icons/bear.svg) }
+
+.role_loyalty_icon { right: 5px; }
+.role_loyalty_text { right: 32px; }
+.role_cylinders_icon { right: 55px; }
+.role_cylinders_text { right: 74px; }
+.role_rupees_icon { right: 100px; }
+.role_rupees_text { right: 119px; }
+
+/* CARDS */
+
+.card {
+	position: relative;
+	display: block;
+	width: 186px;
+	height: 258px;
+	border-radius: 10px;
+	background-color: #fefcf0;
+	background-size: cover;
+	background-repeat: no-repeat;
+	border: 1px solid #4d452b;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+}
+
+#tooltip.card {
+	width: 372px;
+	height: 516px;
+	border-radius: 20px;
+}
+
+.card.action {
+	box-shadow: 0 0 0 3px yellow;
+}
+
+.card .spyrow {
+	position: absolute;
+	display: flex;
+	flex-wrap: wrap;
+	width: 168px;
+	bottom: 108px;
+	right: 8px;
+	gap: 4px;
+	justify-content: end;
+}
+
+/* if discarded */
+#global_events .card.event,
+.hand .card.event {
+	height: 178px;
+	border-radius: 10px 10px 0 0;
+}
+
+/* if played */
+#global_events .card_109.event,
+#global_events .card_115.event,
+.player_court .card.event {
+	margin-top: 71px;
+	background-position: bottom;
+	height: 187px;
+	border-radius: 0 0 10px 10px;
+}
+
+#global_events .card_109.event,
+#global_events .card_115.event {
+	margin-top: 0;
+}
+
+.card .card_action {
+	display: none;
+	position: absolute;
+	width: 36px;
+	height: 37px;
+	border: 3px solid transparent;
+	top: 190px;
+	border-radius: 8px;
+}
+
+.card .card_action.action { display: block; }
+
+.card .card_action.n1 { left: 133px; }
+.card .card_action.n2 { left: 85px; }
+
+.card.passive .card_action.n1 { left: 128px; }
+
+.card.three .card_action.n1 { left: 119px; }
+.card.three .card_action.n2 { left: 72px; }
+.card.three .card_action.n3 { left: 25px; }
+
+.card.card_61 .card_action.n1 { left: 72px; }
+.card.card_64 .card_action.n1 { left: 72px; }
+.card.card_84 .card_action.n1 { left: 72px; }
+.card.card_69 .card_action.n1 { left: 96px; }
+.card.card_69 .card_action.n2 { left: 48px; }
+.card.card_56 .card_action.n1 { top: 192px; }
+.card.card_41 .card_action.n1 { top: 198px; }
+.card.card_21 .card_action.n1 { top: 194px; }
+
+.card.Political .card_action { border-color: #8d198f }
+.card.Intelligence .card_action { border-color: #3871c1 }
+.card.Economic .card_action { border-color: #cd700f }
+.card.Military .card_action { border-color: #bf1b2c }
+
+/*
+.card.Political .card_action { box-shadow: 0 0 3px #8d198f }
+.card.Intelligence .card_action { box-shadow: 0 0 3px #8d198f }
+.card.Economic .card_action { box-shadow: 0 0 3px #8d198f }
+.card.Military .card_action { box-shadow: 0 0 3px #8d198f }
+*/
+
+/* PIECES */
+
+#board div {
+	transition: top 500ms, left 500ms;
+}
+
+.coin {
+	position: absolute;
+	pointer-events: none;
+	width: 50px;
+	height: 50px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: url(pieces/rupee.svg);
+	color: ivory;
+	font-weight: bold;
+	font-size: 32px;
+	line-height: 50px;
+	text-align: center;
+	text-shadow: 0 0 8px black;
+	user-select: none;
+	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+}
+
+.cylinder {
+	width: 30px;
+	height: 30px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+}
+
+#board .cylinder {
+	position: absolute;
+}
+
+.cylinder.p0 { background-image: url(pieces/cylinder_gray.svg) }
+.cylinder.p1 { background-image: url(pieces/cylinder_blue.svg) }
+.cylinder.p2 { background-image: url(pieces/cylinder_tan.svg) }
+.cylinder.p3 { background-image: url(pieces/cylinder_red.svg) }
+.cylinder.p4 { background-image: url(pieces/cylinder_black.svg) }
+
+.block {
+	position: absolute;
+	width: 35px;
+	height: 45px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+}
+
+.block.road {
+	position: absolute;
+	width: 50px;
+	height: 30px;
+}
+
+.block.Afghan { background-image: url(pieces/block_afghan.svg) }
+.block.British { background-image: url(pieces/block_british.svg) }
+.block.Russian { background-image: url(pieces/block_russian.svg) }
+.block.army.Afghan { background-image: url(pieces/army_afghan.svg) }
+.block.army.British { background-image: url(pieces/army_british.svg) }
+.block.army.Russian { background-image: url(pieces/army_russian.svg) }
+.block.road.Afghan { background-image: url(pieces/road_afghan.svg) }
+.block.road.British { background-image: url(pieces/road_british.svg) }
+.block.road.Russian { background-image: url(pieces/road_russian.svg) }
+
+.Afghan.block.action {
+	filter:
+		drop-shadow(0 -2px 0 turquoise)
+		drop-shadow(0 2px 0 turquoise)
+		drop-shadow(-2px 0 0 turquoise)
+		drop-shadow(2px 0 0 turquoise)
+}
+.British.block.action {
+	filter:
+		drop-shadow(0 -2px 0 hotpink)
+		drop-shadow(0 2px 0 hotpink)
+		drop-shadow(-2px 0 0 hotpink)
+		drop-shadow(2px 0 0 hotpink)
+}
+.Russian.block.action {
+	filter:
+		drop-shadow(0 -2px 0 orange)
+		drop-shadow(0 2px 0 orange)
+		drop-shadow(-2px 0 0 orange)
+		drop-shadow(2px 0 0 orange)
+}
+
+.cylinder.action {
+	filter:
+		drop-shadow(0 -2px 0 yellow)
+		drop-shadow(0 2px 0 yellow)
+		drop-shadow(-2px 0 0 yellow)
+		drop-shadow(2px 0 0 yellow)
+}
+
+.block.selected {
+	filter:
+		drop-shadow(0 -2px 0 deepskyblue)
+		drop-shadow(0 2px 0 deepskyblue)
+		drop-shadow(-2px 0 0 deepskyblue)
+		drop-shadow(2px 0 0 deepskyblue)
+}
+
+.cylinder.selected {
+	filter:
+		drop-shadow(0 -2px 0 deepskyblue)
+		drop-shadow(0 2px 0 deepskyblue)
+		drop-shadow(-2px 0 0 deepskyblue)
+		drop-shadow(2px 0 0 deepskyblue)
+}
+
+/* FAVORED SUIT MARKER AND SPACES */
+
+#favored_suit_marker {
+	position: absolute;
+	width: 32px;
+	height: 70px;
+	background-image: url(pieces/favored_suit_marker.svg);
+	background-size: contain;
+	background-repeat: no-repeat;
+	left: 42px;
+	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+	transition: 500ms;
+	transform-origin: bottom center;
+}
+
+#favored_suit_marker.Political { top: 112px; }
+#favored_suit_marker.Intelligence { top: 200px; }
+#favored_suit_marker.Economic { top: 289px; }
+#favored_suit_marker.Military { top: 378px; }
+
+.suit {
+	position: absolute;
+	border: 3px solid transparent;
+	border-radius: 50%;
+	left: 31px;
+	width: 48px;
+	height: 48px;
+}
+
+#suit_political { top: 129px; }
+#suit_intelligence { top: 216px; }
+#suit_economic { top: 305px; }
+#suit_military { top: 394px; }
+
+#suit_political.action { border-color: orchid; }
+#suit_intelligence.action { border-color: deepskyblue; }
+#suit_economic.action { border-color: orange; }
+#suit_military.action { border-color: orangered; }
+
+/* MARKET BOARD */
+
+#market {
+	width: 1280px;
+	height: 630px;
+	background-color: #e7cea7;
+	background-repeat: no-repeat;
+	background-size: cover;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+	margin: 0px auto 10px auto;
+}
+
+#market_a {
+	/* TRBL */
+	padding: 74px 0 0 26px ;
+	display: flex;
+	gap: 20px;
+}
+
+#market_b {
+	padding: 16px 0 0 26px ;
+	display: flex;
+	gap: 20px;
+}
+
+.market_slot {
+	position: relative;
+	width: 188px;
+	height: 260px;
+}
+
+#market .coin {
+	top: 70px;
+	left: -8px;
+}
+
+/* MAP BOARD */
+
+#board {
+	position: relative;
+	width: 1280px;
+	height: 630px;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+	margin: 0px auto 0px auto;
+	background-color: ivory;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+#board svg {
+	position: absolute;
+}
+
+.border, .region {
+	fill: none;
+	stroke: none;
+}
+
+.region.action {
+	fill: transparent;
+	stroke: #66a2b4;
+	stroke-width: 5px;
+	opacity: 0.7;
+}
+
+.border.action {
+	fill: transparent;
+	stroke: #b88a40;
+	stroke-width: 5px;
+	opacity: 0.7;
+}
+
+.rule {
+	position: absolute;
+	background-repeat: no-repeat;
+	background-size: 100%;
+	background-position: center;
+	background-color: #bf935b;
+	border: 1px solid #4d452b;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+	margin: 0 auto 8px auto;
+}
+
+.rule.Transcaspia { left:229px; top:127px; }
+.rule.Punjab { left:904px; top:281px; }
+.rule.Persia { left:181px; top:400px; }
+.rule.Kandahar { left:707px; top:412px; }
+.rule.Kabul { left:648px; top:138px; }
+.rule.Herat { left:431px; top:358px; }
+
+.rule.Persia { background-image: url(pieces/ruler_persia.svg) }
+.rule.Transcaspia { background-image: url(pieces/ruler_transcaspia.svg) }
+.rule.Herat { background-image: url(pieces/ruler_herat.svg) }
+.rule.Kabul { background-image: url(pieces/ruler_kabul.svg) }
+.rule.Kandahar { background-image: url(pieces/ruler_kandahar.svg) }
+.rule.Punjab { background-image: url(pieces/ruler_punjab.svg) }
+
+.rule.Gray { background-color: #b7b2b0; }
+.rule.Blue { background-color: #95b4ca; }
+.rule.Tan { background-color: #e7cea7; }
+.rule.Red { background-color: #d18e95; }
+.rule.Black { background-color: #7b7979; }
+
+/* PLAYER AREAS */
+
+#global_events {
+	box-sizing: border-box;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	padding: 0 25px;
+	gap: 15px;
+	margin: 15px auto;
+	max-width: min(calc(100% - 30px), 1260px);
+}
+
+.hand {
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+	justify-content: start;
+	padding: 15px;
+	margin: 15px auto 0 auto;
+	gap: 15px;
+	min-height: 260px;
+	max-width: min(calc(100% - 20px), 1260px);
+}
+
+.hand.hide {
+	display: none;
+}
+
+.player_area {
+	box-sizing: border-box;
+	margin: 15px auto;
+	min-width: min(100%, 1280px);
+	width: fit-content;
+	max-width: 100%;
+}
+
+.player_court {
+	display: flex;
+	padding: 10px 15px;
+	min-height: 283px;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+	justify-content: start;
+	flex-wrap: wrap;
+	gap: 15px;
+	background-repeat: no-repeat;
+	background-size: 100%;
+	background-position: center bottom;
+}
+
+#player_court_0 { background-color: #b7b2b0; background-image: url(backgrounds/mountains_gray.jpg) }
+#player_court_1 { background-color: #95b4ca; background-image: url(backgrounds/mountains_blue.jpg) }
+#player_court_2 { background-color: #e7cea7; background-image: url(backgrounds/mountains_tan.jpg) }
+#player_court_3 { background-color: #d18e95; background-image: url(backgrounds/mountains_red.jpg) }
+#player_court_4 { background-color: #7b7979; background-image: url(backgrounds/mountains_black.jpg) }
+
+#player_hand_0 { background-image: linear-gradient(transparent, #b7b2b080) }
+#player_hand_1 { background-image: linear-gradient(transparent, #95b4ca80) }
+#player_hand_2 { background-image: linear-gradient(transparent, #e7cea780) }
+#player_hand_3 { background-image: linear-gradient(transparent, #d18e9580) }
+#player_hand_4 { background-image: linear-gradient(transparent, #7b797980) }
+
+.player_pool {
+	display: inline-flex;
+	justify-content: center;
+	align-content: start;
+	flex-wrap: wrap;
+	gap: 7px;
+	width: 209px;
+}
+
+.player_dial {
+	position: relative;
+	width: 207px;
+	height: 207px;
+	border: 1px solid #4d452b;
+	border-radius: 50%;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	box-shadow: 0px 2px 3px 1px rgba(0,0,0,0.5);
+}
+
+.player_dial .coin {
+	top: 19px;
+	right: 0px;
+}
+
+.player_hand_size {
+	position: absolute;
+	user-select: none;
+	top: 19px;
+	left: -3px;
+	width: 36px;
+	height: 50px;
+	background-repeat: no-repeat;
+	background-size: 100%;
+	background-color: #fefcf0;
+	background-image: url(icons/card_back.png);
+	color: ivory;
+	border: 1px solid #4d452b;
+	border-radius: 3px;
+	font-size: 32px;
+	line-height: 47px;
+	font-weight: bold;
+	text-align: center;
+	text-shadow: 0 0 8px black;
+	text-align: center;
+	box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+}
+
+.player_dial .prize {
+	position: absolute;
+	user-select: none;
+	top: 94px;
+	left: 135px;
+	height: 26px;
+	font-family: "Source Serif";
+	font-size: 16px;
+	line-height: 25px;
+	color: black;
+	font-weight: bold;
+}
+
+.gift_2, .gift_4, .gift_6 {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 42px;
+	height: 42px;
+	border: 3px solid transparent;
+	border-radius: 50%;
+}
+.gift_2.action, .gift_4.action, .gift_6.action {
+	border-color: white;
+}
+.gift_2 { top: 75px; left: 8px; }
+.gift_4 { top: 120px; left: 21px; }
+.gift_6 { top: 147px; left: 60px; }
+
+/* IMAGES */
+
+#market { background-image: url(market.1x.jpg) }
+#board { background-image: url(board_fg.svg), url(board_bg.1x.jpg) }
+
+.player_dial.p0 { background-image: url(dials/loyalty_gray.1x.opt.png) }
+.player_dial.p1 { background-image: url(dials/loyalty_blue.1x.opt.png) }
+.player_dial.p2 { background-image: url(dials/loyalty_tan.1x.opt.png) }
+.player_dial.p3 { background-image: url(dials/loyalty_red.1x.opt.png) }
+.player_dial.p4 { background-image: url(dials/loyalty_black.1x.opt.png) }
+.player_dial.Afghan.p0 { background-image: url(dials/loyalty_gray.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
+.player_dial.Afghan.p1 { background-image: url(dials/loyalty_blue.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
+.player_dial.Afghan.p2 { background-image: url(dials/loyalty_tan.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
+.player_dial.Afghan.p3 { background-image: url(dials/loyalty_red.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
+.player_dial.Afghan.p4 { background-image: url(dials/loyalty_black.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
+.player_dial.British.p0 { background-image: url(dials/loyalty_gray.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
+.player_dial.British.p1 { background-image: url(dials/loyalty_blue.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
+.player_dial.British.p2 { background-image: url(dials/loyalty_tan.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
+.player_dial.British.p3 { background-image: url(dials/loyalty_red.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
+.player_dial.British.p4 { background-image: url(dials/loyalty_black.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
+.player_dial.Russian.p0 { background-image: url(dials/loyalty_gray.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
+.player_dial.Russian.p1 { background-image: url(dials/loyalty_blue.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
+.player_dial.Russian.p2 { background-image: url(dials/loyalty_tan.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
+.player_dial.Russian.p3 { background-image: url(dials/loyalty_red.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
+.player_dial.Russian.p4 { background-image: url(dials/loyalty_black.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
+
+@media (min-resolution: 97dpi) {
+	#market { background-image: url(market.2x.jpg) }
+	#board { background-image: url(board_fg.svg), url(board_bg.2x.jpg) }
+
+	.player_dial.p0 { background-image: url(dials/loyalty_gray.2x.opt.png) }
+	.player_dial.p1 { background-image: url(dials/loyalty_blue.2x.opt.png) }
+	.player_dial.p2 { background-image: url(dials/loyalty_tan.2x.opt.png) }
+	.player_dial.p3 { background-image: url(dials/loyalty_red.2x.opt.png) }
+	.player_dial.p4 { background-image: url(dials/loyalty_black.2x.opt.png) }
+	.player_dial.Afghan.p0 { background-image: url(dials/loyalty_gray.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
+	.player_dial.Afghan.p1 { background-image: url(dials/loyalty_blue.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
+	.player_dial.Afghan.p2 { background-image: url(dials/loyalty_tan.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
+	.player_dial.Afghan.p3 { background-image: url(dials/loyalty_red.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
+	.player_dial.Afghan.p4 { background-image: url(dials/loyalty_black.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
+	.player_dial.British.p0 { background-image: url(dials/loyalty_gray.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
+	.player_dial.British.p1 { background-image: url(dials/loyalty_blue.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
+	.player_dial.British.p2 { background-image: url(dials/loyalty_tan.2x.opt.pn.opt.png url(dials/loyalty_british.2x.opt.png) }
+	.player_dial.British.p3 { background-image: url(dials/loyalty_red.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
+	.player_dial.British.p4 { background-image: url(dials/loyalty_black.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
+	.player_dial.Russian.p0 { background-image: url(dials/loyalty_gray.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
+	.player_dial.Russian.p1 { background-image: url(dials/loyalty_blue.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
+	.player_dial.Russian.p2 { background-image: url(dials/loyalty_tan.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
+	.player_dial.Russian.p3 { background-image: url(dials/loyalty_red.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
+	.player_dial.Russian.p4 { background-image: url(dials/loyalty_black.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
+}
+
+/* CARD IMAGES */
+
+.card_1{background-image:url(cards/card_1.jpg)}
+.card_2{background-image:url(cards/card_2.jpg)}
+.card_3{background-image:url(cards/card_3.jpg)}
+.card_4{background-image:url(cards/card_4.jpg)}
+.card_5{background-image:url(cards/card_5.jpg)}
+.card_6{background-image:url(cards/card_6.jpg)}
+.card_7{background-image:url(cards/card_7.jpg)}
+.card_8{background-image:url(cards/card_8.jpg)}
+.card_9{background-image:url(cards/card_9.jpg)}
+.card_10{background-image:url(cards/card_10.jpg)}
+.card_11{background-image:url(cards/card_11.jpg)}
+.card_12{background-image:url(cards/card_12.jpg)}
+.card_13{background-image:url(cards/card_13.jpg)}
+.card_14{background-image:url(cards/card_14.jpg)}
+.card_15{background-image:url(cards/card_15.jpg)}
+.card_16{background-image:url(cards/card_16.jpg)}
+.card_17{background-image:url(cards/card_17.jpg)}
+.card_18{background-image:url(cards/card_18.jpg)}
+.card_19{background-image:url(cards/card_19.jpg)}
+.card_20{background-image:url(cards/card_20.jpg)}
+.card_21{background-image:url(cards/card_21.jpg)}
+.card_22{background-image:url(cards/card_22.jpg)}
+.card_23{background-image:url(cards/card_23.jpg)}
+.card_24{background-image:url(cards/card_24.jpg)}
+.card_25{background-image:url(cards/card_25.jpg)}
+.card_26{background-image:url(cards/card_26.jpg)}
+.card_27{background-image:url(cards/card_27.jpg)}
+.card_28{background-image:url(cards/card_28.jpg)}
+.card_29{background-image:url(cards/card_29.jpg)}
+.card_30{background-image:url(cards/card_30.jpg)}
+.card_31{background-image:url(cards/card_31.jpg)}
+.card_32{background-image:url(cards/card_32.jpg)}
+.card_33{background-image:url(cards/card_33.jpg)}
+.card_34{background-image:url(cards/card_34.jpg)}
+.card_35{background-image:url(cards/card_35.jpg)}
+.card_36{background-image:url(cards/card_36.jpg)}
+.card_37{background-image:url(cards/card_37.jpg)}
+.card_38{background-image:url(cards/card_38.jpg)}
+.card_39{background-image:url(cards/card_39.jpg)}
+.card_40{background-image:url(cards/card_40.jpg)}
+.card_41{background-image:url(cards/card_41.jpg)}
+.card_42{background-image:url(cards/card_42.jpg)}
+.card_43{background-image:url(cards/card_43.jpg)}
+.card_44{background-image:url(cards/card_44.jpg)}
+.card_45{background-image:url(cards/card_45.jpg)}
+.card_46{background-image:url(cards/card_46.jpg)}
+.card_47{background-image:url(cards/card_47.jpg)}
+.card_48{background-image:url(cards/card_48.jpg)}
+.card_49{background-image:url(cards/card_49.jpg)}
+.card_50{background-image:url(cards/card_50.jpg)}
+.card_51{background-image:url(cards/card_51.jpg)}
+.card_52{background-image:url(cards/card_52.jpg)}
+.card_53{background-image:url(cards/card_53.jpg)}
+.card_54{background-image:url(cards/card_54.jpg)}
+.card_55{background-image:url(cards/card_55.jpg)}
+.card_56{background-image:url(cards/card_56.jpg)}
+.card_57{background-image:url(cards/card_57.jpg)}
+.card_58{background-image:url(cards/card_58.jpg)}
+.card_59{background-image:url(cards/card_59.jpg)}
+.card_60{background-image:url(cards/card_60.jpg)}
+.card_61{background-image:url(cards/card_61.jpg)}
+.card_62{background-image:url(cards/card_62.jpg)}
+.card_63{background-image:url(cards/card_63.jpg)}
+.card_64{background-image:url(cards/card_64.jpg)}
+.card_65{background-image:url(cards/card_65.jpg)}
+.card_66{background-image:url(cards/card_66.jpg)}
+.card_67{background-image:url(cards/card_67.jpg)}
+.card_68{background-image:url(cards/card_68.jpg)}
+.card_69{background-image:url(cards/card_69.jpg)}
+.card_70{background-image:url(cards/card_70.jpg)}
+.card_71{background-image:url(cards/card_71.jpg)}
+.card_72{background-image:url(cards/card_72.jpg)}
+.card_73{background-image:url(cards/card_73.jpg)}
+.card_74{background-image:url(cards/card_74.jpg)}
+.card_75{background-image:url(cards/card_75.jpg)}
+.card_76{background-image:url(cards/card_76.jpg)}
+.card_77{background-image:url(cards/card_77.jpg)}
+.card_78{background-image:url(cards/card_78.jpg)}
+.card_79{background-image:url(cards/card_79.jpg)}
+.card_80{background-image:url(cards/card_80.jpg)}
+.card_81{background-image:url(cards/card_81.jpg)}
+.card_82{background-image:url(cards/card_82.jpg)}
+.card_83{background-image:url(cards/card_83.jpg)}
+.card_84{background-image:url(cards/card_84.jpg)}
+.card_85{background-image:url(cards/card_85.jpg)}
+.card_86{background-image:url(cards/card_86.jpg)}
+.card_87{background-image:url(cards/card_87.jpg)}
+.card_88{background-image:url(cards/card_88.jpg)}
+.card_89{background-image:url(cards/card_89.jpg)}
+.card_90{background-image:url(cards/card_90.jpg)}
+.card_91{background-image:url(cards/card_91.jpg)}
+.card_92{background-image:url(cards/card_92.jpg)}
+.card_93{background-image:url(cards/card_93.jpg)}
+.card_94{background-image:url(cards/card_94.jpg)}
+.card_95{background-image:url(cards/card_95.jpg)}
+.card_96{background-image:url(cards/card_96.jpg)}
+.card_97{background-image:url(cards/card_97.jpg)}
+.card_98{background-image:url(cards/card_98.jpg)}
+.card_99{background-image:url(cards/card_99.jpg)}
+.card_100{background-image:url(cards/card_100.jpg)}
+.card_101{background-image:url(cards/card_101.jpg)}
+.card_102{background-image:url(cards/card_102.jpg)}
+.card_103{background-image:url(cards/card_103.jpg)}
+.card_104{background-image:url(cards/card_104.jpg)}
+.card_105{background-image:url(cards/card_105.jpg)}
+.card_106{background-image:url(cards/card_106.jpg)}
+.card_107{background-image:url(cards/card_107.jpg)}
+.card_108{background-image:url(cards/card_108.jpg)}
+.card_109{background-image:url(cards/card_109.jpg)}
+.card_110{background-image:url(cards/card_110.jpg)}
+.card_111{background-image:url(cards/card_111.jpg)}
+.card_112{background-image:url(cards/card_112.jpg)}
+.card_113{background-image:url(cards/card_113.jpg)}
+.card_114{background-image:url(cards/card_114.jpg)}
+.card_115{background-image:url(cards/card_115.jpg)}
+.card_116{background-image:url(cards/card_116.jpg)}
+.card_back{background-image:url(cards/card_back_116.jpg)}
+
+/* MOBILE PHONE LAYOUT */
+
+@media (max-width: 640px) {
+	#tooltip {
+		top: 75px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
+	}
+}
+
+@media (max-width: 400px) or (max-height: 590px) {
+	#tooltip.card {
+		width: 248px;
+		height: 344px;
+		border-radius: 13px;
+	}
+}
