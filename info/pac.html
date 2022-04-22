@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pax Pamir Player Aid</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+body{background-color:slategray}
+div{position:relative;background-color:white;margin:1em auto;box-shadow:1px 1px 8px -2px black}
+p{position:absolute;white-space:pre;margin:0}
+</style>
+</head>
+<body>
+<div id="page1" style="background-image:url('pac.jpg');width:761pt;height:939pt">
+<!--
+<p style="top:855pt;left:380pt;line-height:15pt"><span style="font-size:15pt">BETRAY</span></p>
+<p style="top:872pt;left:380pt;line-height:10pt"><span style="font-size:10pt">Pay 2. Discard a card </span></p>
+<p style="top:885pt;left:380pt;line-height:10pt"><span style="font-size:10pt">where you have a spy.</span></p>
+<p style="top:897pt;left:380pt;line-height:10pt"><span style="font-size:10pt">You may take its prize.</span></p>
+<p style="top:796pt;left:380pt;line-height:15pt"><span style="font-size:15pt">MARCH</span></p>
+<p style="top:812pt;left:380pt;line-height:10pt"><span style="font-size:10pt">For each rank, move one </span></p>
+<p style="top:825pt;left:380pt;line-height:10pt"><span style="font-size:10pt">spy or army.</span></p>
+<p style="top:796pt;left:105pt;line-height:15pt"><span style="font-size:15pt">TAX</span></p>
+<p style="top:813pt;left:105pt;line-height:10pt"><span style="font-size:10pt">Take rupees from market cards. If you </span></p>
+<p style="top:826pt;left:105pt;line-height:10pt"><span style="font-size:10pt">rule a region, may take from players </span></p>
+<p style="top:838pt;left:105pt;line-height:10pt"><span style="font-size:10pt">with at least one card associated with </span></p>
+<p style="top:851pt;left:105pt;line-height:10pt"><span style="font-size:10pt">that region. </span></p>
+<p style="top:731pt;left:380pt;line-height:15pt"><span style="font-size:15pt">GIFT</span></p>
+<p style="top:748pt;left:380pt;line-height:10pt"><span style="font-size:10pt">Pay 2/4/6 to </span></p>
+<p style="top:761pt;left:380pt;line-height:10pt"><span style="font-size:10pt">purchase 1st, </span></p>
+<p style="top:774pt;left:380pt;line-height:10pt"><span style="font-size:10pt">2nd, or 3rd gift.</span></p>
+<p style="top:732pt;left:105pt;line-height:15pt"><span style="font-size:15pt">BUILD</span></p>
+<p style="top:748pt;left:105pt;line-height:10pt"><span style="font-size:10pt">Pay 2/4/6 to place 1, 2, or 3 blocks in </span></p>
+<p style="top:761pt;left:105pt;line-height:10pt"><span style="font-size:10pt">any region you rule (as an army) or </span></p>
+<p style="top:774pt;left:105pt;line-height:10pt"><span style="font-size:10pt">on an adjacent borders (as a road).</span></p>
+<p style="top:299pt;left:380pt;line-height:15pt"><span style="font-size:15pt">PLAY</span></p>
+<p style="top:315pt;left:380pt;line-height:10pt"><span style="font-size:10pt">First pay bribe to the ruler of the card&#x2019;s </span></p>
+<p style="top:328pt;left:380pt;line-height:10pt"><span style="font-size:10pt">region, then resolve impact icons.</span></p>
+<p style="top:299pt;left:182pt;line-height:15pt"><span style="font-size:15pt">PURCHASE </span></p>
+<p style="top:315pt;left:182pt;line-height:10pt"><span style="font-size:10pt">Pay 0-5  rupees on market </span></p>
+<p style="top:328pt;left:182pt;line-height:10pt"><span style="font-size:10pt">cards to purchase a card. </span></p>
+<p style="top:730pt;left:549pt;line-height:15pt"><span style="font-size:15pt">BATTLE</span></p>
+<p style="top:747pt;left:549pt;line-height:10pt"><span style="font-size:10pt">At a single site (region or court </span></p>
+<p style="top:760pt;left:549pt;line-height:10pt"><span style="font-size:10pt">card), remove any combination of </span></p>
+<p style="top:773pt;left:549pt;line-height:10pt"><span style="font-size:10pt">enemy tribes, roads, spies or armies </span></p>
+<p style="top:785pt;left:549pt;line-height:10pt"><span style="font-size:10pt">equal to rank. </span><b><span style="font-size:10pt">You cannot remove </span></b></p>
+<p style="top:798pt;left:549pt;line-height:10pt"><b><span style="font-size:10pt">more units than you yourself have </span></b></p>
+<p style="top:811pt;left:549pt;line-height:10pt"><b><span style="font-size:10pt">armies/spies in that battle.</span></b></p>
+<p style="top:855pt;left:572pt;line-height:9pt"><b><span style="font-size:9pt">The Overthrow Rule</span></b></p>
+<p style="top:867pt;left:532pt;line-height:9pt"><i><span style="font-size:9pt">Loss of last tribe or political card in location </span></i></p>
+<p style="top:878pt;left:563pt;line-height:9pt"><i><span style="font-size:9pt">triggers removal of the other.</span></i></p>
+<p style="top:871pt;left:164pt;line-height:9pt"><b><span style="font-size:9pt">Tax Shelters</span></b></p>
+<p style="top:883pt;left:132pt;line-height:9pt"><i><span style="font-size:9pt">Econ cards protect rupees from </span></i></p>
+<p style="top:894pt;left:126pt;line-height:9pt"><i><span style="font-size:9pt">taxation equal to their total rank.</span></i></p>
+<p style="top:667pt;left:242pt;line-height:9pt"><b><span style="font-size:9pt">Bonus Actions</span></b></p>
+<p style="top:678pt;left:200pt;line-height:9pt"><i><span style="font-size:9pt">Actions on cards matching the favored </span></i></p>
+<p style="top:689pt;left:206pt;line-height:9pt"><i><span style="font-size:9pt">suit do not count against your two.</span></i></p>
+<p style="top:667pt;left:441pt;line-height:9pt"><b><span style="font-size:9pt">Paying for Actions</span></b></p>
+<p style="top:678pt;left:411pt;line-height:9pt"><i><span style="font-size:9pt">If an action has a cost, you must pay </span></i></p>
+<p style="top:689pt;left:412pt;line-height:9pt"><i><span style="font-size:9pt">cards on the right side of the market.</span></i></p>
+<p style="top:622pt;left:242pt;line-height:30pt"><span style="font-size:30pt">Card-Based Actions</span></p>
+<p style="top:258pt;left:289pt;line-height:30pt"><span style="font-size:30pt">Core Actions</span></p>
+<p style="top:367pt;left:324pt;line-height:20pt"><i><span style="font-size:20pt">Impact Icons</span></i></p>
+<p style="top:28pt;left:171pt;line-height:30pt"><span style="font-size:30pt">Turn Structure &amp; How to Win</span></p>
+<p style="top:399pt;left:149pt;line-height:12pt"><span style="font-size:12pt">Place one coalition block of your loyalty </span></p>
+<p style="top:415pt;left:149pt;line-height:12pt"><span style="font-size:12pt">on any border of this region. This piece </span></p>
+<p style="top:432pt;left:149pt;line-height:12pt"><span style="font-size:12pt">is now a </span><b><span style="font-size:12pt">road</span></b><span style="font-size:12pt">.</span></p>
+<p style="top:399pt;left:439pt;line-height:12pt"><span style="font-size:12pt">Place one of your cylinders on a card in </span></p>
+<p style="top:415pt;left:439pt;line-height:12pt"><span style="font-size:12pt">any player&#x2019;s court that matches the played </span></p>
+<p style="top:431pt;left:439pt;line-height:12pt"><span style="font-size:12pt">card&#x2019;s region. This piece is now a </span><b><span style="font-size:12pt">spy</span></b><span style="font-size:12pt">.</span></p>
+<p style="top:461pt;left:439pt;line-height:12pt"><span style="font-size:12pt">Place one of your cylinders in this </span></p>
+<p style="top:478pt;left:439pt;line-height:12pt"><span style="font-size:12pt">region. This piece is now a </span><b><span style="font-size:12pt">tribe</span></b><span style="font-size:12pt">.</span></p>
+<p style="top:522pt;left:148pt;line-height:12pt"><span style="font-size:12pt">Take two rupees from the bank. </span></p>
+<p style="top:538pt;left:148pt;line-height:12pt"><span style="font-size:12pt">This card is leveraged. </span><i><span style="font-size:12pt">Reminder: </span></i></p>
+<p style="top:554pt;left:148pt;line-height:12pt"><i><span style="font-size:12pt">If you ever discard this card, you </span></i></p>
+<p style="top:571pt;left:148pt;line-height:12pt"><i><span style="font-size:12pt">must pay back the rupees (page 8).</span></i></p>
+<p style="top:461pt;left:149pt;line-height:12pt"><span style="font-size:12pt">Place one coalition block of your </span></p>
+<p style="top:478pt;left:149pt;line-height:12pt"><span style="font-size:12pt">loyalty in this region. This piece is </span></p>
+<p style="top:494pt;left:149pt;line-height:12pt"><span style="font-size:12pt">now an </span><b><span style="font-size:12pt">army</span></b><span style="font-size:12pt">.</span></p>
+<p style="top:522pt;left:441pt;line-height:12pt"><span style="font-size:12pt">Move the favored suit marker to the </span></p>
+<p style="top:539pt;left:441pt;line-height:12pt"><span style="font-size:12pt">suit indicated. </span><i><span style="font-size:12pt">Reminder: If the favored </span></i></p>
+<p style="top:555pt;left:441pt;line-height:12pt"><i><span style="font-size:12pt">suit is military, the cost to take the </span></i></p>
+<p style="top:571pt;left:441pt;line-height:12pt"><i><span style="font-size:12pt">purchase action is doubled.</span></i></p>
+<p style="top:95pt;left:28pt;line-height:11pt"><b><span style="font-size:11pt">First,</span></b><span style="font-size:11pt"> take up to two actions (core or on </span></p>
+<p style="top:108pt;left:28pt;line-height:11pt"><span style="font-size:11pt">card-based) and any number of bonus actions.</span></p>
+<p style="top:125pt;left:28pt;line-height:11pt"><b><span style="font-size:11pt">Then,</span></b><span style="font-size:11pt"> perform cleanup.</span></p>
+<p style="top:142pt;left:38pt;line-height:11pt"><span style="font-size:11pt">1. Discard down to court size: 3 +</span></p>
+<p style="top:180pt;left:38pt;line-height:11pt"><span style="font-size:11pt">3. Resolve events in the leftmost </span></p>
+<p style="top:193pt;left:52pt;line-height:11pt"><span style="font-size:11pt">column of the market.</span></p>
+<p style="top:211pt;left:38pt;line-height:11pt"><span style="font-size:11pt">4. Fill market.</span></p>
+<p style="top:74pt;left:28pt;line-height:17pt"><span style="font-size:17pt">TURN STRUCTURE</span></p>
+<p style="top:161pt;left:38pt;line-height:11pt"><span style="font-size:11pt">2. Discard down to hand size: 2 +</span></p>
+<p style="top:95pt;left:286pt;line-height:11pt"><span style="font-size:11pt">When a Dominance Check event card is purchased, players </span></p>
+<p style="top:108pt;left:286pt;line-height:11pt"><span style="font-size:11pt">score points based on the performance of the coalitions.  </span></p>
+<p style="top:193pt;left:286pt;line-height:11pt"><span style="font-size:11pt">The game ends as soon as one player has four or more points than </span></p>
+<p style="top:207pt;left:286pt;line-height:11pt"><span style="font-size:11pt">all other players. Or, when the last Dominance Check is scored.</span></p>
+<p style="top:74pt;left:286pt;line-height:17pt"><span style="font-size:17pt">VICTORY</span></p>
+<p style="top:127pt;left:286pt;line-height:11pt"><span style="font-size:11pt">If a single coalition has 4 more blocks than each other the </span></p>
+<p style="top:141pt;left:286pt;line-height:11pt"><span style="font-size:11pt">dominance is </span><b><span style="font-size:11pt">successful</span></b><span style="font-size:11pt">. Players with </span><b><span style="font-size:11pt">most influence </span></b><span style="font-size:11pt">in the </span></p>
+<p style="top:154pt;left:286pt;line-height:11pt"><span style="font-size:11pt">Dominant coalition score 5/3/1 points. Then clear blocks.</span></p>
+<p style="top:175pt;left:286pt;line-height:11pt"><span style="font-size:11pt">Otherwise, players with the </span><b><span style="font-size:11pt">most cylinders</span></b><span style="font-size:11pt"> in play score 3/1 points.</span></p>
+<p style="top:98pt;left:658pt;line-height:9pt"><b><span style="font-size:9pt">Ties</span></b></p>
+<p style="top:110pt;left:614pt;line-height:9pt"><i><span style="font-size:9pt">If players are tied, combine </span></i></p>
+<p style="top:121pt;left:613pt;line-height:9pt"><i><span style="font-size:9pt">the points for the tied places </span></i></p>
+<p style="top:133pt;left:612pt;line-height:9pt"><i><span style="font-size:9pt">and divide by the number of </span></i></p>
+<p style="top:144pt;left:620pt;line-height:9pt"><i><span style="font-size:9pt">players, rounding down.</span></i></p>
+-->
+</div>
+</body>
+</html>
