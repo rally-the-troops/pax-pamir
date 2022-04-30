@@ -6,7 +6,6 @@
 // TODO: safe house passive
 
 // TODO: nation building - player or global?
-// TODO: nationalism - move and battle with tribes
 // TODO: confidence failure
 
 let cards = require("./cards.js");
@@ -498,6 +497,13 @@ function gen_select_spy_to_move() {
 	let x = active_cylinders();
 	for (let i = x; i < x + 10; ++i)
 		if (game.pieces[i] > 0 && game.pieces[i] <= 100)
+			gen_action('piece', i);
+}
+
+function gen_select_tribe_to_move() {
+	let x = active_cylinders();
+	for (let i = x; i < x + 10; ++i)
+		if (game.pieces[i] >= first_region && game.pieces[i] <= last_region)
 			gen_action('piece', i);
 }
 
@@ -1227,7 +1233,6 @@ const card_action_table = {
 
 	Move() {
 		game.selected = -1;
-		game.selected = -1;
 		game.state = 'move';
 	},
 
@@ -1503,49 +1508,66 @@ function can_army_move_across_border(here, next) {
 
 states.move = {
 	prompt() {
-		if (game.selected >= 36) {
-			let c = game.pieces[game.selected];
-			let here = court_position_from_card(c);
-			view.prompt = `Move spy from ${cards[c].name}.`;
+		if (game.selected >= 0) {
+			let here = game.pieces[game.selected];
 
-			let last = last_court_position();
-			let prev = here > 0 ? here - 1 : last;
-			let next = here < last ? here + 1 : 0;
-			gen_action('card', court_card_from_position(prev));
-			gen_action('card', court_card_from_position(next));
+			// Spy on a court card
+			if (here <= 100) {
+				here = court_position_from_card(c);
+				view.prompt = `Move spy from ${cards[c].name}.`;
 
-			if (active_has_well_connected()) {
-				let pprev = prev > 0 ? prev - 1 : last;
-				let nnext = next < last ? next + 1 : 0;
-				gen_action('card', court_card_from_position(pprev));
-				gen_action('card', court_card_from_position(nnext));
-			}
+				let last = last_court_position();
+				let prev = here > 0 ? here - 1 : last;
+				let next = here < last ? here + 1 : 0;
+				gen_action('card', court_card_from_position(prev));
+				gen_action('card', court_card_from_position(next));
 
-			if (active_has_strange_bedfellows()) {
-				let r = cards[c].region;
-				for (let p = 0; p < game.players.length; ++p) {
-					let court = game.players[p].court;
-					for (let i = 0; i < court.length; ++i)
-						if (cards[court[i]].region === r)
-							gen_action('card', court[i]);
+				if (active_has_well_connected()) {
+					let pprev = prev > 0 ? prev - 1 : last;
+					let nnext = next < last ? next + 1 : 0;
+					gen_action('card', court_card_from_position(pprev));
+					gen_action('card', court_card_from_position(nnext));
+				}
+
+				if (active_has_strange_bedfellows()) {
+					let r = cards[c].region;
+					for (let p = 0; p < game.players.length; ++p) {
+						let court = game.players[p].court;
+						for (let i = 0; i < court.length; ++i)
+							if (cards[court[i]].region === r)
+								gen_action('card', court[i]);
+					}
 				}
 			}
 
-		} else if (game.selected >= 0) {
-			let here = game.pieces[game.selected];
-			view.prompt = `Move ${player.loyalty} army from ${region_names[here]}.`;
-			let supplies = active_has_indian_supplies();
-			for (let next of roads[here])
-				if (supplies || can_army_move_across_border(here, next))
-					gen_action('space', next);
+			// Army or tribe in a region
+			else {
+				if (game.selected < 36)
+					view.prompt = `Move ${player.loyalty} army from ${region_names[here]}.`;
+				else
+					view.prompt = `Move ${player_names[game.active]} tribe from ${region_names[here]}.`;
+				let supplies = active_has_indian_supplies();
+				for (let next of roads[here])
+					if (supplies || can_army_move_across_border(here, next))
+						gen_action('space', next);
+			}
 		} else {
-			if (game.count === 1)
-				view.prompt = `Move up to ${game.count} spy or army \u2014 select a spy or army to move.`;
-			else
-				view.prompt = `Move up to ${game.count} spies and/or armies \u2014 select a spy or army to move.`;
+			if (player.events.nationalism) {
+				if (game.count === 1)
+					view.prompt = `Move up to ${game.count} spy, army, or tribe \u2014 select a spy, army, or tribe to move.`;
+				else
+					view.prompt = `Move up to ${game.count} spies, armies, and/or tribes \u2014 select a spy, army, or tribe to move.`;
+			} else {
+				if (game.count === 1)
+					view.prompt = `Move up to ${game.count} spy or army \u2014 select a spy or army to move.`;
+				else
+					view.prompt = `Move up to ${game.count} spies and/or armies \u2014 select a spy or army to move.`;
+			}
 			gen_action('next');
 			gen_select_army_to_move();
 			gen_select_spy_to_move();
+			if (player.events.nationalism)
+				gen_select_tribe_to_move();
 		}
 	},
 	piece(x) {
@@ -1564,7 +1586,10 @@ states.move = {
 	space(s) {
 		push_undo();
 		let old = game.pieces[game.selected];
-		log(`${player.loyalty} army from ${region_names[old]} to ${region_names[s]}.`);
+		if (game.selected < 36)
+			log(`${player.loyalty} army from ${region_names[old]} to ${region_names[s]}.`);
+		else
+			log(`${player_names[game.active]} tribe from ${region_names[old]} to ${region_names[s]}.`);
 		game.pieces[game.selected] = s;
 		game.selected = -1;
 		if (--game.count === 0)
