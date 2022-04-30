@@ -72,7 +72,13 @@ const region_index = {
 	"Punjab": Punjab,
 };
 
-cards.forEach(c => { if (c) c.region = region_index[c.region] });
+cards.forEach(card => {
+	if (card) {
+		card.region = region_index[card.region];
+		if (card.name === 'EVENT')
+			card.name = card.if_discarded + " / " + card.if_purchased;
+	}
+});
 
 const border_names = {
 	[Persia_Transcaspia]: "Persia/Transcaspia",
@@ -2457,7 +2463,8 @@ function do_dominance_check() {
 	let score = new Array(game.players.length).fill(0);
 	if (success) {
 		logbr();
-		log(`Dominant ${success} Coalition.`);
+		log(`.dc.${success} Dominant ${success} Coalition`);
+		logbr();
 		for (let p = 0; p < game.players.length; ++p) {
 			if (game.players[p].loyalty === success) {
 				score[p] = count_influence_points(p);
@@ -2470,7 +2477,8 @@ function do_dominance_check() {
 			assign_vp([5, 3, 1], score, score.filter(x=>x>0));
 	} else {
 		logbr();
-		log(`Unsuccessful Check.`);
+		log(`.dc.unsuccessful Unsuccessful Check`);
+		logbr();
 		for (let p = 0; p < game.players.length; ++p) {
 			score[p] = count_cylinders_in_play(p);
 			log(`${player_names[p]} had ${score[p]} cylinders.`);
