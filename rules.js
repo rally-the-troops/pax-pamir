@@ -5,7 +5,8 @@
 
 // TODO: safe house passive
 
-// TODO: confidence failure
+// TODO: log helpers - piece name (army/road/tribe color/coalition)
+// TODO: log helpers - card name (number, name, and court or market location)
 
 let cards = require("./cards.js");
 
@@ -460,6 +461,12 @@ function pay_action_cost(count) {
 		rb = rightmost_card(1, rb-1);
 	}
 	public_withdrawal();
+}
+
+function remove_all_tribes_and_armies(where) {
+	for (let i = 0; i < game.pieces.length; ++i)
+		if (game.pieces[i] === where)
+			game.pieces[i] = 0;
 }
 
 function player_with_most_spies(c) {
@@ -1522,7 +1529,8 @@ states.move = {
 
 			// Spy on a court card
 			if (here <= 100) {
-				here = court_position_from_card(c);
+				let c = here;
+				here = court_position_from_card(here);
 				view.prompt = `Move spy from ${cards[c].name}.`;
 
 				let last = last_court_position();
@@ -2016,7 +2024,6 @@ states.cleanup_hand = {
 		remove_from_array(player.hand, c);
 	},
 	next() {
-		push_undo();
 		goto_discard_events();
 	}
 }
@@ -2035,6 +2042,7 @@ function do_discard_event(row, c) {
 }
 
 function goto_discard_events() {
+	clear_undo();
 	if (is_event_card(game.market_cards[0][0])) {
 		do_discard_event(0, game.market_cards[0][0]);
 	} else if (is_event_card(game.market_cards[1][0])) {
@@ -2156,6 +2164,8 @@ const events_if_discarded = {
 
 	"Confidence Failure" () {
 		game.state = 'confidence_failure';
+		if (player.hand.length === 0)
+			next_confidence_failure();
 	},
 
 	"Intelligence" () {
@@ -2170,10 +2180,27 @@ const events_if_discarded = {
 
 }
 
-function remove_all_tribes_and_armies(where) {
-	for (let i = 0; i < game.pieces.length; ++i)
-		if (game.pieces[i] === where)
-			game.pieces[i] = 0;
+states.confidence_failure = {
+	prompt() {
+		view.prompt = "Confidence Failure \u2014 discard a card from your hand.";
+		for (let i = 0; i < player.hand.length; ++i)
+			gen_action('card', player.hand[i]);
+	},
+	card(c) {
+		log(`${player_names[game.active]} discarded ${cards[c].name} from their hand.`);
+		remove_from_array(player.hand, c);
+		next_confidence_failure();
+	},
+}
+
+function next_confidence_failure() {
+	for (;;) {
+		let next = next_player(game.active);
+		if (next === game.phasing)
+			return goto_discard_events();
+		if (game.players[next].hand.length > 0)
+			return set_active(next);
+	}
 }
 
 // EVENTS: IF PURCHASED
