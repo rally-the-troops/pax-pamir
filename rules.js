@@ -5,7 +5,6 @@
 
 // TODO: safe house passive
 
-// TODO: nation building - player or global?
 // TODO: confidence failure
 
 let cards = require("./cards.js");
@@ -1227,6 +1226,8 @@ const card_action_table = {
 
 	Build() {
 		game.count = Math.min(3, Math.floor(player.coins / 2));
+		if (player.events.nation_building)
+			game.count *= 2;
 		game.selected = select_available_block();
 		game.state = 'build';
 	},
@@ -1370,7 +1371,8 @@ states.build = {
 	prompt() {
 		view.prompt = `Build up to ${game.count} armies and/or roads.`;
 		gen_action('next');
-		if (player.coins >= 2) {
+		let must_pay = !player.events.nation_building || (game.count & 1) === 0;
+		if (!must_pay || player.coins >= 2) {
 			if (game.selected < 0) {
 				gen_select_block();
 			} else {
@@ -1390,7 +1392,11 @@ states.build = {
 	},
 	space(s) {
 		push_undo();
-		pay_action_cost(2);
+
+		let must_pay = !player.events.nation_building || (game.count & 1) === 0;
+		if (must_pay)
+			pay_action_cost(2);
+
 		if (s <= last_region)
 			log(`${player.loyalty} army to ${region_names[s]}.`);
 		else
@@ -1398,7 +1404,10 @@ states.build = {
 		game.pieces[game.selected] = s;
 		game.used_pieces.push(game.selected);
 		game.selected = -1;
-		if (--game.count === 0)
+		--game.count;
+
+		must_pay = !player.events.nation_building || (game.count & 1) === 0;
+		if (game.count === 0 || (must_pay && player.coins < 2))
 			end_build_action();
 		else
 			game.selected = select_available_block();
