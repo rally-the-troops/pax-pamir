@@ -4,7 +4,10 @@
 // TODO: check all card data
 
 // TODO: safe house passive
-// TODO: events
+
+// TODO: nation building - player or global?
+// TODO: nationalism - move and battle with tribes
+// TODO: confidence failure
 
 let cards = require("./cards.js");
 
@@ -39,6 +42,8 @@ const Safehouse = 500;
 
 const first_region = 201;
 const last_region = 206;
+
+const PUBLIC_WITHDRAWAL = 111;
 
 const player_names = [
 	"Gray",
@@ -433,6 +438,8 @@ function market_cost(col, c) {
 function is_favored_suit(c) {
 	if (cards[c].suit === game.favored)
 		return true;
+	if (player.events.new_tactics && cards[c].suit === Military)
+		return true;
 	if (c === 91) return true; // Savvy Operator
 	if (c === 99) return true; // Irregulars
 }
@@ -454,6 +461,7 @@ function pay_action_cost(count) {
 		ra = rightmost_card(0, ra-1);
 		rb = rightmost_card(1, rb-1);
 	}
+	public_withdrawal();
 }
 
 function player_with_most_spies(c) {
@@ -690,8 +698,14 @@ states.bribe = {
 		if (player.coins - game.reserve >= game.count)
 			gen_action('pay');
 		gen_action('beg');
+		if (player.events.courtly_manners)
+			gen_action('courtly_manners');
 		if (game.undo.length === 0)
 			gen_action('refuse');
+	},
+	courtly_manners() {
+		log(`${player_names[p]} chooses not to pay bribe.`);
+		end_bribe();
 	},
 	pay() {
 		let p = ruler_of_region(cards[game.card].region);
@@ -852,7 +866,7 @@ states.actions = {
 			for (let row = 0; row < 2; ++row) {
 				for (let col = 0; col < 6; ++col) {
 					let c = game.market_cards[row][col];
-					if (c && market_cost(col, c) <= player.coins && !game.used_cards.includes(c))
+					if (c && market_cost(col, c) <= player.coins && !game.used_cards.includes(c) && c !== PUBLIC_WITHDRAWAL)
 						gen_action('purchase', c);
 				}
 			}
@@ -906,6 +920,7 @@ states.actions = {
 				game.used_cards.push(game.market_cards[1-row][i]);
 			}
 		}
+		public_withdrawal();
 
 		logbr();
 
@@ -934,8 +949,7 @@ states.actions = {
 			resume_actions();
 		} else if (is_event_card(c)) {
 			log(`Purchased event ${cards[c].if_purchased}.`);
-			log(`TODO: ${cards[c].if_purchased}`);
-			resume_actions();
+			events_if_purchased[cards[c].if_purchased]();
 		} else {
 			log(`Purchased ${cards[c].name}.`);
 			player.hand.push(c);
@@ -967,7 +981,7 @@ function do_play_1(c, side) {
 	push_undo();
 	game.card = c;
 	game.where = side;
-	if (!active_has_charismatic_courtiers()) {
+	if (!active_has_charismatic_courtiers() && !game.events.disregard_for_customs) {
 		let ruler = ruler_of_region(cards[c].region);
 		if (ruler >= 0 && ruler !== game.active) {
 			game.state = 'bribe';
@@ -1182,7 +1196,7 @@ function goto_play_leveraged() {
 function goto_play_climate() {
 	// TODO: manual click?
 	let card = cards[game.card];
-	if (card.climate) {
+	if (card.climate && !game.events.pashtunwali_values) {
 		log(`Favored suit to ${card.climate}.`);
 		game.favored = card.climate;
 	}
@@ -1232,7 +1246,7 @@ function do_card_action_1(c, what, reserve) {
 	push_undo();
 	game.card = c;
 	game.where = what;
-	if (!active_has_civil_service_reforms()) {
+	if (!active_has_civil_service_reforms() && !game.events.disregard_for_customs) {
 		let who = player_with_most_spies(c);
 		if (who >= 0 && who !== game.active) {
 			game.state = 'bribe';
@@ -1783,11 +1797,11 @@ states.battle = {
 		game.where = where;
 		game.count = Math.min(game.count, count_active_spies_on_card(where));
 	},
-	space(where) {
+	space(s) {
 		push_undo();
-		log(`${player_names[game.active]} starts battle in ${region_names[where]}.`);
-		game.where = where;
-		game.count = Math.min(game.count, count_active_armies_in_region(where));
+		log(`${player_names[game.active]} starts battle in ${region_names[s]}.`);
+		game.where = s;
+		game.count = Math.min(game.count, count_active_armies_in_region(s));
 	},
 	piece(x) {
 		push_undo();
@@ -1885,6 +1899,8 @@ states.blackmail = {
 	},
 }
 
+// PASSIVE: SAFEHOUSE (TODO)
+
 // CLEANUP
 
 function player_court_size() {
@@ -1976,11 +1992,12 @@ function do_discard_event(row, c) {
 	logbr();
 	log(`Discarded event\n${cards[c].if_discarded}.`);
 	logbr();
-	if (is_dominance_check(c))
+	if (is_dominance_check(c)) {
 		do_dominance_check();
-	else
-		log(`TODO: ${cards[c].if_discarded}`);
-	goto_discard_events();
+		goto_discard_events();
+	} else {
+		events_if_discarded[cards[c].if_discarded](row);
+	}
 }
 
 function goto_discard_events() {
@@ -2054,6 +2071,231 @@ function goto_refill_market() {
 	goto_next_player();
 }
 
+// EVENTS: IF DISCARDED
+
+const events_if_discarded = {
+
+	"Military" () {
+		game.favor = Military;
+		goto_discard_events();
+	},
+
+	"Embarrassment of Riches" () {
+		game.events.embarrassment_of_riches = 1;
+		goto_discard_events();
+	},
+
+	"Disregard for Customs" () {
+		game.events.disregard_for_customs = 1;
+		goto_discard_events();
+	},
+
+	"Failure to Impress" () {
+		for (let p = 0; p < game.players.length; ++p)
+			game.players[p].prizes = 0;
+		goto_discard_events();
+	},
+
+	"Riots in Punjab" () {
+		remove_all_tribes_and_armies(Punjab);
+		goto_discard_events();
+	},
+
+	"Riots in Herat" () {
+		remove_all_tribes_and_armies(Herat);
+		goto_discard_events();
+	},
+
+	"No effect" () {
+		goto_discard_events();
+	},
+
+	"Riots in Kabul" () {
+		remove_all_tribes_and_armies(Kabul);
+		goto_discard_events();
+	},
+
+	"Riots in Persia" () {
+		remove_all_tribes_and_armies(Persia);
+		goto_discard_events();
+	},
+
+	"Confidence Failure" () {
+		game.state = 'confidence_failure';
+	},
+
+	"Intelligence" () {
+		game.favored = Intelligence;
+		goto_discard_events();
+	},
+
+	"Political" () {
+		game.favored = Political;
+		goto_discard_events();
+	},
+
+}
+
+function remove_all_tribes_and_armies(where) {
+	for (let i = 0; i < game.pieces.length; ++i)
+		if (game.pieces[i] === where)
+			game.pieces[i] = 0;
+}
+
+// EVENTS: IF PURCHASED
+
+const events_if_purchased = {
+
+	"New Tactics" () {
+		player.events.new_tactics = 1;
+		end_action();
+	},
+
+	"Koh-i-noor Recovered" () {
+		player.events.koh_i_noor = 1;
+		end_action();
+	},
+
+	"Courtly Manners" () {
+		player.events.courtly_manners = 1;
+		end_action();
+	},
+
+	"Rumor" () {
+		game.state = 'rumor';
+	},
+
+	"Conflict Fatigue" () {
+		game.events.conflict_fatigue = 1;
+		end_action();
+	},
+
+	"Nationalism" () {
+		player.events.nationalism = 1;
+		end_action();
+	},
+
+	"Public Withdrawal" () {
+		throw new Error("cannot purchase");
+	},
+
+	"Nation Building" () {
+		player.events.nation_building = 1;
+		end_action();
+	},
+
+	"Backing of Persian Aristocracy" () {
+		player.coins += 3;
+		end_action();
+	},
+
+	"Other Persuasive Methods" () {
+		game.state = 'other_persuasive_methods';
+	},
+
+	"Pashtunwali Values" () {
+		game.state = 'pashtunwali_values';
+	},
+
+	"Rebuke" () {
+		game.state = 'rebuke';
+	},
+
+}
+
+// TODO: other_persuasive_methods
+// TODO: pashtunwali_values
+// TODO: rebuke
+
+function public_withdrawal() {
+	// Remove any money placed on card "Public Withdrawal" from the game.
+	for (let row = 0; row < 2; ++row)
+		for (let col = 0; col < 6; ++col)
+			if (game.market_cards[row][col] === PUBLIC_WITHDRAWAL)
+				game.market_coins[row][col] = 0;
+}
+
+states.rumor = {
+	prompt() {
+		view.prompt = `Rumor \u2014 choose a player.`;
+		for (let p = 0; p < game.players.length; ++p)
+			if (p !== game.active)
+				gen_action('player_' + p);
+	},
+	player_0() { do_rumor(0); },
+	player_1() { do_rumor(1); },
+	player_2() { do_rumor(2); },
+	player_3() { do_rumor(3); },
+	player_4() { do_rumor(4); },
+}
+
+function do_rumor(p) {
+	push_undo();
+	log(`${player_names[game.active]} chose ${player_names[p]}.`);
+	game.players[p].events.rumor = 1;
+	end_action();
+}
+
+states.other_persuasive_methods = {
+	prompt() {
+		view.prompt = `Other Persuasive Methods \u2014 exchange your hand with another player.`;
+		for (let p = 0; p < game.players.length; ++p)
+			if (p !== game.active)
+				gen_action('player_' + p);
+	},
+	player_0() { do_other_persuasive_methods(0); },
+	player_1() { do_other_persuasive_methods(1); },
+	player_2() { do_other_persuasive_methods(2); },
+	player_3() { do_other_persuasive_methods(3); },
+	player_4() { do_other_persuasive_methods(4); },
+}
+
+function do_other_persuasive_methods(p) {
+	// TODO: clear_undo instead?
+	push_undo();
+	log(`${player_names[game.active]} exchanged hands with ${player_names[p]}.`);
+	let swap = game.players[game.active].hand;
+	game.players[game.active].hand = game.players[p].hand;
+	game.players[p].hand = swap;
+	end_action();
+}
+
+states.pashtunwali_values = {
+	prompt() {
+		view.prompt = `Pashtunwali Values \u2014 choose a suit to favor.`;
+		gen_action('suit_political');
+		gen_action('suit_intelligence');
+		gen_action('suit_economic');
+		gen_action('suit_military');
+	},
+	suit_political() { do_pashtunwali_values(Political); },
+	suit_intelligence() { do_pashtunwali_values(Intelligence); },
+	suit_economic() { do_pashtunwali_values(Economic); },
+	suit_military() { do_pashtunwali_values(Military); },
+}
+
+function do_pashtunwali_values(suit) {
+	log(`Favored suit to ${suit}.`);
+	game.favored = suit;
+	game.events.pashtunwali_values = 1;
+	end_action();
+}
+
+states.rebuke = {
+	prompt() {
+		view.prompt = `Rebuke \u2014 remove all tribes and armies in a single region.`;
+		for (let s = first_region; s <= last_region; ++s)
+			// TODO: can pick empty region?
+			gen_action('space', s);
+	},
+	space(s) {
+		push_undo();
+		log(`Removed all tribes and armies in ${region_names[s]}.`);
+		remove_all_tribes_and_armies(s);
+		end_action();
+	},
+}
+
 // DOMINANCE CHECK
 
 function count_cylinders_in_play(p) {
@@ -2068,13 +2310,21 @@ function count_cylinders_in_play(p) {
 function count_influence_points(p) {
 	let n = 1 + game.players[p].prizes;
 	let x = player_cylinders(p);
-	for (let i = x; i < x + 10; ++i)
-		if (game.pieces[i] === Gift)
-			++n;
-	let court = game.players[p].court;
-	for (let i = 0; i < court.length; ++i)
-		if (cards[court[i]].patriot)
-			++n;
+
+	if (!game.events.embarrassment_of_riches) {
+		let gv = game.players[p].events.koh_i_noor ? 2 : 1;
+		for (let i = x; i < x + 10; ++i)
+			if (game.pieces[i] === Gift)
+				n += gv;
+	}
+
+	if (!game.players[p].events.rumor) {
+		let court = game.players[p].court;
+		for (let i = 0; i < court.length; ++i)
+			if (cards[court[i]].patriot)
+				++n;
+	}
+
 	return n;
 }
 
@@ -2121,6 +2371,7 @@ function do_dominance_check() {
 	let n_british = 0;
 	let n_russian = 0;
 	let success = null;
+
 	for (let i = 0; i < 12; ++i) {
 		if (game.pieces[i] > 0)
 			n_afghan ++;
@@ -2130,11 +2381,12 @@ function do_dominance_check() {
 			n_russian ++;
 	}
 
-	if (n_afghan >= n_british+4 && n_afghan >= n_russian+4)
+	let limit = game.events.conflict_fatigue ? 2 : 4;
+	if (n_afghan >= n_british+limit && n_afghan >= n_russian+limit)
 		success = Afghan;
-	else if (n_british >= n_afghan+4 && n_british >= n_russian+4)
+	else if (n_british >= n_afghan+limit && n_british >= n_russian+limit)
 		success = British;
-	else if (n_russian >= n_british+4 && n_russian >= n_afghan+4)
+	else if (n_russian >= n_british+limit && n_russian >= n_afghan+limit)
 		success = Russian;
 
 	let final = is_final_dominance_check();
@@ -2186,6 +2438,10 @@ function do_dominance_check() {
 
 	if (final)
 		goto_game_over();
+
+	game.events = {};
+	for (let p = 0; p < game.players.length; ++p)
+		game.players[p].events = {};
 }
 
 function vp_tie(pp) {
@@ -2297,6 +2553,7 @@ exports.setup = function (seed, scenario, options) {
 			coins: 4,
 			hand: [],
 			court: [],
+			events: {},
 		}
 	}
 
