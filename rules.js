@@ -37,12 +37,14 @@ const Kabul_Punjab = 308;
 const Kandahar_Punjab = 309;
 
 const Gift = 400;
-const Safehouse = 500;
+const Safe_House = 500;
 
 const first_region = 201;
 const last_region = 206;
 
 const PUBLIC_WITHDRAWAL = 111;
+const SAFE_HOUSE_1 = 41;
+const SAFE_HOUSE_2 = 72;
 
 const player_names = [
 	"Gray",
@@ -297,6 +299,7 @@ function player_has_bodyguards(p) { return player_has_court_card(p, 15) || playe
 function player_has_indispensable_advisors(p) { return player_has_court_card(p, 1); }
 function player_has_citadel_in_kabul(p) { return player_has_court_card(p, 17); }
 function player_has_citadel_in_transcaspia(p) { return player_has_court_card(p, 97); }
+function player_has_safe_house(p) { return player_has_court_card(p, 41) || player_has_court_card(p, 72); }
 
 function any_player_has_insurrection(p) { return any_player_has_court_card(p, 3); }
 
@@ -466,7 +469,7 @@ function pay_action_cost(count) {
 		ra = rightmost_card(0, ra-1);
 		rb = rightmost_card(1, rb-1);
 	}
-	public_withdrawal();
+	check_public_withdrawal();
 }
 
 function remove_all_tribes_and_armies(where) {
@@ -611,7 +614,7 @@ function check_leverage() {
 	for (let p = 0; p < first; ++p)
 		if (check_player_leverage(p))
 			return;
-	resume_actions();
+	check_safe_house();
 }
 
 function check_player_leverage(p) {
@@ -938,7 +941,7 @@ states.actions = {
 				game.used_cards.push(game.market_cards[1-row][i]);
 			}
 		}
-		public_withdrawal();
+		check_public_withdrawal();
 
 		logbr();
 
@@ -991,6 +994,7 @@ states.actions = {
 	play_right(c) { do_play_1(c, 1); },
 
 	pass() {
+		logbr();
 		log(`Passed.`);
 		goto_cleanup_court();
 	},
@@ -1836,7 +1840,7 @@ states.battle = {
 				for (let p = 0; p < game.players.length; ++p) {
 					if (p !== game.active && !player_has_indispensable_advisors(p)) {
 						let x = player_cylinders(p);
-						for (let i = 0; i < 10; ++i)
+						for (let i = x; i < x + 10; ++i)
 							if (game.pieces[i] === where)
 								gen_action('piece', i);
 					}
@@ -1867,11 +1871,13 @@ states.battle = {
 			else
 				log(`Removed ${piece_owner(x)} road from ${border_names[where]}.`);
 		} else {
+			let p = Math.floor((x - 36) / 10);
 			if (where <= 100) {
 				log(`Removed ${piece_owner(x)} spy from ${cards[where].name}.`);
+				if (player_has_safe_house(p))
+					game.pieces[x] = Safe_House;
 			} else {
 				log(`Removed ${piece_owner(x)} tribe from ${region_names[where]}.`);
-				let p = Math.floor((x - 36) / 10);
 				check_region_overthrow(p, where);
 			}
 		}
@@ -1953,7 +1959,60 @@ states.blackmail = {
 	},
 }
 
-// PASSIVE: SAFEHOUSE (TODO)
+// PASSIVE: SAFEHOUSE
+
+function check_safe_house() {
+	let first = game.phasing;
+	for (let p = first; p < game.players.length; ++p)
+		if (check_player_safe_house(p))
+			return;
+	for (let p = 0; p < first; ++p)
+		if (check_player_safe_house(p))
+			return;
+	resume_actions();
+}
+
+function check_player_safe_house(p) {
+	let x = player_cylinders(p);
+	for (let i = x; i < x + 10; ++i) {
+		if (game.pieces[x] === Safe_House) {
+			if (player_has_safe_house(p)) {
+				if (game.active !== p)
+					clear_undo();
+				set_active(p);
+				game.state = 'safe_house';
+				game.selected = x;
+				return true;
+			} else {
+				game.pieces[x] = 0;
+			}
+		}
+	}
+	return false;
+}
+
+states.safe_house = {
+	prompt() {
+		view.prompt = `Safe House \u2014 you may place your killed spy on a Safe House.`;
+		if (player.court.indexOf(SAFE_HOUSE_1) >= 0)
+			gen_action('card', SAFE_HOUSE_1);
+		if (player.court.indexOf(SAFE_HOUSE_2) >= 0)
+			gen_action('card', SAFE_HOUSE_2);
+		gen_action('pass');
+	},
+	card(c) {
+		push_undo();
+		game.pieces[game.selected] = c;
+		game.selected = -1;
+		check_safe_house();
+	},
+	pass() {
+		push_undo();
+		game.pieces[game.selected] = 0;
+		game.selected = -1;
+		check_safe_house();
+	},
+}
 
 // CLEANUP
 
@@ -2284,7 +2343,7 @@ const events_if_purchased = {
 // TODO: pashtunwali_values
 // TODO: rebuke
 
-function public_withdrawal() {
+function check_public_withdrawal() {
 	// Remove any money placed on card "Public Withdrawal" from the game.
 	for (let row = 0; row < 2; ++row)
 		for (let col = 0; col < 6; ++col)
