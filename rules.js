@@ -456,7 +456,7 @@ function rightmost_card(row, i) {
 }
 
 function pay_action_cost(count) {
-	log(`Paid ${count} rupees.`);
+	// log(`Paid ${count} rupees.`);
 	player.coins -= count;
 	let ra = rightmost_card(0, 5);
 	let rb = rightmost_card(1, 5);
@@ -581,7 +581,7 @@ function discard_court_card(c) {
 function change_loyalty(new_loyalty) {
 	player.loyalty = new_loyalty;
 
-	log(`${player_names[game.active]} switches loyalty to ${player.loyalty}.`);
+	log(`${player_names[game.active]} loyalty to ${player.loyalty}.`);
 
 	for (let i = 0; i < player.court.length;) {
 		let c = player.court[i];
@@ -722,7 +722,7 @@ states.bribe = {
 			gen_action('refuse');
 	},
 	courtly_manners() {
-		log(`${player_names[p]} chooses not to pay bribe.`);
+		log(`${player_names[p]} chose not to pay bribe.`);
 		end_bribe();
 	},
 	pay() {
@@ -812,7 +812,7 @@ states.loyalty = {
 }
 
 function set_starting_loyalty(loyalty) {
-	log(`${player_names[game.active]} pledged ${loyalty} loyalty.`);
+	log(`${player_names[game.active]} loyalty to ${loyalty}.`);
 	player.loyalty = loyalty;
 	let next = next_player(game.active);
 	if (game.players[next].loyalty)
@@ -943,18 +943,22 @@ states.actions = {
 		logbr();
 
 		if (cost > 0) {
+			/*
 			if (cost > 1)
 				log(`Paid ${cost} rupees.`);
 			else
 				log(`Paid ${cost} rupee.`);
+			*/
 			player.coins -= cost;
 		}
 
 		if (game.market_coins[row][col] > 0) {
+			/*
 			if (game.market_coins[row][col] > 1)
 				log(`Took ${game.market_coins[row][col]} rupees.`);
 			else
 				log(`Took ${game.market_coins[row][col]} rupee.`);
+			*/
 			player.coins += game.market_coins[row][col];
 		}
 
@@ -964,9 +968,11 @@ states.actions = {
 		if (is_dominance_check(c)) {
 			log(`Purchased Dominance Check.`);
 			do_dominance_check();
+			if (game.state === 'game_over')
+				return;
 			resume_actions();
 		} else if (is_event_card(c)) {
-			log(`Purchased event ${cards[c].if_purchased}.`);
+			log(`Purchased ${cards[c].if_purchased}.`);
 			events_if_purchased[cards[c].if_purchased]();
 		} else {
 			log(`Purchased ${cards[c].name}.`);
@@ -1205,7 +1211,7 @@ states.place_spy = {
 function goto_play_leveraged() {
 	let card = cards[game.card];
 	if (card.leveraged) {
-		log(`Leveraged 2 rupees.`);
+		log(`Leveraged.`);
 		player.coins += 2;
 	}
 	goto_play_climate();
@@ -1345,7 +1351,7 @@ states.tax = {
 	card(c) {
 		push_undo();
 		let [row, col] = find_card_in_market(c);
-		log(`Taxed ${cards[c].name}.`);
+		log(`Taxed market.`);
 		game.market_coins[row][col] --;
 		player.coins ++;
 		if (--game.count === 0)
@@ -1994,7 +2000,7 @@ states.cleanup_court = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} discarded\n${cards[c].name} from their court.`);
+		log(`${player_names[game.active]} discarded ${cards[c].name} from their court.`);
 		discard_court_card(c);
 	},
 	next() {
@@ -2026,7 +2032,7 @@ states.cleanup_hand = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} discarded\n${cards[c].name} from their hand.`);
+		log(`${player_names[game.active]} discarded ${cards[c].name} from their hand.`);
 		remove_from_array(player.hand, c);
 	},
 	next() {
@@ -2037,10 +2043,12 @@ states.cleanup_hand = {
 function do_discard_event(row, c) {
 	game.market_cards[row][0] = 0;
 	logbr();
-	log(`Discarded event\n${cards[c].if_discarded}.`);
+	log(`Discarded ${cards[c].if_discarded}.`);
 	logbr();
 	if (is_dominance_check(c)) {
 		do_dominance_check();
+		if (game.state === 'game_over')
+			return;
 		goto_discard_events();
 	} else {
 		events_if_discarded[cards[c].if_discarded](row);
@@ -2109,6 +2117,8 @@ function goto_refill_market() {
 						log(`Instability!`);
 						discard_instability_cards();
 						do_dominance_check();
+						if (game.state === 'game_over')
+							return;
 						goto_refill_market();
 					}
 				}
@@ -2298,7 +2308,7 @@ states.rumor = {
 
 function do_rumor(p) {
 	push_undo();
-	log(`${player_names[game.active]} chose ${player_names[p]}.`);
+	log(`${player_names[game.active]} chose ${player_names[p]} for Rumor.`);
 	game.players[p].events.rumor = 1;
 	end_action();
 }
@@ -2457,14 +2467,14 @@ function do_dominance_check() {
 		success = Russian;
 
 	let final = is_final_dominance_check();
-	if (final)
-		log(`Final Dominance Check.`);
 
 	let score = new Array(game.players.length).fill(0);
 	if (success) {
 		logbr();
 		log(`.dc.${success} Dominant ${success} Coalition`);
 		logbr();
+		if (final)
+			log(`Final Dominance Check.`);
 		for (let p = 0; p < game.players.length; ++p) {
 			if (game.players[p].loyalty === success) {
 				score[p] = count_influence_points(p);
@@ -2479,6 +2489,8 @@ function do_dominance_check() {
 		logbr();
 		log(`.dc.unsuccessful Unsuccessful Check`);
 		logbr();
+		if (final)
+			log(`Final Dominance Check.`);
 		for (let p = 0; p < game.players.length; ++p) {
 			score[p] = count_cylinders_in_play(p);
 			log(`${player_names[p]} had ${score[p]} cylinders.`);
@@ -2635,7 +2647,6 @@ exports.setup = function (seed, scenario, options) {
 	// Starting loyalty, starting with a random player.
 	game.state = 'loyalty';
 	game.active = random(player_count);
-	log(`Random start player is ${player_names[game.active]}.`);
 
 	return save_game();
 }
