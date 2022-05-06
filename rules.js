@@ -1,9 +1,6 @@
 "use strict";
 
-// TODO: layout pieces on map
 // TODO: check all card data
-
-// TODO: safe house passive
 
 // TODO: log helpers - piece name (army/road/tribe color/coalition)
 // TODO: log helpers - card name (number, name, and court or market location)
@@ -656,7 +653,6 @@ states.leverage = {
 			player.coins = 0;
 	},
 	next() {
-		clear_undo();
 		check_leverage();
 	}
 }
@@ -868,13 +864,6 @@ function goto_next_player() {
 
 states.actions = {
 	prompt() {
-		if (game.actions === 2)
-			view.prompt = `You have two actions.`;
-		else if (game.actions === 1)
-			view.prompt = `You have one action.`;
-		else
-			view.prompt = `You have no more actions.`;
-
 		// Pass / End turn
 		if (game.actions > 0) {
 			gen_action('pass');
@@ -903,24 +892,61 @@ states.actions = {
 		}
 
 		// Card-based actions
+		let bonus = false;
 		for (let i = 0; i < player.court.length; ++i) {
 			let c = player.court[i];
 			let card = cards[c];
-			if ((game.actions > 0 || is_favored_suit(c)) && !game.used_cards.includes(c)) {
-				if (card.tax)
+
+			if (game.used_cards.includes(c))
+				continue;
+
+			let favored = is_favored_suit(c);
+			if (favored || game.actions > 0) {
+				let usable = false;
+
+				if (card.tax) {
 					gen_action('tax', c);
-				if (card.gift && active_gifts() < 3 && player.coins >= gift_cost())
+					usable = true;
+				}
+				if (card.gift && active_gifts() < 3 && player.coins >= gift_cost()) {
 					gen_action('gift', c);
-				if (card.build && player.coins >= 2 && active_rules_any_region())
+					usable = true;
+				}
+				if (card.build && player.coins >= 2 && active_rules_any_region()) {
 					gen_action('build', c);
-				if (card.move) // TODO: check if any moves are possible
+					usable = true;
+				}
+				// TODO: check if any moves are possible
+				if (card.move) {
 					gen_action('move', c);
-				if (card.betray && player.coins >= 2 && active_has_spy())
+					usable = true;
+				}
+
+				if (card.betray && player.coins >= 2 && active_has_spy()) {
 					gen_action('betray', c);
-				if (card.battle)
+					usable = true;
+				}
+
+				// TODO: check if any battles are possible
+				if (card.battle) {
 					gen_action('battle', c);
+					usable = true;
+				}
+
+				if (usable && favored)
+					bonus = true;
 			}
 		}
+
+		if (game.actions === 2)
+			view.prompt = `You may take two actions.`;
+		else if (game.actions === 1)
+			view.prompt = `You may take one more action.`;
+		else
+			view.prompt = `You have no more actions.`;
+		if (bonus)
+			view.prompt += ` You may take bonus actions.`;
+
 	},
 
 	purchase(c) {
