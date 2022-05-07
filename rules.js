@@ -408,11 +408,16 @@ function active_rules_any_region() {
 	return player_rules_any_region(game.active);
 }
 
-function active_has_spy() {
+function active_can_betray() {
 	let x = active_cylinders();
-	for (let i = x; i < x + 10; ++i)
-		if (game.pieces[i] >= 1 && game.pieces[i] <= 100)
-			return true;
+	for (let i = x; i < x + 10; ++i) {
+		if (game.pieces[i] >= 1 && game.pieces[i] <= 100) {
+			let c = game.pieces[i];
+			let p = find_card_in_court(c);
+			if (!player_has_bodyguards(p))
+				return true;
+		}
+	}
 	return false;
 }
 
@@ -922,7 +927,7 @@ states.actions = {
 					usable = true;
 				}
 
-				if (card.betray && player.coins >= 2 && active_has_spy()) {
+				if (card.betray && player.coins >= 2 && active_can_betray()) {
 					gen_action('betray', c);
 					usable = true;
 				}
