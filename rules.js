@@ -715,7 +715,7 @@ function check_region_overthrow(p, r) {
 
 states.bribe = {
 	prompt() {
-		let p = ruler_of_region(cards[game.card].region);
+		let p = game.bribe;
 		view.prompt = `Must pay ${game.count} rupee bribe to ${player_names[p]}.`;
 		if (player.coins - game.reserve >= game.count)
 			gen_action('pay');
@@ -730,14 +730,14 @@ states.bribe = {
 		end_bribe();
 	},
 	pay() {
-		let p = ruler_of_region(cards[game.card].region);
+		let p = game.bribe;
 		game.players[p].coins += game.count;
 		game.players[game.active].coins -= game.count;
 		end_bribe();
 	},
 	beg() {
 		clear_undo();
-		let p = ruler_of_region(cards[game.card].region);
+		let p = game.bribe;
 		game.state = 'waive';
 		set_active(p);
 	},
@@ -1046,6 +1046,7 @@ function do_play_1(c, side) {
 			game.state = 'bribe';
 			game.count = count_player_cylinders(ruler, cards[c].region);
 			game.reserve = 0;
+			game.bribe = ruler;
 			return;
 		}
 	}
@@ -1312,6 +1313,7 @@ function do_card_action_1(c, what, reserve) {
 			game.state = 'bribe';
 			game.count = count_player_cylinders(who, c);
 			game.reserve = reserve;
+			game.bribe = who;
 			return;
 		}
 	}
@@ -2689,11 +2691,12 @@ exports.setup = function (seed, scenario, options) {
 		state: "none",
 		used_cards: [],
 		used_pieces: [],
+		bribe: -1,
+		card: 0,
 		count: 0,
+		region: 0,
 		reserve: 0,
 		selected: -1,
-		region: 0,
-		card: 0,
 		where: 0,
 
 		phasing: null,
