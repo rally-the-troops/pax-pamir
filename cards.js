@@ -6,7 +6,7 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 3,
 		"spies": 3,
-		"move": 3,
+		"move": true,
 		"prize": 'Russian',
 		"number": 1
 	},
@@ -18,8 +18,8 @@ const cards = [
 		"armies": 1,
 		"spies": 2,
 		"climate": 'Military',
-		"move": 2,
-		"battle": 2,
+		"move": true,
+		"battle": true,
 		"prize": 'Russian',
 		"number": 2
 	},
@@ -31,7 +31,7 @@ const cards = [
 		"armies": 1,
 		"spies": 2,
 		"climate": 'Military',
-		"battle": 2,
+		"battle": true,
 		"patriot": 'Afghan',
 		"number": 3
 	},
@@ -41,8 +41,8 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 1,
 		"spies": 1,
-		"gift": 1,
-		"move": 1,
+		"gift": true,
+		"move": true,
 		"prize": 'Afghan',
 		"number": 4
 	},
@@ -52,7 +52,7 @@ const cards = [
 		"suit": 'Political',
 		"rank": 1,
 		"tribes": 1,
-		"build": 1,
+		"build": true,
 		"prize": 'Afghan',
 		"number": 5
 	},
@@ -64,8 +64,8 @@ const cards = [
 		"armies": 1,
 		"tribes": 1,
 		"spies": 1,
-		"build": 1,
-		"move": 1,
+		"build": true,
+		"move": true,
 		"patriot": 'Afghan',
 		"number": 6
 	},
@@ -87,7 +87,7 @@ const cards = [
 		"roads": 2,
 		"spies": 1,
 		"climate": 'Political',
-		"tax": 2,
+		"tax": true,
 		"number": 8
 	},
 	{
@@ -96,8 +96,8 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 1,
 		"roads": 1,
-		"tax": 1,
-		"move": 1,
+		"tax": true,
+		"move": true,
 		"number": 9
 	},
 	{
@@ -107,8 +107,8 @@ const cards = [
 		"rank": 1,
 		"roads": 1,
 		"climate": 'Military',
-		"build": 1,
-		"betray": 1,
+		"build": true,
+		"betray": true,
 		"prize": 'Afghan',
 		"number": 10
 	},
@@ -118,8 +118,8 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 2,
 		"roads": 2,
-		"tax": 2,
-		"gift": 1,
+		"tax": true,
+		"gift": true,
 		"patriot": 'Afghan',
 		"number": 11
 	},
@@ -130,7 +130,7 @@ const cards = [
 		"rank": 3,
 		"armies": 1,
 		"roads": 3,
-		"gift": 1,
+		"gift": true,
 		"number": 12
 	},
 	{
@@ -139,8 +139,8 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 2,
 		"roads": 2,
-		"tax": 2,
-		"move": 2,
+		"tax": true,
+		"move": true,
 		"prize": 'Russian',
 		"number": 13
 	},
@@ -151,8 +151,8 @@ const cards = [
 		"rank": 2,
 		"roads": 2,
 		"leveraged": 1,
-		"gift": 1,
-		"build": 1,
+		"gift": true,
+		"build": true,
 		"number": 14
 	},
 	{
@@ -161,7 +161,7 @@ const cards = [
 		"suit": 'Military',
 		"rank": 1,
 		"armies": 1,
-		"betray": 1,
+		"betray": true,
 		"number": 15
 	},
 	{
@@ -170,8 +170,8 @@ const cards = [
 		"suit": 'Military',
 		"rank": 1,
 		"armies": 1,
-		"tax": 1,
-		"betray": 1,
+		"tax": true,
+		"betray": true,
 		"number": 16
 	},
 	{
@@ -180,7 +180,7 @@ const cards = [
 		"suit": 'Military',
 		"rank": 1,
 		"armies": 1,
-		"build": 1,
+		"build": true,
 		"number": 17
 	},
 	{
@@ -189,8 +189,8 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 1,
 		"spies": 1,
-		"gift": 1,
-		"betray": 1,
+		"gift": true,
+		"betray": true,
 		"number": 18
 	},
 	{
@@ -200,8 +200,8 @@ const cards = [
 		"rank": 2,
 		"spies": 2,
 		"climate": 'Economic',
-		"move": 2,
-		"betray": 1,
+		"move": true,
+		"betray": true,
 		"patriot": 'British',
 		"prize": 'Russian',
 		"number": 19
@@ -213,8 +213,8 @@ const cards = [
 		"rank": 1,
 		"spies": 1,
 		"climate": 'Economic',
-		"gift": 1,
-		"move": 1,
+		"gift": true,
+		"move": true,
 		"patriot": 'British',
 		"prize": 'Russian',
 		"number": 20
@@ -225,7 +225,7 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 2,
 		"spies": 2,
-		"move": 2,
+		"move": true,
 		"prize": 'Afghan',
 		"number": 21
 	},
@@ -236,8 +236,8 @@ const cards = [
 		"rank": 1,
 		"spies": 1,
 		"climate": 'Political',
-		"gift": 1,
-		"move": 1,
+		"gift": true,
+		"move": true,
 		"patriot": 'British',
 		"prize": 'Russian',
 		"number": 22
@@ -249,8 +249,8 @@ const cards = [
 		"rank": 1,
 		"spies": 1,
 		"climate": 'Economic',
-		"move": 1,
-		"battle": 1,
+		"move": true,
+		"battle": true,
 		"patriot": 'British',
 		"prize": 'Russian',
 		"number": 23
@@ -262,7 +262,7 @@ const cards = [
 		"rank": 2,
 		"armies": 1,
 		"tribes": 2,
-		"betray": 1,
+		"betray": true,
 		"number": 24
 	},
 	{
@@ -271,7 +271,7 @@ const cards = [
 		"suit": 'Political',
 		"rank": 1,
 		"tribes": 1,
-		"tax": 1,
+		"tax": true,
 		"patriot": 'Afghan',
 		"prize": 'British',
 		"number": 25
@@ -283,7 +283,7 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"tribes": 1,
-		"betray": 1,
+		"betray": true,
 		"prize": 'Afghan',
 		"number": 26
 	},
@@ -294,7 +294,7 @@ const cards = [
 		"rank": 1,
 		"tribes": 1,
 		"leveraged": 1,
-		"build": 1,
+		"build": true,
 		"number": 27
 	},
 	{
@@ -304,8 +304,8 @@ const cards = [
 		"rank": 1,
 		"roads": 1,
 		"spies": 1,
-		"tax": 1,
-		"build": 1,
+		"tax": true,
+		"build": true,
 		"prize": 'Afghan',
 		"number": 28
 	},
@@ -315,8 +315,8 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 2,
 		"roads": 2,
-		"tax": 2,
-		"move": 2,
+		"tax": true,
+		"move": true,
 		"number": 29
 	},
 	{
@@ -327,8 +327,8 @@ const cards = [
 		"roads": 1,
 		"spies": 1,
 		"leveraged": 1,
-		"tax": 1,
-		"gift": 1,
+		"tax": true,
+		"gift": true,
 		"number": 30
 	},
 	{
@@ -338,8 +338,8 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"climate": 'Intelligence',
-		"tax": 1,
-		"betray": 1,
+		"tax": true,
+		"betray": true,
 		"number": 31
 	},
 	{
@@ -348,7 +348,7 @@ const cards = [
 		"suit": 'Military',
 		"rank": 3,
 		"armies": 3,
-		"move": 3,
+		"move": true,
 		"patriot": 'British',
 		"prize": 'Afghan',
 		"number": 32
@@ -359,8 +359,8 @@ const cards = [
 		"suit": 'Military',
 		"rank": 2,
 		"armies": 2,
-		"gift": 1,
-		"battle": 2,
+		"gift": true,
+		"battle": true,
 		"number": 33
 	},
 	{
@@ -370,9 +370,9 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"climate": 'Economic',
-		"move": 1,
-		"battle": 1,
-		"betray": 1,
+		"move": true,
+		"battle": true,
+		"betray": true,
 		"prize": 'British',
 		"number": 34
 	},
@@ -383,8 +383,8 @@ const cards = [
 		"rank": 2,
 		"armies": 2,
 		"climate": 'Political',
-		"move": 2,
-		"battle": 2,
+		"move": true,
+		"battle": true,
 		"number": 35
 	},
 	{
@@ -394,8 +394,8 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"climate": 'Intelligence',
-		"battle": 1,
-		"betray": 1,
+		"battle": true,
+		"betray": true,
 		"patriot": 'British',
 		"prize": 'Afghan',
 		"number": 36
@@ -407,8 +407,8 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"climate": 'Political',
-		"move": 1,
-		"battle": 1,
+		"move": true,
+		"battle": true,
 		"patriot": 'British',
 		"prize": 'Afghan',
 		"number": 37
@@ -419,7 +419,7 @@ const cards = [
 		"suit": 'Military',
 		"rank": 2,
 		"armies": 2,
-		"battle": 2,
+		"battle": true,
 		"prize": 'British',
 		"number": 38
 	},
@@ -429,8 +429,8 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 1,
 		"spies": 1,
-		"move": 1,
-		"battle": 1,
+		"move": true,
+		"battle": true,
 		"number": 39
 	},
 	{
@@ -440,8 +440,8 @@ const cards = [
 		"rank": 2,
 		"spies": 2,
 		"leveraged": 1,
-		"tax": 2,
-		"move": 2,
+		"tax": true,
+		"move": true,
 		"patriot": 'British',
 		"prize": 'Afghan',
 		"number": 40
@@ -452,7 +452,7 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 2,
 		"spies": 2,
-		"build": 1,
+		"build": true,
 		"number": 41
 	},
 	{
@@ -463,7 +463,7 @@ const cards = [
 		"tribes": 1,
 		"leveraged": 1,
 		"climate": 'Economic',
-		"build": 1,
+		"build": true,
 		"patriot": 'Afghan',
 		"prize": 'Afghan',
 		"number": 42
@@ -475,7 +475,7 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"tribes": 1,
-		"battle": 1,
+		"battle": true,
 		"prize": 'Afghan',
 		"number": 43
 	},
@@ -486,8 +486,8 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"tribes": 1,
-		"tax": 1,
-		"build": 1,
+		"tax": true,
+		"build": true,
 		"prize": 'Russian',
 		"number": 44
 	},
@@ -498,8 +498,8 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"tribes": 1,
-		"gift": 1,
-		"betray": 1,
+		"gift": true,
+		"betray": true,
 		"number": 45
 	},
 	{
@@ -510,7 +510,7 @@ const cards = [
 		"roads": 2,
 		"leveraged": 1,
 		"climate": 'Intelligence',
-		"gift": 1,
+		"gift": true,
 		"number": 46
 	},
 	{
@@ -520,8 +520,8 @@ const cards = [
 		"rank": 2,
 		"armies": 1,
 		"roads": 2,
-		"gift": 1,
-		"move": 2,
+		"gift": true,
+		"move": true,
 		"prize": 'Russian',
 		"number": 47
 	},
@@ -532,8 +532,8 @@ const cards = [
 		"rank": 1,
 		"roads": 1,
 		"climate": 'Political',
-		"build": 1,
-		"move": 1,
+		"build": true,
+		"move": true,
 		"number": 48
 	},
 	{
@@ -543,8 +543,8 @@ const cards = [
 		"rank": 1,
 		"roads": 1,
 		"climate": 'Political',
-		"tax": 1,
-		"build": 1,
+		"tax": true,
+		"build": true,
 		"number": 49
 	},
 	{
@@ -553,8 +553,8 @@ const cards = [
 		"suit": 'Military',
 		"rank": 2,
 		"armies": 2,
-		"move": 2,
-		"battle": 2,
+		"move": true,
+		"battle": true,
 		"patriot": 'British',
 		"prize": 'Russian',
 		"number": 50
@@ -565,7 +565,7 @@ const cards = [
 		"suit": 'Military',
 		"rank": 1,
 		"armies": 1,
-		"battle": 1,
+		"battle": true,
 		"patriot": 'British',
 		"prize": 'Russian',
 		"number": 51
@@ -577,8 +577,8 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"climate": 'Political',
-		"tax": 1,
-		"battle": 1,
+		"tax": true,
+		"battle": true,
 		"number": 52
 	},
 	{
@@ -588,7 +588,7 @@ const cards = [
 		"rank": 2,
 		"armies": 2,
 		"spies": 1,
-		"betray": 1,
+		"betray": true,
 		"prize": 'Russian',
 		"number": 53
 	},
@@ -599,7 +599,7 @@ const cards = [
 		"rank": 1,
 		"spies": 1,
 		"leveraged": 1,
-		"tax": 1,
+		"tax": true,
 		"number": 54
 	},
 	{
@@ -609,9 +609,9 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"tribes": 1,
-		"tax": 1,
-		"move": 1,
-		"battle": 1,
+		"tax": true,
+		"move": true,
+		"battle": true,
 		"number": 55
 	},
 	{
@@ -621,7 +621,7 @@ const cards = [
 		"rank": 2,
 		"tribes": 2,
 		"climate": 'Political',
-		"betray": 1,
+		"betray": true,
 		"prize": 'Afghan',
 		"number": 56
 	},
@@ -631,8 +631,8 @@ const cards = [
 		"suit": 'Political',
 		"rank": 1,
 		"tribes": 1,
-		"move": 1,
-		"betray": 1,
+		"move": true,
+		"betray": true,
 		"prize": 'British',
 		"number": 57
 	},
@@ -643,8 +643,8 @@ const cards = [
 		"rank": 1,
 		"tribes": 1,
 		"climate": 'Economic',
-		"gift": 1,
-		"build": 1,
+		"gift": true,
+		"build": true,
 		"patriot": 'Afghan',
 		"number": 58
 	},
@@ -654,8 +654,8 @@ const cards = [
 		"suit": 'Military',
 		"rank": 2,
 		"armies": 2,
-		"battle": 2,
-		"betray": 1,
+		"battle": true,
+		"betray": true,
 		"number": 59
 	},
 	{
@@ -664,9 +664,9 @@ const cards = [
 		"suit": 'Military',
 		"rank": 1,
 		"armies": 1,
-		"tax": 1,
-		"gift": 1,
-		"battle": 1,
+		"tax": true,
+		"gift": true,
+		"battle": true,
 		"prize": 'Russian',
 		"number": 60
 	},
@@ -676,7 +676,7 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 2,
 		"roads": 2,
-		"tax": 2,
+		"tax": true,
 		"number": 61
 	},
 	{
@@ -686,8 +686,8 @@ const cards = [
 		"rank": 1,
 		"roads": 1,
 		"climate": 'Political',
-		"gift": 1,
-		"build": 1,
+		"gift": true,
+		"build": true,
 		"number": 62
 	},
 	{
@@ -696,7 +696,7 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 3,
 		"roads": 3,
-		"move": 3,
+		"move": true,
 		"number": 63
 	},
 	{
@@ -707,7 +707,7 @@ const cards = [
 		"roads": 2,
 		"spies": 1,
 		"climate": 'Military',
-		"tax": 2,
+		"tax": true,
 		"number": 64
 	},
 	{
@@ -717,9 +717,9 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"roads": 1,
-		"tax": 1,
-		"move": 1,
-		"battle": 1,
+		"tax": true,
+		"move": true,
+		"battle": true,
 		"number": 65
 	},
 	{
@@ -729,7 +729,7 @@ const cards = [
 		"rank": 2,
 		"armies": 1,
 		"roads": 2,
-		"battle": 2,
+		"battle": true,
 		"prize": 'Afghan',
 		"number": 66
 	},
@@ -739,8 +739,8 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 2,
 		"roads": 1,
-		"gift": 1,
-		"move": 2,
+		"gift": true,
+		"move": true,
 		"number": 67
 	},
 	{
@@ -750,7 +750,7 @@ const cards = [
 		"rank": 2,
 		"armies": 1,
 		"spies": 2,
-		"tax": 2,
+		"tax": true,
 		"number": 68
 	},
 	{
@@ -759,8 +759,8 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 2,
 		"spies": 2,
-		"move": 2,
-		"battle": 2,
+		"move": true,
+		"battle": true,
 		"patriot": 'Russian',
 		"prize": 'British',
 		"number": 69
@@ -771,7 +771,7 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 2,
 		"spies": 2,
-		"move": 2,
+		"move": true,
 		"patriot": 'Russian',
 		"prize": 'Afghan',
 		"number": 70
@@ -782,8 +782,8 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 1,
 		"spies": 1,
-		"gift": 1,
-		"move": 1,
+		"gift": true,
+		"move": true,
 		"patriot": 'British',
 		"prize": 'Afghan',
 		"number": 71
@@ -794,7 +794,7 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 2,
 		"spies": 2,
-		"move": 2,
+		"move": true,
 		"prize": 'Russian',
 		"number": 72
 	},
@@ -805,8 +805,8 @@ const cards = [
 		"rank": 1,
 		"spies": 1,
 		"climate": 'Military',
-		"build": 1,
-		"battle": 1,
+		"build": true,
+		"battle": true,
 		"prize": 'British',
 		"number": 73
 	},
@@ -817,8 +817,8 @@ const cards = [
 		"rank": 1,
 		"tribes": 1,
 		"climate": 'Intelligence',
-		"battle": 1,
-		"betray": 1,
+		"battle": true,
+		"betray": true,
 		"patriot": 'Afghan',
 		"prize": 'Russian',
 		"number": 74
@@ -830,8 +830,8 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"tribes": 1,
-		"tax": 1,
-		"battle": 1,
+		"tax": true,
+		"battle": true,
 		"number": 75
 	},
 	{
@@ -851,8 +851,8 @@ const cards = [
 		"armies": 1,
 		"tribes": 1,
 		"climate": 'Intelligence',
-		"build": 1,
-		"betray": 1,
+		"build": true,
+		"betray": true,
 		"number": 77
 	},
 	{
@@ -863,7 +863,7 @@ const cards = [
 		"roads": 2,
 		"leveraged": 1,
 		"climate": 'Intelligence',
-		"build": 1,
+		"build": true,
 		"number": 78
 	},
 	{
@@ -874,8 +874,8 @@ const cards = [
 		"roads": 1,
 		"spies": 1,
 		"leveraged": 1,
-		"tax": 1,
-		"move": 1,
+		"tax": true,
+		"move": true,
 		"prize": 'British',
 		"number": 79
 	},
@@ -886,8 +886,8 @@ const cards = [
 		"rank": 1,
 		"roads": 1,
 		"leveraged": 1,
-		"tax": 1,
-		"build": 1,
+		"tax": true,
+		"build": true,
 		"patriot": 'British',
 		"prize": 'Russian',
 		"number": 80
@@ -899,8 +899,8 @@ const cards = [
 		"rank": 2,
 		"roads": 2,
 		"leveraged": 1,
-		"tax": 2,
-		"build": 1,
+		"tax": true,
+		"build": true,
 		"patriot": 'Russian',
 		"prize": 'British',
 		"number": 81
@@ -912,8 +912,8 @@ const cards = [
 		"rank": 2,
 		"armies": 2,
 		"climate": 'Intelligence',
-		"gift": 1,
-		"battle": 2,
+		"gift": true,
+		"battle": true,
 		"number": 82
 	},
 	{
@@ -923,7 +923,7 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"spies": 1,
-		"tax": 1,
+		"tax": true,
 		"number": 83
 	},
 	{
@@ -933,7 +933,7 @@ const cards = [
 		"rank": 2,
 		"armies": 2,
 		"climate": 'Economic',
-		"battle": 2,
+		"battle": true,
 		"patriot": 'Russian',
 		"prize": 'Afghan',
 		"number": 84
@@ -946,8 +946,8 @@ const cards = [
 		"spies": 1,
 		"leveraged": 1,
 		"climate": 'Economic',
-		"gift": 1,
-		"build": 1,
+		"gift": true,
+		"build": true,
 		"prize": 'British',
 		"number": 85
 	},
@@ -957,8 +957,8 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 2,
 		"spies": 2,
-		"build": 1,
-		"move": 2,
+		"build": true,
+		"move": true,
 		"patriot": 'Russian',
 		"number": 86
 	},
@@ -968,9 +968,9 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 1,
 		"spies": 1,
-		"gift": 1,
-		"build": 1,
-		"move": 1,
+		"gift": true,
+		"build": true,
+		"move": true,
 		"patriot": 'Russian',
 		"number": 87
 	},
@@ -980,8 +980,8 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 1,
 		"spies": 1,
-		"gift": 1,
-		"move": 1,
+		"gift": true,
+		"move": true,
 		"patriot": 'British',
 		"number": 88
 	},
@@ -991,9 +991,9 @@ const cards = [
 		"suit": 'Intelligence',
 		"rank": 1,
 		"spies": 1,
-		"move": 1,
-		"battle": 1,
-		"betray": 1,
+		"move": true,
+		"battle": true,
+		"betray": true,
 		"patriot": 'Russian',
 		"number": 89
 	},
@@ -1003,8 +1003,8 @@ const cards = [
 		"suit": 'Political',
 		"rank": 1,
 		"tribes": 1,
-		"tax": 1,
-		"betray": 1,
+		"tax": true,
+		"betray": true,
 		"prize": 'British',
 		"number": 90
 	},
@@ -1016,7 +1016,7 @@ const cards = [
 		"armies": 1,
 		"tribes": 1,
 		"spies": 1,
-		"betray": 1,
+		"betray": true,
 		"prize": 'Russian',
 		"number": 91
 	},
@@ -1028,9 +1028,9 @@ const cards = [
 		"tribes": 1,
 		"spies": 1,
 		"climate": 'Military',
-		"tax": 1,
-		"move": 1,
-		"battle": 1,
+		"tax": true,
+		"move": true,
+		"battle": true,
 		"prize": 'British',
 		"number": 92
 	},
@@ -1040,8 +1040,8 @@ const cards = [
 		"suit": 'Political',
 		"rank": 2,
 		"tribes": 2,
-		"battle": 2,
-		"betray": 1,
+		"battle": true,
+		"betray": true,
 		"prize": 'British',
 		"number": 93
 	},
@@ -1053,8 +1053,8 @@ const cards = [
 		"roads": 1,
 		"spies": 1,
 		"leveraged": 1,
-		"tax": 1,
-		"betray": 1,
+		"tax": true,
+		"betray": true,
 		"prize": 'British',
 		"number": 94
 	},
@@ -1064,8 +1064,8 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 1,
 		"roads": 1,
-		"tax": 1,
-		"move": 1,
+		"tax": true,
+		"move": true,
 		"patriot": 'Russian',
 		"prize": 'Afghan',
 		"number": 95
@@ -1076,8 +1076,8 @@ const cards = [
 		"suit": 'Economic',
 		"rank": 2,
 		"roads": 2,
-		"tax": 2,
-		"move": 2,
+		"tax": true,
+		"move": true,
 		"prize": 'British',
 		"number": 96
 	},
@@ -1088,7 +1088,7 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"climate": 'Intelligence',
-		"build": 1,
+		"build": true,
 		"number": 97
 	},
 	{
@@ -1097,7 +1097,7 @@ const cards = [
 		"suit": 'Military',
 		"rank": 3,
 		"armies": 3,
-		"gift": 1,
+		"gift": true,
 		"prize": 'British',
 		"number": 98
 	},
@@ -1108,7 +1108,7 @@ const cards = [
 		"rank": 1,
 		"armies": 1,
 		"spies": 1,
-		"battle": 1,
+		"battle": true,
 		"patriot": 'Russian',
 		"prize": 'British',
 		"number": 99
@@ -1119,7 +1119,7 @@ const cards = [
 		"suit": 'Military',
 		"rank": 2,
 		"armies": 2,
-		"battle": 2,
+		"battle": true,
 		"patriot": 'Russian',
 		"prize": 'British',
 		"number": 100
