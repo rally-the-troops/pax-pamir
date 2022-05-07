@@ -195,17 +195,16 @@ function next_player(current) {
 	return (current + 1) % game.players.length;
 }
 
-function a_or_an(s) {
-	let x = s[0];
-	switch (s[0]) {
-	case 'A': case 'a':
-	case 'O': case 'o':
-	case 'E': case 'e':
-	case 'U': case 'u':
-	case 'I': case 'i':
-		return "an " + s;
+function a_coalition(s) {
+	switch (s) {
+	case Afghan: return "an Afghan";
+	case British: return "a British";
+	case Russian: return "a Russian";
 	}
-	return "a " + s;
+}
+
+function the_card(c) {
+	return `#${c}`;
 }
 
 function logbr() {
@@ -215,6 +214,10 @@ function logbr() {
 
 function log(msg) {
 	game.log.push(msg);
+}
+
+function logi(msg) {
+	game.log.push(">" + msg);
 }
 
 function clear_undo() {
@@ -562,7 +565,7 @@ function discard_court_card(c) {
 		}
 	}
 
-	log(`${player_names[pidx]} discarded ${cards[c].name}.`);
+	log(`${player_names[pidx]} discarded #${c}.`);
 
 	// Return all spies on card
 	for (let p = 0; p < game.players.length; ++p) {
@@ -751,9 +754,9 @@ states.bribe = {
 states.waive = {
 	prompt() {
 		if (typeof game.where === 'string')
-			view.prompt = `${player_names[game.phasing]} asks you to waive the bribe to use ${cards[game.card].name} to ${game.where}.`;
+			view.prompt = `${player_names[game.phasing]} asks you to waive the bribe to use #${game.card} to ${game.where}.`;
 		else
-			view.prompt = `${player_names[game.phasing]} asks you to waive the bribe to play ${cards[game.card].name}.`;
+			view.prompt = `${player_names[game.phasing]} asks you to waive the bribe to play #${game.card}.`;
 		let max_cost = Math.min(game.players[game.phasing].coins - game.reserve, game.count);
 		gen_action('waive');
 		for (let i = 1; i < max_cost; ++i)
@@ -999,17 +1002,15 @@ states.actions = {
 		game.market_coins[row][col] = 0;
 		game.market_cards[row][col] = 0;
 
+		log(`Purchased #${c}.`);
 		if (is_dominance_check(c)) {
-			log(`Purchased Dominance Check.`);
 			do_dominance_check();
 			if (game.state === 'game_over')
 				return;
 			resume_actions();
 		} else if (is_event_card(c)) {
-			log(`Purchased ${cards[c].if_purchased}.`);
 			events_if_purchased[cards[c].if_purchased]();
 		} else {
-			log(`Purchased ${cards[c].name}.`);
 			player.hand.push(c);
 			resume_actions();
 		}
@@ -1058,7 +1059,7 @@ function do_play_2() {
 	let side = game.where;
 	game.actions --;
 	logbr();
-	log(`Played ${cards[c].name} (${region_names[cards[c].region]}).`);
+	log(`Played #${c}.`);
 	let idx = player.hand.indexOf(c);
 	player.hand.splice(idx, 1);
 	if (side)
@@ -1104,7 +1105,7 @@ states.place_tribe = {
 	},
 	space(s) {
 		push_undo();
-		log(`${player_names[game.active]} tribe to ${region_names[s]}.`);
+		logi(`Tribe to ${region_names[s]}.`);
 		game.pieces[game.selected] = s;
 		game.used_pieces.push(game.selected);
 		game.selected = -1;
@@ -1145,7 +1146,7 @@ states.place_road = {
 	},
 	space(s) {
 		push_undo();
-		log(`${player.loyalty} road to ${border_names[s]}.`);
+		logi(`${player.loyalty} road to ${border_names[s]}.`);
 		game.pieces[game.selected] = s;
 		game.used_pieces.push(game.selected);
 		game.selected = -1;
@@ -1185,7 +1186,7 @@ states.place_army = {
 	},
 	space(s) {
 		push_undo();
-		log(`${player.loyalty} army to ${region_names[s]}.`);
+		logi(`${player.loyalty} army to ${region_names[s]}.`);
 		game.pieces[game.selected] = s;
 		game.used_pieces.push(game.selected);
 		game.selected = -1;
@@ -1233,7 +1234,7 @@ states.place_spy = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} spy to ${cards[c].name}.`);
+		logi(`Spy to #${c}.`);
 		game.pieces[game.selected] = c;
 		game.used_pieces.push(game.selected);
 		game.selected = -1;
@@ -1247,7 +1248,7 @@ states.place_spy = {
 function goto_play_leveraged() {
 	let card = cards[game.card];
 	if (card.leveraged) {
-		log(`Leveraged.`);
+		logi(`Leveraged.`);
 		player.coins += 2;
 	}
 	goto_play_climate();
@@ -1257,7 +1258,7 @@ function goto_play_climate() {
 	// TODO: manual click?
 	let card = cards[game.card];
 	if (card.climate && !game.events.pashtunwali_values) {
-		log(`Favored suit to ${card.climate}.`);
+		logi(`Favored suit to ${card.climate}.`);
 		game.favored = card.climate;
 	}
 	end_action();
@@ -1320,6 +1321,15 @@ function do_card_action_1(c, what, reserve) {
 	do_card_action_2();
 }
 
+const past_what = {
+	Tax: "Taxed",
+	Gift: "Gifted",
+	Build: "Built",
+	Move: "Moved",
+	Betray: "Betrayed",
+	Battle: "Battled",
+}
+
 function do_card_action_2() {
 	let c = game.card;
 	let what = game.where;
@@ -1328,7 +1338,7 @@ function do_card_action_2() {
 		game.actions --;
 	game.count = cards[c].rank;
 	logbr();
-	log(`Used ${cards[c].name} to ${what}.`);
+	log(`${past_what[what]} with #${c}.`);
 	card_action_table[what]();
 }
 
@@ -1350,7 +1360,7 @@ function can_tax_player(active, p, claim) {
 
 function do_tax_player(p) {
 	push_undo();
-	log(`Taxed ${player_names[p]} player.`);
+	logi(`Taxed ${player_names[p]} player.`);
 	game.players[p].coins --;
 	player.coins ++;
 	if (--game.count === 0)
@@ -1388,7 +1398,7 @@ states.tax = {
 	card(c) {
 		push_undo();
 		let [row, col] = find_card_in_market(c);
-		log(`Taxed market.`);
+		logi(`Taxed market.`);
 		game.market_coins[row][col] --;
 		player.coins ++;
 		if (--game.count === 0)
@@ -1454,9 +1464,9 @@ states.build = {
 			pay_action_cost(2);
 
 		if (s <= last_region)
-			log(`${player.loyalty} army to ${region_names[s]}.`);
+			logi(`${player.loyalty} army to ${region_names[s]}.`);
 		else
-			log(`${player.loyalty} road to ${border_names[s]}.`);
+			logi(`${player.loyalty} road to ${border_names[s]}.`);
 		game.pieces[game.selected] = s;
 		game.used_pieces.push(game.selected);
 		game.selected = -1;
@@ -1496,9 +1506,9 @@ states.infrastructure = {
 	space(s) {
 		push_undo();
 		if (s <= last_region)
-			log(`${player.loyalty} army to ${region_names[s]}.`);
+			logi(`${player.loyalty} army to ${region_names[s]}.`);
 		else
-			log(`${player.loyalty} road to ${border_names[s]}.`);
+			logi(`${player.loyalty} road to ${border_names[s]}.`);
 		game.pieces[game.selected] = s;
 		game.used_pieces.push(game.selected);
 		game.selected = -1;
@@ -1580,7 +1590,7 @@ states.move = {
 			if (here <= 100) {
 				let c = here;
 				here = court_position_from_card(here);
-				view.prompt = `Move spy from ${cards[c].name}.`;
+				view.prompt = `Move spy from #${c}.`;
 
 				let last = last_court_position();
 				let prev = here > 0 ? here - 1 : last;
@@ -1643,7 +1653,7 @@ states.move = {
 	card(c) {
 		push_undo();
 		let old = game.pieces[game.selected];
-		log(`${player_names[game.active]} spy from ${cards[old].name} to ${cards[c].name}.`);
+		logi(`Spy from #${old} to #${c}.`);
 		game.pieces[game.selected] = c;
 		game.selected = -1;
 		if (--game.count === 0)
@@ -1653,9 +1663,9 @@ states.move = {
 		push_undo();
 		let old = game.pieces[game.selected];
 		if (game.selected < 36)
-			log(`${player.loyalty} army from ${region_names[old]} to ${region_names[s]}.`);
+			logi(`${player.loyalty} army from ${region_names[old]} to ${region_names[s]}.`);
 		else
-			log(`${player_names[game.active]} tribe from ${region_names[old]} to ${region_names[s]}.`);
+			logi(`Tribe from ${region_names[old]} to ${region_names[s]}.`);
 		game.pieces[game.selected] = s;
 		game.selected = -1;
 		if (--game.count === 0)
@@ -1695,13 +1705,14 @@ states.betray = {
 }
 
 states.accept_prize = {
+	inactive: "accept prize",
 	prompt() {
-		view.prompt = `You may accept ${cards[game.card].name} as ${a_or_an(cards[game.card].prize)} prize.`;
+		view.prompt = `You may accept #${game.card} as ${a_coalition(cards[game.card].prize)} prize.`;
 		gen_action('accept');
 		gen_action('refuse');
 	},
 	accept() {
-		log(`${player_names[game.active]} took ${cards[game.card].name} as ${a_or_an(cards[game.card].prize)} prize.`);
+		log(`${player_names[game.active]} took #${game.card} as ${a_coalition(cards[game.card].prize)} prize.`);
 		if (cards[game.card].prize !== player.loyalty)
 			change_loyalty(cards[game.card].prize);
 		player.prizes ++;
@@ -1869,7 +1880,7 @@ states.battle = {
 					}
 				}
 			} else {
-				view.prompt = `Remove up to ${game.count} spies on ${cards[where].name}.`;
+				view.prompt = `Remove up to ${game.count} spies on #${where}.`;
 				for (let p = 0; p < game.players.length; ++p) {
 					if (p !== game.active && !player_has_indispensable_advisors(p)) {
 						let x = player_cylinders(p);
@@ -1884,13 +1895,13 @@ states.battle = {
 	},
 	card(where) {
 		push_undo();
-		log(`${player_names[game.active]} starts battle on ${cards[where].name}.`);
+		logi(`Started battle on #${where}.`);
 		game.where = where;
 		game.count = Math.min(game.count, count_active_spies_on_card(where));
 	},
 	space(s) {
 		push_undo();
-		log(`${player_names[game.active]} starts battle in ${region_names[s]}.`);
+		logi(`Started battle in ${region_names[s]}.`);
 		game.where = s;
 		game.count = Math.min(game.count, count_active_armies_in_region(s));
 	},
@@ -1899,18 +1910,18 @@ states.battle = {
 		let where = game.pieces[x];
 		game.pieces[x] = 0;
 		if (x < 36) {
-			if (game.where >= first_region && game.where <= last_region)
-				log(`Removed ${piece_owner(x)} army from ${region_names[where]}.`);
+			if (where >= first_region && where <= last_region)
+				logi(`Removed ${piece_owner(x)} army from ${region_names[where]}.`);
 			else
-				log(`Removed ${piece_owner(x)} road from ${border_names[where]}.`);
+				logi(`Removed ${piece_owner(x)} road from ${border_names[where]}.`);
 		} else {
 			let p = Math.floor((x - 36) / 10);
 			if (where <= 100) {
-				log(`Removed ${piece_owner(x)} spy from ${cards[where].name}.`);
+				logi(`Removed ${piece_owner(x)} spy from #${where}.`);
 				if (player_has_safe_house(p))
 					game.pieces[x] = Safe_House;
 			} else {
-				log(`Removed ${piece_owner(x)} tribe from ${region_names[where]}.`);
+				logi(`Removed ${piece_owner(x)} tribe from ${region_names[where]}.`);
 				check_region_overthrow(p, where);
 			}
 		}
@@ -1976,7 +1987,7 @@ states.blackmail = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} blackmail spy to ${cards[c].name}.`);
+		log(`Blackmail spy to #${c}.`);
 		game.pieces[game.selected] = c;
 		game.used_pieces.push(game.selected);
 		if (game.where < 0) {
@@ -2025,6 +2036,7 @@ function check_player_safe_house(p) {
 }
 
 states.safe_house = {
+	inactive: "safe house",
 	prompt() {
 		view.prompt = `Safe House \u2014 you may place your killed spy on a Safe House.`;
 		if (player.court.indexOf(SAFE_HOUSE_1) >= 0)
@@ -2070,6 +2082,7 @@ function player_hand_size() {
 }
 
 function goto_cleanup_court() {
+	logbr();
 	if (player.court.length > player_court_size()) {
 		game.state = 'cleanup_court';
 	} else {
@@ -2092,7 +2105,7 @@ states.cleanup_court = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} discarded ${cards[c].name} from their court.`);
+		log(`${player_names[game.active]} discarded #${c} from their court.`);
 		discard_court_card(c);
 	},
 	next() {
@@ -2124,7 +2137,7 @@ states.cleanup_hand = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} discarded ${cards[c].name} from their hand.`);
+		log(`${player_names[game.active]} discarded #${c} from their hand.`);
 		remove_from_array(player.hand, c);
 	},
 	next() {
@@ -2289,26 +2302,29 @@ const events_if_discarded = {
 }
 
 states.confidence_failure = {
+	inactive: "confidence failure",
 	prompt() {
 		view.prompt = "Confidence Failure \u2014 discard a card from your hand.";
 		for (let i = 0; i < player.hand.length; ++i)
 			gen_action('card', player.hand[i]);
 	},
 	card(c) {
-		log(`${player_names[game.active]} discarded ${cards[c].name} from their hand.`);
+		log(`${player_names[game.active]} discarded #${c} from their hand.`);
 		remove_from_array(player.hand, c);
 		next_confidence_failure();
 	},
 }
 
 function next_confidence_failure() {
-	for (;;) {
-		let next = next_player(game.active);
+	let next = game.active;
+	for (let i = 0; i < 10; ++i) {
+		next = next_player(next);
 		if (next === game.phasing)
 			return goto_discard_events();
 		if (game.players[next].hand.length > 0)
 			return set_active(next);
 	}
+	throw new Error("FAIL");
 }
 
 // EVENTS: IF PURCHASED
@@ -2406,6 +2422,7 @@ function do_rumor(p) {
 }
 
 states.other_persuasive_methods = {
+	inactive: "other persuasive methods",
 	prompt() {
 		view.prompt = `Other Persuasive Methods \u2014 exchange your hand with another player.`;
 		for (let p = 0; p < game.players.length; ++p)
@@ -2430,6 +2447,7 @@ function do_other_persuasive_methods(p) {
 }
 
 states.pashtunwali_values = {
+	inactive: "Pastunwali values",
 	prompt() {
 		view.prompt = `Pashtunwali Values \u2014 choose a suit to favor.`;
 		gen_action('suit_political');
@@ -2535,6 +2553,10 @@ function is_final_dominance_check() {
 	return true;
 }
 
+function rank_score(a, b) {
+	return parseInt(b) - parseInt(a);
+}
+
 function do_dominance_check() {
 	let n_afghan = 0;
 	let n_british = 0;
@@ -2549,6 +2571,10 @@ function do_dominance_check() {
 		if (game.pieces[i+24] > 0)
 			n_russian ++;
 	}
+
+	logi(n_afghan + " Afghan block" + (n_afghan !== 1 ? "s," : ","))
+	logi(n_british + " British block" + (n_british !== 1 ? "s," : ","))
+	logi(n_russian + " Russian block" + (n_russian !== 1 ? "s." : "."))
 
 	let limit = game.events.conflict_fatigue ? 2 : 4;
 	if (n_afghan >= n_british+limit && n_afghan >= n_russian+limit)
@@ -2567,12 +2593,15 @@ function do_dominance_check() {
 		logbr();
 		if (final)
 			log(`Final Dominance Check.`);
+		let list = [];
 		for (let p = 0; p < game.players.length; ++p) {
 			if (game.players[p].loyalty === success) {
 				score[p] = count_influence_points(p);
-				log(`${player_names[p]} had ${score[p]} influence.`);
+				list.push(`${score[p]} ${player_names[p]} influence`);
 			}
 		}
+		list.sort(rank_score);
+		log("Ranking:\n" + list.join(",\n") + ".");
 		if (final)
 			assign_vp([10, 6, 2], score, score.filter(x=>x>0));
 		else
@@ -2583,10 +2612,17 @@ function do_dominance_check() {
 		logbr();
 		if (final)
 			log(`Final Dominance Check.`);
+		let list = [];
+		let msg = "Ranking:";
 		for (let p = 0; p < game.players.length; ++p) {
 			score[p] = count_cylinders_in_play(p);
-			log(`${player_names[p]} had ${score[p]} cylinders.`);
+			if (score[p] !== 1)
+				list.push(`${score[p]} ${player_names[p]} cylinders`);
+			else
+				list.push(`${score[p]} ${player_names[p]} cylinder`);
 		}
+		list.sort(rank_score);
+		log("Ranking:\n" + list.join(",\n") + ".");
 		if (final)
 			assign_vp([6, 2], score, score.slice());
 		else
@@ -2691,12 +2727,12 @@ exports.setup = function (seed, scenario, options) {
 		state: "none",
 		used_cards: [],
 		used_pieces: [],
-		bribe: -1,
-		card: 0,
 		count: 0,
-		region: 0,
 		reserve: 0,
+		bribe: -1,
 		selected: -1,
+		region: 0,
+		card: 0,
 		where: 0,
 
 		phasing: null,
