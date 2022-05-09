@@ -65,7 +65,7 @@ const cards = [
 		"tribes": 1,
 		"spies": 1,
 		"build": true,
-		"move": true,
+		"battle": true,
 		"patriot": 'Afghan',
 		"number": 6
 	},
