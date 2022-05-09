@@ -2867,6 +2867,8 @@ exports.resign = function (state, current) {
 	return save_game();
 }
 
+exports.is_checkpoint = (a, b) => a.phasing !== b.phasing;
+
 exports.view = function(state, current) {
 	current = player_index[current];
 	load_game(state);
