@@ -2644,14 +2644,9 @@ function do_dominance_check() {
 	}
 
 	// Clear the board.
-	for (let i = 0; i < 36; ++i)
-		game.pieces[i] = 0;
-
-	// Prince Akbar Khan
-	if (any_player_has_insurrection()) {
-		log(`Insurrection placed two Afghan armies in Kabul.`);
-		game.pieces[0] = Kabul;
-		game.pieces[1] = Kabul;
+	if (success) {
+		for (let i = 0; i < 36; ++i)
+			game.pieces[i] = 0;
 	}
 
 	// Check instant victory
@@ -2665,6 +2660,14 @@ function do_dominance_check() {
 	game.events = {};
 	for (let p = 0; p < game.players.length; ++p)
 		game.players[p].events = {};
+
+	// Prince Akbar Khan
+	if (any_player_has_insurrection()) {
+		// TODO: maybe move existing pieces if not successful
+		log(`Insurrection placed two Afghan armies in Kabul.`);
+		game.pieces[0] = Kabul;
+		game.pieces[1] = Kabul;
+	}
 }
 
 function vp_tie(pp) {
