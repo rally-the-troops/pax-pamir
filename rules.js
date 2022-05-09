@@ -3,7 +3,17 @@
 // TODO: check all card data
 
 // TODO: log helpers - piece name (army/road/tribe color/coalition)
-// TODO: log helpers - card name (number, name, and court or market location)
+
+// TODO: check if actions are possible: Tax, Move, Battle
+
+// TODO: change suit action buttons to click on the map instead
+
+// show number of cards in hand of other players
+// show influence on loyalty badge in role view
+// show climate in header
+// show coins in role view
+
+// change title of card menu to "Bonus Actions:" in ui
 
 let cards = require("./cards.js");
 
