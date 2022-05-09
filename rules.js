@@ -416,6 +416,8 @@ function active_can_betray() {
 	for (let i = x; i < x + 10; ++i) {
 		if (game.pieces[i] >= 1 && game.pieces[i] <= 100) {
 			let c = game.pieces[i];
+			if (cards[c].suit !== Political)
+				return true;
 			let p = find_card_in_court(c);
 			if (!player_has_bodyguards(p))
 				return true;
@@ -1686,9 +1688,13 @@ states.betray = {
 		for (let i = x; i < x + 10; ++i) {
 			if (game.pieces[i] > 0 && game.pieces[i] <= 100) {
 				let c = game.pieces[i];
-				let p = find_card_in_court(c);
-				if (!player_has_bodyguards(p))
+				if (cards[c].suit !== Political) {
 					gen_action('card', c);
+				} else {
+					let p = find_card_in_court(c);
+					if (!player_has_bodyguards(p))
+						gen_action('card', c);
+				}
 			}
 		}
 	},
