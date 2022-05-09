@@ -2154,8 +2154,7 @@ states.cleanup_hand = {
 function do_discard_event(row, c) {
 	game.market_cards[row][0] = 0;
 	logbr();
-	log(`Discarded ${cards[c].if_discarded}.`);
-	logbr();
+	log(`Discarded #${c}.`);
 	if (is_dominance_check(c)) {
 		do_dominance_check();
 		if (game.state === 'game_over')
@@ -2245,6 +2244,7 @@ function goto_refill_market() {
 const events_if_discarded = {
 
 	"Military" () {
+		logi("Favored suit to Military.");
 		game.favor = Military;
 		goto_discard_events();
 	},
@@ -2260,31 +2260,37 @@ const events_if_discarded = {
 	},
 
 	"Failure to Impress" () {
+		logi("Discarded all loyalty prizes.");
 		for (let p = 0; p < game.players.length; ++p)
 			game.players[p].prizes = 0;
 		goto_discard_events();
 	},
 
 	"Riots in Punjab" () {
+		logi("Removed all tribes and armies in Punjab.");
 		remove_all_tribes_and_armies(Punjab);
 		goto_discard_events();
 	},
 
 	"Riots in Herat" () {
+		logi("Removed all tribes and armies in Herat.");
 		remove_all_tribes_and_armies(Herat);
 		goto_discard_events();
 	},
 
 	"No effect" () {
+		logi("No effect.");
 		goto_discard_events();
 	},
 
 	"Riots in Kabul" () {
+		logi("Removed all tribes and armies in Kabul.");
 		remove_all_tribes_and_armies(Kabul);
 		goto_discard_events();
 	},
 
 	"Riots in Persia" () {
+		logi("Removed all tribes and armies in Persia.");
 		remove_all_tribes_and_armies(Persia);
 		goto_discard_events();
 	},
@@ -2296,11 +2302,13 @@ const events_if_discarded = {
 	},
 
 	"Intelligence" () {
+		logi("Favored suit to Intelligence.");
 		game.favored = Intelligence;
 		goto_discard_events();
 	},
 
 	"Political" () {
+		logi("Favored suit to Political.");
 		game.favored = Political;
 		goto_discard_events();
 	},
