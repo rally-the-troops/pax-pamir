@@ -2769,8 +2769,8 @@ exports.setup = function (seed, scenario, options) {
 
 	prepare_deck();
 
-	for (let row = 0; row < 2; ++row)
-		for (let col = 0; col < 6; ++col)
+	for (let col = 0; col < 6; ++col)
+		for (let row = 0; row < 2; ++row)
 			game.market_cards[row][col] = game.deck.pop();
 
 	// Starting loyalty, starting with a random player.
