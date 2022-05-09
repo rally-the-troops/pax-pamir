@@ -2669,10 +2669,10 @@ function do_dominance_check() {
 	// Check instant victory
 	let vps = game.players.map((pp,i) => pp.vp).sort((a,b)=>b-a);
 	if (vps[0] >= vps[1] + 4)
-		goto_game_over();
+		return goto_game_over();
 
 	if (final)
-		goto_game_over();
+		return goto_game_over();
 
 	game.events = {};
 	for (let p = 0; p < game.players.length; ++p)
