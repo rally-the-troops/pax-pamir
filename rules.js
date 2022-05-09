@@ -496,9 +496,24 @@ function pay_action_cost(count, offset) {
 }
 
 function remove_all_tribes_and_armies(where) {
-	for (let i = 0; i < game.pieces.length; ++i)
+	logi(`Removed all tribes and armies in ${region_names[where]}.`);
+
+	for (let i = 0; i < 36; ++i)
 		if (game.pieces[i] === where)
 			game.pieces[i] = 0;
+
+	for (let p = 0; p < game.players.length; ++p) {
+		let x = player_cylinders(p);
+		let maybe_overthrow = false;
+		for (let i = x; i < x + 10; ++i) {
+			if (game.pieces[i] === where) {
+				game.pieces[i] = 0;
+				maybe_overthrow = true;
+			}
+		}
+		if (maybe_overthrow)
+			check_region_overthrow(p, where);
+	}
 }
 
 function player_with_most_spies(c) {
