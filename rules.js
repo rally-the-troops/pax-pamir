@@ -475,11 +475,17 @@ function rightmost_card(row, i) {
 	return i;
 }
 
-function pay_action_cost(count) {
+function pay_action_cost(count, offset) {
 	// log(`Paid ${count} rupees.`);
 	player.coins -= count;
 	let ra = rightmost_card(0, 5);
 	let rb = rightmost_card(1, 5);
+
+	for (let i = 0; i < offset; ++i) {
+		ra = rightmost_card(0, ra-1);
+		rb = rightmost_card(1, rb-1);
+	}
+
 	for (let i = 0; i < count; i += 2) {
 		if (ra >= 0) game.market_coins[0][ra] ++;
 		if (rb >= 0) game.market_coins[1][rb] ++;
@@ -1284,7 +1290,7 @@ const card_action_table = {
 	},
 
 	Gift() {
-		pay_action_cost(gift_cost());
+		pay_action_cost(gift_cost(), 0);
 		game.selected = select_available_cylinder();
 		if (game.selected < 0)
 			game.state = 'gift';
@@ -1297,6 +1303,7 @@ const card_action_table = {
 		if (player.events.nation_building)
 			game.count *= 2;
 		game.selected = select_available_block();
+		game.reserve = 0;
 		game.state = 'build';
 	},
 
@@ -1306,7 +1313,7 @@ const card_action_table = {
 	},
 
 	Betray() {
-		pay_action_cost(2);
+		pay_action_cost(2, 0);
 		game.state = 'betray';
 	},
 
@@ -1473,7 +1480,7 @@ states.build = {
 
 		let must_pay = !player.events.nation_building || (game.count & 1) === 0;
 		if (must_pay)
-			pay_action_cost(2);
+			pay_action_cost(2, game.reserve++);
 
 		if (s <= last_region)
 			logi(`${player.loyalty} army to ${region_names[s]}.`);
