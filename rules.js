@@ -1825,7 +1825,10 @@ function count_player_cylinders(p, r) {
 }
 
 function count_active_armies_in_region(where) {
-	return count_player_armies_in_region(game.active, where);
+	let n = count_player_armies_in_region(game.active, where);
+	if (player.events.nationalism)
+		n += count_player_cylinders(game.active, where);
+	return n;
 }
 
 function count_enemy_blocks_on_border(where) {
