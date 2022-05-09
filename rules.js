@@ -752,6 +752,8 @@ states.bribe = {
 	},
 	pay() {
 		let p = game.bribe;
+		logbr();
+		log(`Paid ${game.count} to ${player_names[p]}.`);
 		game.players[p].coins += game.count;
 		game.players[game.active].coins -= game.count;
 		end_bribe();
@@ -759,10 +761,12 @@ states.bribe = {
 	beg() {
 		clear_undo();
 		let p = game.bribe;
+		log(`Asked ${player_names[p]} to waive the bribe for #${game.card}.`);
 		game.state = 'waive';
 		set_active(p);
 	},
 	refuse() {
+		log(`Refused the new price.`);
 		game.card = 0;
 		game.where = 0;
 		resume_actions();
@@ -930,6 +934,7 @@ states.actions = {
 			if (favored || game.actions > 0) {
 				let usable = false;
 
+				// TODO: check if taxation is possible
 				if (card.tax) {
 					gen_action('tax', c);
 					usable = true;
@@ -1273,7 +1278,7 @@ function goto_play_leveraged() {
 }
 
 function goto_play_climate() {
-	// TODO: manual click?
+	// TODO: manual click to set climate
 	let card = cards[game.card];
 	if (card.climate && !game.events.pashtunwali_values) {
 		logi(`Favored suit to ${card.climate}.`);
@@ -2241,6 +2246,7 @@ function goto_refill_market() {
 					let c = game.deck.pop();
 					game.market_cards[row][col] = c;
 					if (instability > 0 && is_dominance_check(c)) {
+						logbr();
 						log(`Instability!`);
 						discard_instability_cards();
 						do_dominance_check();
@@ -2261,6 +2267,7 @@ function goto_refill_market() {
 const events_if_discarded = {
 
 	"Military" () {
+		// TODO: manual click to set climate
 		logi("Favored suit to Military.");
 		game.favor = Military;
 		goto_discard_events();
@@ -2284,13 +2291,11 @@ const events_if_discarded = {
 	},
 
 	"Riots in Punjab" () {
-		logi("Removed all tribes and armies in Punjab.");
 		remove_all_tribes_and_armies(Punjab);
 		goto_discard_events();
 	},
 
 	"Riots in Herat" () {
-		logi("Removed all tribes and armies in Herat.");
 		remove_all_tribes_and_armies(Herat);
 		goto_discard_events();
 	},
@@ -2301,13 +2306,11 @@ const events_if_discarded = {
 	},
 
 	"Riots in Kabul" () {
-		logi("Removed all tribes and armies in Kabul.");
 		remove_all_tribes_and_armies(Kabul);
 		goto_discard_events();
 	},
 
 	"Riots in Persia" () {
-		logi("Removed all tribes and armies in Persia.");
 		remove_all_tribes_and_armies(Persia);
 		goto_discard_events();
 	},
@@ -2319,12 +2322,14 @@ const events_if_discarded = {
 	},
 
 	"Intelligence" () {
+		// TODO: manual click to set climate
 		logi("Favored suit to Intelligence.");
 		game.favored = Intelligence;
 		goto_discard_events();
 	},
 
 	"Political" () {
+		// TODO: manual click to set climate
 		logi("Favored suit to Political.");
 		game.favored = Political;
 		goto_discard_events();
@@ -2508,7 +2513,6 @@ states.rebuke = {
 	},
 	space(s) {
 		push_undo();
-		log(`Removed all tribes and armies in ${region_names[s]}.`);
 		remove_all_tribes_and_armies(s);
 		end_action();
 	},
