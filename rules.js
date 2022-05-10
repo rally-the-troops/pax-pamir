@@ -1,17 +1,11 @@
 "use strict";
 
 // TODO: check all card data
-
 // TODO: log helpers - piece name (army/road/tribe color/coalition)
-
 // TODO: check if actions are possible: Tax, Move, Battle
-
 // TODO: change suit action buttons to click on the map instead
 
-// show number of cards in hand of other players
-// show influence on loyalty badge in role view
-// show climate in header
-// show coins in role view
+// TODO: Prince Akbar Khan
 
 // change title of card menu to "Bonus Actions:" in ui
 
@@ -282,14 +276,14 @@ function player_has_court_card(p, c) {
 	return false;
 }
 
-function any_player_has_court_card(p, c) {
+function which_player_has_court_card(c) {
 	for (let p = 0; p < game.players.length; ++p) {
 		let court = game.players[p].court;
 		for (let i = 0; i < court.length; ++i)
 			if (court[i] === c)
-				return true;
+				return p;
 	}
-	return false;
+	return -1;
 }
 
 function active_has_russian_influence() { return active_has_court_card(70); }
@@ -311,7 +305,7 @@ function player_has_citadel_in_kabul(p) { return player_has_court_card(p, 17); }
 function player_has_citadel_in_transcaspia(p) { return player_has_court_card(p, 97); }
 function player_has_safe_house(p) { return player_has_court_card(p, 41) || player_has_court_card(p, 72); }
 
-function any_player_has_insurrection(p) { return any_player_has_court_card(p, 3); }
+function which_player_has_insurrection(p) { return which_player_has_court_card(3); }
 
 function player_has_citadel(p, r) {
 	if (r === Kabul) return player_has_citadel_in_kabul(p);
@@ -568,6 +562,13 @@ function select_available_block() {
 	return -1;
 }
 
+function select_afghan_block() {
+	for (let i = 0; i < 12; ++i)
+		if (game.pieces[i] === 0)
+			return i;
+	return -1;
+}
+
 function gen_select_block() {
 	let b = active_coalition_blocks();
 	for (let i = b; i < b + 12; ++i)
@@ -762,12 +763,11 @@ states.bribe = {
 			gen_action('refuse');
 	},
 	courtly_manners() {
-		log(`${player_names[p]} chose not to pay bribe.`);
+		log(`Did not pay bribe.`);
 		end_bribe();
 	},
 	pay() {
 		let p = game.bribe;
-		logbr();
 		log(`Paid ${game.count} to ${player_names[p]}.`);
 		game.players[p].coins += game.count;
 		game.players[game.active].coins -= game.count;
@@ -781,7 +781,6 @@ states.bribe = {
 		set_active(p);
 	},
 	refuse() {
-		log(`Refused the new price.`);
 		game.card = 0;
 		game.where = 0;
 		resume_actions();
@@ -1042,10 +1041,7 @@ states.actions = {
 
 		log(`Purchased #${c}.`);
 		if (is_dominance_check(c)) {
-			do_dominance_check();
-			if (game.state === 'game_over')
-				return;
-			resume_actions();
+			do_dominance_check('purchase');
 		} else if (is_event_card(c)) {
 			events_if_purchased[cards[c].if_purchased]();
 		} else {
@@ -1082,6 +1078,7 @@ function do_play_1(c, side) {
 	if (!active_has_charismatic_courtiers() && !game.events.disregard_for_customs) {
 		let ruler = ruler_of_region(cards[c].region);
 		if (ruler >= 0 && ruler !== game.active) {
+			logbr();
 			game.state = 'bribe';
 			game.count = count_player_cylinders(ruler, cards[c].region);
 			game.reserve = 0;
@@ -1350,6 +1347,7 @@ function do_card_action_1(c, what, reserve) {
 	if (!active_has_civil_service_reforms() && !game.events.disregard_for_customs) {
 		let who = player_with_most_spies(c);
 		if (who >= 0 && who !== game.active) {
+			logbr();
 			game.state = 'bribe';
 			game.count = count_player_cylinders(who, c);
 			game.reserve = reserve;
@@ -2105,6 +2103,57 @@ states.safe_house = {
 	},
 }
 
+// PASSIVE: INSURRECTION
+
+function check_insurrection() {
+	let prince = which_player_has_insurrection();
+	console.log("INSURRECTION", prince);
+	if (prince >= 0) {
+		clear_undo();
+		logbr();
+		log(`Prince Akbar Khan`);
+		game.count = 2;
+		game.selected = select_afghan_block();
+		set_active(prince);
+		game.state = 'insurrection';
+	} else {
+		end_dominance_check();
+	}
+}
+
+states.insurrection = {
+	prompt() {
+		if (game.count > 0) {
+			if (game.selected < 0) {
+				view.prompt = `Insurrection \u2014 select an Afghan block to move.`;
+				gen_select_block();
+			} else {
+				view.prompt = `Insurrection \u2014 place Afghan army in Kabul.`;
+				gen_action('space', Kabul);
+			}
+		} else {
+			view.prompt = `Insurrection \u2014 done.`;
+			gen_action('next');
+		}
+	},
+	piece(x) {
+		push_undo();
+		game.selected = x;
+	},
+	space(s) {
+		push_undo();
+		logi(`Afghan army to Kabul.`);
+		game.pieces[game.selected] = Kabul;
+		game.selected = -1;
+		if (--game.count > 0)
+			game.selected = select_available_block();
+	},
+	next() {
+		clear_undo();
+		end_dominance_check();
+	}
+}
+
 // CLEANUP
 
 function player_court_size() {
@@ -2196,10 +2245,7 @@ function do_discard_event(row, c) {
 	logbr();
 	log(`Discarded #${c}.`);
 	if (is_dominance_check(c)) {
-		do_dominance_check();
-		if (game.state === 'game_over')
-			return;
-		goto_discard_events();
+		do_dominance_check('discard');
 	} else {
 		events_if_discarded[cards[c].if_discarded](row);
 	}
@@ -2267,10 +2313,7 @@ function goto_refill_market() {
 						logbr();
 						log(`Instability!`);
 						discard_instability_cards();
-						do_dominance_check();
-						if (game.state === 'game_over')
-							return;
-						goto_refill_market();
+						return do_dominance_check('instability');
 					}
 				}
 			}
@@ -2610,7 +2653,7 @@ function rank_score(a, b) {
 	return parseInt(b) - parseInt(a);
 }
 
-function do_dominance_check() {
+function do_dominance_check(reason) {
 	let n_afghan = 0;
 	let n_british = 0;
 	let n_russian = 0;
@@ -2700,12 +2743,22 @@ function do_dominance_check() {
 	for (let p = 0; p < game.players.length; ++p)
 		game.players[p].events = {};
 
-	// Prince Akbar Khan
-	if (any_player_has_insurrection()) {
-		// TODO: maybe move existing pieces if not successful
-		log(`Insurrection placed two Afghan armies in Kabul.`);
-		game.pieces[0] = Kabul;
-		game.pieces[1] = Kabul;
+	game.where = reason;
+
+	check_insurrection();
+}
+
+function end_dominance_check() {
+	set_active(game.phasing);
+	if (game.state === 'game_over')
+		return;
+	switch (game.where) {
+	case 'discard':
+		return goto_discard_events();
+	case 'purchase':
+		return resume_actions();
+	case 'instability':
+		return goto_refill_market();
 	}
 }
 
