@@ -1,5 +1,7 @@
 "use strict";
 
+// TODO: card actions clickable card regions instead
+
 // TODO: check all card data
 // TODO: log helpers - piece name (army/road/tribe color/coalition)
 // TODO: check if actions are possible: Tax, Move, Battle
@@ -599,7 +601,7 @@ function discard_court_card(c) {
 		}
 	}
 
-	log(`${player_names[pidx]} discarded #${c}.`);
+	log(`${player_names[pidx]} discarded #${c} from court.`);
 
 	// Return all spies on card
 	for (let p = 0; p < game.players.length; ++p) {
@@ -815,7 +817,7 @@ states.waive = {
 	offer_9() { do_offer(9); },
 	refuse() {
 		log(`${player_names[game.active]} refused to waive the bribe.`);
-		game.state = 'bribe'
+		game.state = 'bribe';
 		set_active(game.phasing);
 	},
 }
@@ -910,9 +912,9 @@ states.actions = {
 	prompt() {
 		// Pass / End turn
 		if (game.actions > 0) {
-			gen_action('pass');
+			gen_action('end_turn_pass');
 		} else {
-			gen_action('next');
+			gen_action('end_turn');
 		}
 
 		// Purchase
@@ -921,7 +923,7 @@ states.actions = {
 				for (let col = 0; col < 6; ++col) {
 					let c = game.market_cards[row][col];
 					if (c && market_cost(col, c) <= player.coins && !game.used_cards.includes(c) && c !== PUBLIC_WITHDRAWAL)
-						gen_action('purchase', c);
+						gen_action('card', c);
 				}
 			}
 		}
@@ -994,7 +996,8 @@ states.actions = {
 
 	},
 
-	purchase(c) {
+	// Purchase card from market
+	card(c) {
 		push_undo();
 		logbr();
 
@@ -1016,25 +1019,11 @@ states.actions = {
 
 		logbr();
 
-		if (cost > 0) {
-			/*
-			if (cost > 1)
-				log(`Paid ${cost} rupees.`);
-			else
-				log(`Paid ${cost} rupee.`);
-			*/
+		if (cost > 0)
 			player.coins -= cost;
-		}
 
-		if (game.market_coins[row][col] > 0) {
-			/*
-			if (game.market_coins[row][col] > 1)
-				log(`Took ${game.market_coins[row][col]} rupees.`);
-			else
-				log(`Took ${game.market_coins[row][col]} rupee.`);
-			*/
+		if (game.market_coins[row][col] > 0)
 			player.coins += game.market_coins[row][col];
-		}
 
 		game.market_coins[row][col] = 0;
 		game.market_cards[row][col] = 0;
@@ -1050,21 +1039,24 @@ states.actions = {
 		}
 	},
 
+	// Play card to court
+	play_left(c) { do_play_1(c, 0); },
+	play_right(c) { do_play_1(c, 1); },
+
+	// Use card based ability
 	tax(c) { do_card_action_1(c, "Tax", 0); },
 	gift(c) { do_card_action_1(c, "Gift", gift_cost()); },
 	build(c) { do_card_action_1(c, "Build", 2); },
 	move(c) { do_card_action_1(c, "Move", 0); },
 	betray(c) { do_card_action_1(c, "Betray", 2); },
 	battle(c) { do_card_action_1(c, "Battle", 0); },
-	play_left(c) { do_play_1(c, 0); },
-	play_right(c) { do_play_1(c, 1); },
 
-	pass() {
+	end_turn_pass() {
 		logbr();
 		log(`Passed.`);
 		goto_cleanup_court();
 	},
-	next() {
+	end_turn() {
 		goto_cleanup_court();
 	},
 }
@@ -1286,17 +1278,31 @@ function goto_play_leveraged() {
 		logi(`Leveraged.`);
 		player.coins += 2;
 	}
-	goto_play_climate();
+	goto_play_favored_suit_impact();
 }
 
-function goto_play_climate() {
-	// TODO: manual click to set climate
+function goto_play_favored_suit_impact() {
 	let card = cards[game.card];
 	if (card.climate && !game.events.pashtunwali_values) {
-		logi(`Favored suit to ${card.climate}.`);
-		game.favored = card.climate;
+		game.state = 'favored_suit_impact';
+		game.where = card.climate;
+	} else {
+		end_action();
 	}
-	end_action();
+}
+
+states.favored_suit_impact = {
+	inactive: "favored suit",
+	prompt() {
+		view.prompt = `Change the favored suit to ${game.where}.`;
+		gen_action('suit', game.where);
+	},
+	suit(suit) {
+		push_undo();
+		logi(`Favored suit to ${suit}.`);
+		game.favored = suit;
+		end_action();
+	},
 }
 
 // CARD-BASED ACTION (COMMON)
@@ -1896,7 +1902,7 @@ function piece_owner(x) {
 states.battle = {
 	prompt() {
 		if (game.where <= 0) {
-			view.prompt = `Start a battle in a single region or on a court card.`
+			view.prompt = `Start a battle in a single region or on a court card.`;
 			for (let p = 0; p < game.players.length; ++p) {
 				let court = game.players[p].court;
 				for (let i = 0; i < court.length; ++i) {
@@ -2200,7 +2206,6 @@ states.cleanup_court = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} discarded #${c} from their court.`);
 		discard_court_card(c);
 	},
 	next() {
@@ -2232,7 +2237,7 @@ states.cleanup_hand = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} discarded #${c} from their hand.`);
+		log(`${player_names[game.active]} discarded #${c} from hand.`);
 		remove_from_array(player.hand, c);
 	},
 	next() {
@@ -2328,10 +2333,7 @@ function goto_refill_market() {
 const events_if_discarded = {
 
 	"Military" () {
-		// TODO: manual click to set climate
-		logi("Favored suit to Military.");
-		game.favor = Military;
-		goto_discard_events();
+		goto_favored_suit_event(Military);
 	},
 
 	"Embarrassment of Riches" () {
@@ -2352,13 +2354,11 @@ const events_if_discarded = {
 	},
 
 	"Riots in Punjab" () {
-		remove_all_tribes_and_armies(Punjab);
-		goto_discard_events();
+		goto_riots(Punjab);
 	},
 
 	"Riots in Herat" () {
-		remove_all_tribes_and_armies(Herat);
-		goto_discard_events();
+		goto_riots(Herat);
 	},
 
 	"No effect" () {
@@ -2367,13 +2367,11 @@ const events_if_discarded = {
 	},
 
 	"Riots in Kabul" () {
-		remove_all_tribes_and_armies(Kabul);
-		goto_discard_events();
+		goto_riots(Kabul);
 	},
 
 	"Riots in Persia" () {
-		remove_all_tribes_and_armies(Persia);
-		goto_discard_events();
+		goto_riots(Persia);
 	},
 
 	"Confidence Failure" () {
@@ -2383,19 +2381,47 @@ const events_if_discarded = {
 	},
 
 	"Intelligence" () {
-		// TODO: manual click to set climate
-		logi("Favored suit to Intelligence.");
-		game.favored = Intelligence;
-		goto_discard_events();
+		goto_favored_suit_event(Intelligence);
 	},
 
 	"Political" () {
-		// TODO: manual click to set climate
-		logi("Favored suit to Political.");
-		game.favored = Political;
-		goto_discard_events();
+		goto_favored_suit_event(Political);
 	},
 
+}
+
+function goto_favored_suit_event(suit) {
+	game.state = 'favored_suit';
+	game.where = suit;
+}
+
+states.favored_suit = {
+	inactive: "favored suit",
+	prompt() {
+		view.prompt = `Change the favored suit to ${game.where}.`;
+		gen_action('suit', game.where);
+	},
+	suit(suit) {
+		logi(`Favored suit to ${suit}.`);
+		game.favored = suit;
+		goto_discard_events();
+	},
+}
+
+function goto_riots(where) {
+	game.state = 'riots';
+	game.where = where;
+}
+
+states.riots = {
+	prompt() {
+		view.prompt = `Riot in ${region_names[game.where]}.`;
+		gen_action('space', game.where);
+	},
+	space(s) {
+		remove_all_tribes_and_armies(s);
+		goto_discard_events();
+	},
 }
 
 states.confidence_failure = {
@@ -2406,7 +2432,7 @@ states.confidence_failure = {
 			gen_action('card', player.hand[i]);
 	},
 	card(c) {
-		log(`${player_names[game.active]} discarded #${c} from their hand.`);
+		log(`${player_names[game.active]} discarded #${c} from hand.`);
 		remove_from_array(player.hand, c);
 		next_confidence_failure();
 	},
@@ -2547,22 +2573,17 @@ states.pashtunwali_values = {
 	inactive: "Pastunwali values",
 	prompt() {
 		view.prompt = `Pashtunwali Values \u2014 choose a suit to favor.`;
-		gen_action('suit_political');
-		gen_action('suit_intelligence');
-		gen_action('suit_economic');
-		gen_action('suit_military');
+		gen_action('suit', Political);
+		gen_action('suit', Intelligence);
+		gen_action('suit', Economic);
+		gen_action('suit', Military);
 	},
-	suit_political() { do_pashtunwali_values(Political); },
-	suit_intelligence() { do_pashtunwali_values(Intelligence); },
-	suit_economic() { do_pashtunwali_values(Economic); },
-	suit_military() { do_pashtunwali_values(Military); },
-}
-
-function do_pashtunwali_values(suit) {
-	log(`Favored suit to ${suit}.`);
-	game.favored = suit;
-	game.events.pashtunwali_values = 1;
-	end_action();
+	suit(suit) {
+		log(`Favored suit to ${suit}.`);
+		game.favored = suit;
+		game.events.pashtunwali_values = 1;
+		end_action();
+	},
 }
 
 states.rebuke = {
