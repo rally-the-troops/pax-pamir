@@ -209,10 +209,6 @@ function a_coalition(s) {
 	}
 }
 
-function the_card(c) {
-	return `#${c}`;
-}
-
 function logbr() {
 	if (game.log.length > 0 && game.log[game.log.length-1] !== "")
 		game.log.push("");
@@ -307,7 +303,7 @@ function player_has_citadel_in_kabul(p) { return player_has_court_card(p, 17); }
 function player_has_citadel_in_transcaspia(p) { return player_has_court_card(p, 97); }
 function player_has_safe_house(p) { return player_has_court_card(p, 41) || player_has_court_card(p, 72); }
 
-function which_player_has_insurrection(p) { return which_player_has_court_card(3); }
+function which_player_has_insurrection() { return which_player_has_court_card(3); }
 
 function player_has_citadel(p, r) {
 	if (r === Kabul) return player_has_citadel_in_kabul(p);
@@ -463,6 +459,7 @@ function is_favored_suit(c) {
 		return true;
 	if (c === 91) return true; // Savvy Operator
 	if (c === 99) return true; // Irregulars
+	return false;
 }
 
 function rightmost_card(row, i) {
@@ -1903,13 +1900,13 @@ states.battle = {
 	prompt() {
 		if (game.where <= 0) {
 			view.prompt = `Start a battle in a single region or on a court card.`;
-			for (let p = 0; p < game.players.length; ++p) {
-				let court = game.players[p].court;
-				for (let i = 0; i < court.length; ++i) {
-					if (is_battle_card(court[i]))
-						gen_action('card', court[i]);
+				for (let p = 0; p < game.players.length; ++p) {
+					let court = game.players[p].court;
+					for (let i = 0; i < court.length; ++i) {
+						if (is_battle_card(court[i]))
+							gen_action('card', court[i]);
+					}
 				}
-			}
 			for (let r = first_region; r <= last_region; ++r) {
 				if (is_battle_region(r))
 					gen_action('space', r);
@@ -2146,7 +2143,7 @@ states.insurrection = {
 		push_undo();
 		game.selected = x;
 	},
-	space(s) {
+	space() {
 		push_undo();
 		logi(`Afghan army to Kabul.`);
 		game.pieces[game.selected] = Kabul;
@@ -2730,7 +2727,6 @@ function do_dominance_check(reason) {
 		if (final)
 			log(`Final Dominance Check.`);
 		let list = [];
-		let msg = "Ranking:";
 		for (let p = 0; p < game.players.length; ++p) {
 			score[p] = count_cylinders_in_play(p);
 			if (score[p] !== 1)
@@ -2753,7 +2749,7 @@ function do_dominance_check(reason) {
 	}
 
 	// Check instant victory
-	let vps = game.players.map((pp,i) => pp.vp).sort((a,b)=>b-a);
+	let vps = game.players.map(pp => pp.vp).sort((a,b)=>b-a);
 	if (vps[0] >= vps[1] + 4)
 		return goto_game_over();
 
