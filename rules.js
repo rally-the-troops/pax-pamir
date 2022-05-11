@@ -1,15 +1,8 @@
 "use strict";
 
-// TODO: card actions clickable card regions instead
-
 // TODO: check all card data
 // TODO: log helpers - piece name (army/road/tribe color/coalition)
 // TODO: check if actions are possible: Tax, Move, Battle
-// TODO: change suit action buttons to click on the map instead
-
-// TODO: Prince Akbar Khan
-
-// change title of card menu to "Bonus Actions:" in ui
 
 let cards = require("./cards.js");
 
@@ -576,11 +569,13 @@ function gen_select_block() {
 }
 
 function gen_select_army_to_move() {
-	// TODO: only select armies in regions that can move
 	let b = active_coalition_blocks();
-	for (let i = b; i < b + 12; ++i)
-		if (game.pieces[i] >= first_region && game.pieces[i] <= last_region)
-			gen_action('piece', i);
+	for (let i = b; i < b + 12; ++i) {
+		let r = game.pieces[i];
+		if (r >= first_region && r <= last_region)
+			if (active_can_move_from_region(r))
+				gen_action('piece', i);
+	}
 }
 
 // DISCARD COURT CARD
@@ -947,8 +942,7 @@ states.actions = {
 			if (favored || game.actions > 0) {
 				let usable = false;
 
-				// TODO: check if taxation is possible
-				if (card.tax) {
+				if (card.tax && active_can_tax()) {
 					gen_action('tax', c);
 					usable = true;
 				}
@@ -960,19 +954,15 @@ states.actions = {
 					gen_action('build', c);
 					usable = true;
 				}
-				// TODO: check if any moves are possible
-				if (card.move) {
+				if (card.move && active_can_move()) {
 					gen_action('move', c);
 					usable = true;
 				}
-
 				if (card.betray && player.coins >= 2 && active_can_betray()) {
 					gen_action('betray', c);
 					usable = true;
 				}
-
-				// TODO: check if any battles are possible
-				if (card.battle) {
+				if (card.battle && active_can_battle()) {
 					gen_action('battle', c);
 					usable = true;
 				}
@@ -1407,6 +1397,19 @@ function do_tax_player(p) {
 		end_action();
 }
 
+function active_can_tax() {
+	for (let row = 0; row < 2; ++row)
+		for (let col = 0; col < 6; ++col)
+			if (game.market_coins[row][col] > 0)
+				return true;
+	let claim = active_has_claim_of_ancient_lineage();
+	for (let p = 0; p < game.players.length; ++p)
+		if (p !== game.active && can_tax_player(game.active, p, claim))
+			gen_action('player_' + p)
+				return true;
+	return false;
+}
+
 states.tax = {
 	prompt() {
 		if (game.count === 1)
@@ -1621,6 +1624,43 @@ function can_army_move_across_border(here, next) {
 	return false;
 }
 
+function active_can_move_from_region(here) {
+	let supplies = active_has_indian_supplies();
+	for (let next of roads[here])
+		if (supplies || can_army_move_across_border(here, next))
+			return true;
+	return false;
+}
+
+function active_can_move() {
+	let b = active_coalition_blocks();
+	let x = active_cylinders();
+
+	for (let i = b; i < b + 12; ++i) {
+		let r = game.pieces[i];
+		if (r >= first_region && r <= last_region)
+			if (active_can_move_from_region(r))
+				return true;
+	}
+
+	for (let i = x; i < x + 10; ++i) {
+		let r = game.pieces[i];
+		if (r > 0 && r <= 100)
+			return true;
+	}
+
+	if (player.events.nationalism) {
+		for (let i = x; i < x + 10; ++i) {
+			let r = game.pieces[i];
+			if (r >= first_region && r <= last_region)
+				if (active_can_move_from_region(r))
+					return true;
+		}
+	}
+
+	return false;
+}
+
 states.move = {
 	prompt() {
 		if (game.selected >= 0) {
@@ -1796,12 +1836,14 @@ function count_active_spies_on_card(where) {
 function count_enemy_spies_on_card(where) {
 	let n = 0;
 	for (let p = 0; p < game.players.length; ++p) {
-		if (p !== game.active) {
-			let x = player_cylinders(p);
-			for (let i = x; i < x + 10; ++i) {
-				if (game.pieces[i] === where)
-					++n;
-			}
+		if (p === game.active)
+			continue;
+		if (player_has_indispensable_advisors(p))
+			continue;
+		let x = player_cylinders(p);
+		for (let i = x; i < x + 10; ++i) {
+			if (game.pieces[i] === where)
+				++n;
 		}
 	}
 	return n;
@@ -1852,12 +1894,14 @@ function count_enemy_blocks_on_border(where) {
 function count_enemy_tribes_and_blocks_in_region(where) {
 	let n = 0;
 	for (let p = 0; p < game.players.length; ++p) {
-		if (game.players[p].loyalty !== player.loyalty) {
-			let x = player_cylinders(p);
-			for (let i = x; i < x + 10; ++i)
-				if (game.pieces[i] === where)
-					++n;
-		}
+		if (game.players[p].loyalty === player.loyalty)
+			continue;
+		if (player_has_citadel(p, where))
+			continue;
+		let x = player_cylinders(p);
+		for (let i = x; i < x + 10; ++i)
+			if (game.pieces[i] === where)
+				++n;
 	}
 	if (player.loyalty !== Afghan)
 		for (let i = 0; i < 12; ++i)
@@ -1896,17 +1940,31 @@ function piece_owner(x) {
 	return "undefined";
 }
 
+function active_can_battle() {
+	for (let r = first_region; r <= last_region; ++r) {
+		if (is_battle_region(r))
+			return true;
+	}
+	for (let p = 0; p < game.players.length; ++p) {
+		let court = game.players[p].court;
+		for (let i = 0; i < court.length; ++i)
+			if (is_battle_card(court[i]))
+				return true;
+	}
+	return false;
+}
+
 states.battle = {
 	prompt() {
 		if (game.where <= 0) {
 			view.prompt = `Start a battle in a single region or on a court card.`;
-				for (let p = 0; p < game.players.length; ++p) {
-					let court = game.players[p].court;
-					for (let i = 0; i < court.length; ++i) {
-						if (is_battle_card(court[i]))
-							gen_action('card', court[i]);
-					}
+			for (let p = 0; p < game.players.length; ++p) {
+				let court = game.players[p].court;
+				for (let i = 0; i < court.length; ++i) {
+					if (is_battle_card(court[i]))
+						gen_action('card', court[i]);
 				}
+			}
 			for (let r = first_region; r <= last_region; ++r) {
 				if (is_battle_region(r))
 					gen_action('space', r);
