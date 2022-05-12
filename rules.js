@@ -2756,6 +2756,14 @@ exports.view = function(state, current) {
 		market_coins: game.market_coins,
 		players: game.players,
 		selected: game.selected,
+		ruler: [
+			ruler_of_region(Persia),
+			ruler_of_region(Transcaspia),
+			ruler_of_region(Herat),
+			ruler_of_region(Kabul),
+			ruler_of_region(Kandahar),
+			ruler_of_region(Punjab)
+		],
 	};
 
 	if (game.state === 'game_over') {
