@@ -1560,10 +1560,12 @@ states.infrastructure = {
 }
 
 function end_build_action() {
-	if (active_has_infrastructure())
+	if (active_has_infrastructure()) {
 		game.state = 'infrastructure';
-	else
+		game.selected = select_available_block();
+	} else {
 		end_action();
+	}
 }
 
 // CARD-BASED ACTION: MOVE
