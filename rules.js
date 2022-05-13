@@ -461,9 +461,8 @@ function rightmost_card(row, i) {
 	return i;
 }
 
-function pay_action_cost(count, offset) {
-	// log(`Paid ${count} rupees.`);
-	player.coins -= count;
+function pay_action_cost(cost, offset) {
+	player.coins -= cost;
 	let ra = rightmost_card(0, 5);
 	let rb = rightmost_card(1, 5);
 
@@ -472,7 +471,7 @@ function pay_action_cost(count, offset) {
 		rb = rightmost_card(1, rb-1);
 	}
 
-	for (let i = 0; i < count; i += 2) {
+	for (let i = 0; i < cost; i += 2) {
 		if (ra >= 0) game.market_coins[0][ra] ++;
 		if (rb >= 0) game.market_coins[1][rb] ++;
 		ra = rightmost_card(0, ra-1);
@@ -593,19 +592,29 @@ function discard_court_card(c) {
 		}
 	}
 
-	log(`${player_names[pidx]} discarded #${c} from court.`);
+	if (pidx !== game.phasing)
+		log(`Discarded #${c} from ${player_names[pidx]} court.`);
+	else
+		log(`Discarded #${c} from court.`);
 
 	// Return all spies on card
 	for (let p = 0; p < game.players.length; ++p) {
 		let x = player_cylinders(p);
-		for (let i = x; i < x + 10; ++i)
-			if (game.pieces[i] === c)
+		for (let i = x; i < x + 10; ++i) {
+			if (game.pieces[i] === c) {
+				log(`Returned ${player_names[p]} spy.`);
 				game.pieces[i] = 0;
+			}
+		}
 	}
 
 	// Return rupees for leverage
 	if (cards[c].leveraged) {
-		log(`${player_names[pidx]} returned leverage.`);
+		if (pidx !== game.phasing)
+			log(`${player_names[pidx]} paid back leverage.`);
+		else
+			log(`Paid back leverage.`);
+
 		game.players[pidx].coins -= 2;
 	}
 
@@ -617,7 +626,7 @@ function discard_court_card(c) {
 function change_loyalty(new_loyalty) {
 	player.loyalty = new_loyalty;
 
-	log(`${player_names[game.active]} loyalty to ${player.loyalty}.`);
+	log(`Loyalty to ${player.loyalty}.`);
 
 	for (let i = 0; i < player.court.length;) {
 		let c = player.court[i];
@@ -657,6 +666,7 @@ function check_player_leverage(p) {
 		} else {
 			if (game.active !== p)
 				clear_undo();
+			logbr();
 			set_active(p);
 			game.state = 'leverage';
 			return true;
@@ -668,23 +678,25 @@ function check_player_leverage(p) {
 states.leverage = {
 	prompt() {
 		if (player.coins < 0) {
-			view.prompt = `Discard cards from your hand or court to pay for leverage.`;
+			view.prompt = `Discard cards from your hand or court to pay back leverage.`;
 			for (let i = 0; i < player.hand.length; ++i)
 				gen_action('card', player.hand[i]);
 			for (let i = 0; i < player.court.length; ++i)
 				gen_action('card', player.court[i]);
 		} else {
-			view.prompt = `Discard cards from your hand or court to pay for leverage \u2014 done.`;
+			view.prompt = `Discard cards from your hand or court to pay back leverage \u2014 done.`;
 			gen_action('next');
 		}
 	},
 	card(c) {
 		push_undo();
 		player.coins ++;
-		if (player.hand.includes(c))
+		if (player.hand.includes(c)) {
+			log(`Discarded #${c} from hand.`);
 			remove_from_array(player.hand, c);
-		else
+		} else {
 			discard_court_card(c);
+		}
 		if (player.hand.length + player.court.length === 0)
 			player.coins = 0;
 	},
@@ -710,10 +722,13 @@ function check_court_overthrow(p, r) {
 			++nt;
 
 	if (nc === 0 && nt > 0) {
-		log(`${player_names[p]} is overthrown in ${region_names[r]}.`);
-		for (let i = x; i < x + 10; ++i)
-			if (game.pieces[i] === r)
+		log(`${player_names[p]} overthrown in ${region_names[r]}.`);
+		for (let i = x; i < x + 10; ++i) {
+			if (game.pieces[i] === r) {
+				// log(`Removed ${player_names[p]} tribe.`);
 				game.pieces[i] = 0;
+			}
+		}
 	}
 }
 
@@ -732,7 +747,7 @@ function check_region_overthrow(p, r) {
 			++nt;
 
 	if (nt === 0 && nc > 0) {
-		log(`${player_names[p]} is overthrown in ${region_names[r]}.`);
+		log(`${player_names[p]} overthrown in ${region_names[r]}.`);
 		for (let i = 0; i < court.length;) {
 			if (cards[court[i]].region === r)
 				discard_court_card(court[i]);
@@ -1009,13 +1024,21 @@ states.actions = {
 		if (cost > 0)
 			player.coins -= cost;
 
-		if (game.market_coins[row][col] > 0)
-			player.coins += game.market_coins[row][col];
+		let took = game.market_coins[row][col];
+		if (took > 0)
+			player.coins += took;
 
 		game.market_coins[row][col] = 0;
 		game.market_cards[row][col] = 0;
 
 		log(`Purchased #${c}.`);
+		if (cost > 0 && took > 0)
+			logi(`Paid ${cost} and took ${took}.`);
+		else if (cost > 0)
+			logi(`Paid ${cost}.`);
+		else if (took > 0)
+			logi(`Took ${took}.`);
+
 		if (is_dominance_check(c)) {
 			do_dominance_check('purchase');
 		} else if (is_event_card(c)) {
@@ -1300,7 +1323,9 @@ const card_action_table = {
 	},
 
 	Gift() {
-		pay_action_cost(gift_cost(), 0);
+		let cost = gift_cost();
+		logi(`Paid ${cost}.`);
+		pay_action_cost(cost, 0);
 		game.selected = select_available_cylinder();
 		if (game.selected < 0)
 			game.state = 'gift';
@@ -1798,7 +1823,7 @@ states.accept_prize = {
 		gen_action('refuse');
 	},
 	accept() {
-		log(`${player_names[game.active]} took #${game.card} as ${a_coalition(cards[game.card].prize)} prize.`);
+		log(`Accepted ${cards[game.card].prize} prize.`);
 		if (cards[game.card].prize !== player.loyalty)
 			change_loyalty(cards[game.card].prize);
 		player.prizes ++;
@@ -2002,13 +2027,13 @@ states.battle = {
 	},
 	card(where) {
 		push_undo();
-		logi(`Started battle on #${where}.`);
+		//logi(`Battle on #${where}.`);
 		game.where = where;
 		game.count = Math.min(game.count, count_active_spies_on_card(where));
 	},
 	space(s) {
 		push_undo();
-		logi(`Started battle in ${region_names[s]}.`);
+		//logi(`Battle in ${region_names[s]}.`);
 		game.where = s;
 		game.count = Math.min(game.count, count_active_armies_in_region(s));
 	},
@@ -2120,7 +2145,10 @@ function check_safe_house() {
 	for (let p = 0; p < first; ++p)
 		if (check_player_safe_house(p))
 			return;
-	resume_actions();
+	if (game.actions >= 0)
+		resume_actions();
+	else
+		goto_cleanup_hand();
 }
 
 function check_player_safe_house(p) {
@@ -2131,6 +2159,7 @@ function check_player_safe_house(p) {
 				if (game.active !== p)
 					clear_undo();
 				set_active(p);
+				logbr();
 				game.state = 'safe_house';
 				game.selected = x;
 				return true;
@@ -2154,6 +2183,7 @@ states.safe_house = {
 	},
 	card(c) {
 		push_undo();
+		log(`${player_names[game.active]} spy to #{c}.`);
 		game.pieces[game.selected] = c;
 		game.selected = -1;
 		check_safe_house();
@@ -2170,7 +2200,6 @@ states.safe_house = {
 
 function check_insurrection() {
 	let prince = which_player_has_insurrection();
-	console.log("INSURRECTION", prince);
 	if (prince >= 0) {
 		clear_undo();
 		logbr();
@@ -2240,6 +2269,7 @@ function player_hand_size() {
 }
 
 function goto_cleanup_court() {
+	game.actions = -1;
 	logbr();
 	if (player.court.length > player_court_size()) {
 		game.state = 'cleanup_court';
@@ -2267,7 +2297,7 @@ states.cleanup_court = {
 	},
 	next() {
 		push_undo();
-		goto_cleanup_hand();
+		check_leverage();
 	}
 }
 
@@ -2294,7 +2324,7 @@ states.cleanup_hand = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} discarded #${c} from hand.`);
+		log(`Discarded #${c} from hand.`);
 		remove_from_array(player.hand, c);
 	},
 	next() {
