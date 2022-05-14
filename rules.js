@@ -618,7 +618,8 @@ function discard_court_card(c) {
 		game.players[pidx].coins -= 2;
 	}
 
-	check_court_overthrow(pidx, cards[c].region);
+	if (cards[c].suit === Political)
+		check_court_overthrow(pidx, cards[c].region);
 }
 
 // CHANGE LOYALTY
@@ -712,9 +713,11 @@ function check_court_overthrow(p, r) {
 	let x = player_cylinders(p);
 
 	let nc = 0;
-	for (let i = 0; i < court.length; ++i)
-		if (cards[court[i]].region === r)
+	for (let i = 0; i < court.length; ++i) {
+		let info = cards[court[i]];
+		if (info.suit === Political && info.region === r)
 			++nc;
+	}
 
 	let nt = 0;
 	for (let i = x; i < x + 10; ++i)
@@ -737,9 +740,11 @@ function check_region_overthrow(p, r) {
 	let x = player_cylinders(p);
 
 	let nc = 0;
-	for (let i = 0; i < court.length; ++i)
-		if (cards[court[i]].region === r)
+	for (let i = 0; i < court.length; ++i) {
+		let info = cards[court[i]];
+		if (info.suit === Political && info.region === r)
 			++nc;
+	}
 
 	let nt = 0;
 	for (let i = x; i < x + 10; ++i)
@@ -749,7 +754,8 @@ function check_region_overthrow(p, r) {
 	if (nt === 0 && nc > 0) {
 		log(`${player_names[p]} overthrown in ${region_names[r]}.`);
 		for (let i = 0; i < court.length;) {
-			if (cards[court[i]].region === r)
+			let info = cards[court[i]];
+			if (info.suit === Political && info.region === r)
 				discard_court_card(court[i]);
 			else
 				++i;
