@@ -1769,11 +1769,13 @@ states.move = {
 	space(s) {
 		push_undo();
 		let old = game.pieces[game.selected];
-		if (game.selected < 36)
-			logi(`${player.loyalty} army from ${region_names[old]} to ${region_names[s]}.`);
-		else
-			logi(`Tribe from ${region_names[old]} to ${region_names[s]}.`);
 		game.pieces[game.selected] = s;
+		if (game.selected < 36) {
+			logi(`${player.loyalty} army from ${region_names[old]} to ${region_names[s]}.`);
+		} else {
+			logi(`Tribe from ${region_names[old]} to ${region_names[s]}.`);
+			check_region_overthrow(game.active, old);
+		}
 		game.selected = -1;
 		if (--game.count === 0)
 			end_action();
