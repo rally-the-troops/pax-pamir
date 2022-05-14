@@ -2938,6 +2938,7 @@ exports.setup = function (seed, scenario, options) {
 
 	game = {
 		seed: seed,
+		open: options.open_hands ? 1 : 0,
 
 		active: 0,
 		state: "none",
@@ -3044,6 +3045,7 @@ exports.view = function(state, current) {
 		market_coins: game.market_coins,
 		players: game.players,
 		selected: game.selected,
+		open: game.open,
 	};
 
 	if (game.state === 'game_over') {
