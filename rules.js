@@ -1,9 +1,5 @@
 "use strict";
 
-// TODO: check all card data
-// TODO: log helpers - piece name (army/road/tribe color/coalition)
-// TODO: check if actions are possible: Tax, Move, Battle
-
 let cards = require("./cards.js");
 
 const Afghan = 'Afghan';
@@ -1436,8 +1432,7 @@ function active_can_tax() {
 	let claim = active_has_claim_of_ancient_lineage();
 	for (let p = 0; p < game.players.length; ++p)
 		if (p !== game.active && can_tax_player(game.active, p, claim))
-			gen_action('player_' + p)
-				return true;
+			return true;
 	return false;
 }
 
