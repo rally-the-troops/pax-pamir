@@ -547,7 +547,7 @@ function gen_select_tribe_to_move() {
 
 function select_available_block() {
 	let b = active_coalition_blocks();
-	for (let i = b; i < b + 12; ++i)
+	for (let i = b + 11; i >= b; --i)
 		if (game.pieces[i] === 0)
 			return i;
 	return -1;
