@@ -28,7 +28,9 @@ const Kabul_Kandahar = 307;
 const Kabul_Punjab = 308;
 const Kandahar_Punjab = 309;
 
-const Gift = 400;
+const Gift2 = 400;
+const Gift4 = 401;
+const Gift6 = 402;
 const Safe_House = 500;
 
 const first_region = 201;
@@ -324,17 +326,33 @@ function active_cylinders() {
 	return 36 + game.active * 10;
 }
 
-function active_gifts() {
+function min_gift_cost() {
 	let x = active_cylinders();
-	let n = 0;
-	for (let i = x; i < x + 10; ++i)
-		if (game.pieces[i] === Gift)
-			++n;
-	return n;
+	let avail_2 = true, avail_4 = true, avail_6 = true;
+	for (let i = x; i < x + 10; ++i) {
+		let s = game.pieces[i];
+		if (s === Gift2) avail_2 = false;
+		else if (s === Gift4) avail_4 = false;
+		else if (s === Gift6) avail_6 = false;
+	}
+	if (avail_2) return 2;
+	if (avail_4) return 4;
+	if (avail_6) return 6;
+	return 1000;
 }
 
-function gift_cost() {
-	return 2 * active_gifts() + 2;
+function gen_place_gift() {
+	let x = active_cylinders();
+	let avail_2 = true, avail_4 = true, avail_6 = true;
+	for (let i = x; i < x + 10; ++i) {
+		let s = game.pieces[i];
+		if (s === Gift2) avail_2 = false;
+		else if (s === Gift4) avail_4 = false;
+		else if (s === Gift6) avail_6 = false;
+	}
+	if (avail_2 && player.coins >= 2) gen_action('place_gift', 2);
+	if (avail_4 && player.coins >= 4) gen_action('place_gift', 4);
+	if (avail_6 && player.coins >= 6) gen_action('place_gift', 6);
 }
 
 function ruler_of_region(r) {
@@ -636,9 +654,11 @@ function change_loyalty(new_loyalty) {
 	}
 
 	let x = active_cylinders();
-	for (let i = x; i < x + 10; ++i)
-		if (game.pieces[i] === Gift)
+	for (let i = x; i < x + 10; ++i) {
+		let s = game.pieces[i];
+		if (s === Gift2 || s === Gift4 || s === Gift6)
 			game.pieces[i] = 0;
+	}
 
 	player.prizes = 0;
 }
@@ -963,7 +983,7 @@ states.actions = {
 					gen_action('tax', c);
 					usable = true;
 				}
-				if (card.gift && active_gifts() < 3 && player.coins >= gift_cost()) {
+				if (card.gift && player.coins >= min_gift_cost()) {
 					gen_action('gift', c);
 					usable = true;
 				}
@@ -1057,7 +1077,7 @@ states.actions = {
 
 	// Use card based ability
 	tax(c) { do_card_action_1(c, "Tax", 0); },
-	gift(c) { do_card_action_1(c, "Gift", gift_cost()); },
+	gift(c) { do_card_action_1(c, "Gift", min_gift_cost()); },
 	build(c) { do_card_action_1(c, "Build", 2); },
 	move(c) { do_card_action_1(c, "Move", 0); },
 	betray(c) { do_card_action_1(c, "Betray", 2); },
@@ -1325,14 +1345,8 @@ const card_action_table = {
 	},
 
 	Gift() {
-		let cost = gift_cost();
-		logi(`Paid ${cost}.`);
-		pay_action_cost(cost, 0);
 		game.selected = select_available_cylinder();
-		if (game.selected < 0)
-			game.state = 'gift';
-		else
-			do_gift();
+		game.state = 'gift';
 	},
 
 	Build() {
@@ -1484,20 +1498,32 @@ states.tax = {
 
 states.gift = {
 	prompt() {
-		view.prompt = `Select cylinder to use as Gift.`;
-		gen_select_cylinder();
+		if (game.selected < 0) {
+			view.prompt = `Select cylinder to place as Gift.`;
+			gen_select_cylinder();
+		} else {
+			view.prompt = `Place cylinder as Gift.`;
+			gen_place_gift();
+		}
 	},
 	piece(x) {
 		push_undo();
 		game.selected = x;
-		do_gift();
 	},
-}
-
-function do_gift() {
-	game.pieces[game.selected] = Gift;
-	game.used_pieces.push(game.selected);
-	end_action();
+	place_gift(cost) {
+		push_undo();
+		logi(`Paid ${cost}.`);
+		pay_action_cost(cost, 0);
+		if (cost === 2)
+			game.pieces[game.selected] = Gift2;
+		else if (cost === 4)
+			game.pieces[game.selected] = Gift4;
+		else if (cost === 6)
+			game.pieces[game.selected] = Gift6;
+		game.used_pieces.push(game.selected);
+		game.selected = -1;
+		end_action();
+	}
 }
 
 // CARD-BASED ACTION: BUILD
@@ -2707,9 +2733,11 @@ function count_influence_points(p) {
 
 	if (!game.events.embarrassment_of_riches) {
 		let gv = game.players[p].events.koh_i_noor ? 2 : 1;
-		for (let i = x; i < x + 10; ++i)
-			if (game.pieces[i] === Gift)
+		for (let i = x; i < x + 10; ++i) {
+			let s = game.pieces[i];
+			if (s === Gift2 || s === Gift4 || s === Gift6)
 				n += gv;
+		}
 	}
 
 	if (!game.players[p].events.rumor) {
