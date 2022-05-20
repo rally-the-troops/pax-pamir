@@ -720,9 +720,6 @@ body.shift #tooltip.focus { display: block; }
 
 /* CARD IMAGES */
 
-.card_back{background-image:url(cards.1x/card_back_116.webp)}
-@media (min-resolution: 97dpi) { .card_back{background-image:url(cards.2x/card_back_116.webp)} }
-
 .card_1{background-image:url(cards.2x/card_1.webp)}
 .card_2{background-image:url(cards.2x/card_2.webp)}
 .card_3{background-image:url(cards.2x/card_3.webp)}
@@ -839,3 +836,6 @@ body.shift #tooltip.focus { display: block; }
 .card_114{background-image:url(cards.2x/card_114.webp)}
 .card_115{background-image:url(cards.2x/card_115.webp)}
 .card_116{background-image:url(cards.2x/card_116.webp)}
+
+.card_back{background-image:url(cards.1x/card_back_116.webp)}
+@media (min-resolution: 97dpi) { .card_back{background-image:url(cards.2x/card_back_116.webp)} }
