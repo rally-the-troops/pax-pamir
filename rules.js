@@ -162,6 +162,8 @@ function remove_from_array(array, item) {
 }
 
 function set_active(new_active) {
+	if (game.active !== new_active)
+		clear_undo();
 	game.active = new_active;
 	update_aliases();
 }
@@ -681,8 +683,6 @@ function check_player_leverage(p) {
 		if (game.players[p].hand.length + game.players[p].court.length === 0) {
 			game.players[p].coins = 0;
 		} else {
-			if (game.active !== p)
-				clear_undo();
 			logbr();
 			set_active(p);
 			game.state = 'leverage';
@@ -718,6 +718,7 @@ states.leverage = {
 			player.coins = 0;
 	},
 	next() {
+		push_undo();
 		check_leverage();
 	}
 }
@@ -805,7 +806,6 @@ states.bribe = {
 		end_bribe();
 	},
 	beg() {
-		clear_undo();
 		let p = game.bribe;
 		log(`Asked ${player_names[p]} to waive the bribe for #${game.card}.`);
 		game.state = 'waive';
@@ -931,7 +931,6 @@ function resume_actions() {
 }
 
 function goto_next_player() {
-	clear_undo();
 	game.phasing = next_player(game.phasing);
 	set_active(game.phasing);
 	goto_actions();
@@ -2185,8 +2184,6 @@ function check_player_safe_house(p) {
 	for (let i = x; i < x + 10; ++i) {
 		if (game.pieces[x] === Safe_House) {
 			if (player_has_safe_house(p)) {
-				if (game.active !== p)
-					clear_undo();
 				set_active(p);
 				logbr();
 				game.state = 'safe_house';
@@ -2230,7 +2227,6 @@ states.safe_house = {
 function check_insurrection() {
 	let prince = which_player_has_insurrection();
 	if (prince >= 0) {
-		clear_undo();
 		logbr();
 		log(`Prince Akbar Khan`);
 		game.count = 2;
@@ -2270,7 +2266,7 @@ states.insurrection = {
 			game.selected = select_available_block();
 	},
 	next() {
-		clear_undo();
+		push_undo();
 		end_dominance_check();
 	}
 }
@@ -2357,6 +2353,7 @@ states.cleanup_hand = {
 		remove_from_array(player.hand, c);
 	},
 	next() {
+		push_undo();
 		goto_discard_events();
 	}
 }
@@ -2373,7 +2370,6 @@ function do_discard_event(row, c) {
 }
 
 function goto_discard_events() {
-	clear_undo();
 	if (is_event_card(game.market_cards[0][0])) {
 		do_discard_event(0, game.market_cards[0][0]);
 	} else if (is_event_card(game.market_cards[1][0])) {
@@ -2676,8 +2672,10 @@ states.other_persuasive_methods = {
 }
 
 function do_other_persuasive_methods(p) {
-	// TODO: clear_undo instead?
-	push_undo();
+	if (game.open)
+		push_undo();
+	else
+		clear_undo(); // No undo if closed hands.
 	log(`${player_names[game.active]} exchanged hands with ${player_names[p]}.`);
 	let swap = game.players[game.active].hand;
 	game.players[game.active].hand = game.players[p].hand;
