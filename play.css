@@ -334,21 +334,26 @@ body.shift #tooltip.focus { display: block; }
 .block.road.British { background-image: url(pieces/road_british.svg) }
 .block.road.Russian { background-image: url(pieces/road_russian.svg) }
 
-.Afghan.block.action {
+.Afghan.block.action,
+.Afghan.block.selected {
 	filter:
 		drop-shadow(0 -2px 0 turquoise)
 		drop-shadow(0 2px 0 turquoise)
 		drop-shadow(-2px 0 0 turquoise)
 		drop-shadow(2px 0 0 turquoise)
 }
-.British.block.action {
+
+.British.block.action,
+.British.block.selected {
 	filter:
 		drop-shadow(0 -2px 0 hotpink)
 		drop-shadow(0 2px 0 hotpink)
 		drop-shadow(-2px 0 0 hotpink)
 		drop-shadow(2px 0 0 hotpink)
 }
-.Russian.block.action {
+
+.Russian.block.action,
+.Russian.block.selected {
 	filter:
 		drop-shadow(0 -2px 0 orange)
 		drop-shadow(0 2px 0 orange)
@@ -356,28 +361,49 @@ body.shift #tooltip.focus { display: block; }
 		drop-shadow(2px 0 0 orange)
 }
 
-.cylinder.action {
+.cylinder.p0.action,
+.cylinder.p0.selected {
 	filter:
-		drop-shadow(0 -2px 0 yellow)
-		drop-shadow(0 2px 0 yellow)
-		drop-shadow(-2px 0 0 yellow)
-		drop-shadow(2px 0 0 yellow)
+		drop-shadow(0 -2px 0 silver)
+		drop-shadow(0 2px 0 silver)
+		drop-shadow(-2px 0 0 silver)
+		drop-shadow(2px 0 0 silver)
 }
 
-.block.selected {
+.cylinder.p1.action,
+.cylinder.p1.selected {
 	filter:
-		drop-shadow(0 -2px 0 deepskyblue)
-		drop-shadow(0 2px 0 deepskyblue)
-		drop-shadow(-2px 0 0 deepskyblue)
-		drop-shadow(2px 0 0 deepskyblue)
+		drop-shadow(0 -2px 0 skyblue)
+		drop-shadow(0 2px 0 skyblue)
+		drop-shadow(-2px 0 0 skyblue)
+		drop-shadow(2px 0 0 skyblue)
 }
 
-.cylinder.selected {
+.cylinder.p2.action,
+.cylinder.p2.selected {
 	filter:
-		drop-shadow(0 -2px 0 deepskyblue)
-		drop-shadow(0 2px 0 deepskyblue)
-		drop-shadow(-2px 0 0 deepskyblue)
-		drop-shadow(2px 0 0 deepskyblue)
+		drop-shadow(0 -2px 0 gold)
+		drop-shadow(0 2px 0 gold)
+		drop-shadow(-2px 0 0 gold)
+		drop-shadow(2px 0 0 gold)
+}
+
+.cylinder.p3.action,
+.cylinder.p3.selected {
+	filter:
+		drop-shadow(0 -2px 0 tomato)
+		drop-shadow(0 2px 0 tomato)
+		drop-shadow(-2px 0 0 tomato)
+		drop-shadow(2px 0 0 tomato)
+}
+
+.cylinder.p4.action,
+.cylinder.p4.selected {
+	filter:
+		drop-shadow(0 -2px 0 black)
+		drop-shadow(0 2px 0 black)
+		drop-shadow(-2px 0 0 black)
+		drop-shadow(2px 0 0 black)
 }
 
 /* FAVORED SUIT MARKER AND SPACES */
@@ -473,7 +499,7 @@ body.shift #tooltip.focus { display: block; }
 }
 
 .border, .region {
-	fill: none;
+	fill: transparent;
 	stroke: none;
 }
 
