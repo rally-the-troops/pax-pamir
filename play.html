@@ -45,9 +45,9 @@
 <aside>
 	<div id="roles">
 		<div id="banner" class="Political">
-			<div id="favored_suit_banner" class="icon" onclick="scroll_to_market()"></div>
-			<div id="map_banner"  class="icon"onclick="scroll_to_map()"></div>
-			<div id="hand_banner" class="icon" onclick="toggle_open_hands()"></div>
+			<div id="favored_suit_banner" class="icon" onclick="scroll_to_market()" onmouseenter="ui.status.textContent='Scroll to Market'" onmouseleave="on_blur()"></div>
+			<div id="map_banner"  class="icon"onclick="scroll_to_map()" onmouseenter="ui.status.textContent='Scroll to Map'" onmouseleave="on_blur()"></div>
+			<div id="hand_banner" class="icon" onclick="toggle_open_hands()" onmouseenter="ui.status.textContent='Hide/show hands'" onmouseleave="on_blur()"></div>
 		</div>
 
 		<div class="role hide" onclick="scroll_to_player(0)" id="role_Gray">

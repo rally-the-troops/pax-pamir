@@ -43,14 +43,23 @@ const region_index = {
 	"Punjab": Punjab,
 };
 
-const region_names = {
+const space_names = {
 	[Persia]: "Persia",
 	[Transcaspia]: "Transcaspia",
 	[Herat]: "Herat",
 	[Kabul]: "Kabul",
 	[Kandahar]: "Kandahar",
 	[Punjab]: "Punjab",
-};
+	[Persia_Transcaspia]: "Persia/Transcaspia",
+	[Persia_Herat]: "Persia/Herat",
+	[Transcaspia_Herat]: "Transcaspia/Herat",
+	[Transcaspia_Kabul]: "Transcaspia/Kabul",
+	[Herat_Kabul]: "Herat/Kabul",
+	[Herat_Kandahar]: "Herat/Kandahar",
+	[Kabul_Kandahar]: "Kabul/Kandahar",
+	[Kabul_Punjab]: "Kabul/Punjab",
+	[Kandahar_Punjab]: "Kandahar/Punjab",
+}
 
 cards.forEach(card => {
 	if (card) {
@@ -283,6 +292,10 @@ function on_focus_card(evt) {
 		ui.status.textContent = `${evt.target.card} - ${cards[c].name}`;
 		ui.tooltip.classList = "focus card card_" + c;
 	}
+}
+
+function on_focus_space(evt) {
+	ui.status.textContent = space_names[evt.target.space];
 }
 
 function on_click_space(evt) {
@@ -660,7 +673,10 @@ function on_update() {
 			else if (s <= 100)
 				ui.spyrows[s].appendChild(ui.pieces[x]);
 			else
-				ui.board.appendChild(ui.pieces[x]);
+			{
+				if (ui.pieces[x].parentElement !== ui.board)
+					ui.board.appendChild(ui.pieces[x]);
+			}
 			ui.pieces[x].classList.toggle('action', is_piece_action(x));
 			ui.pieces[x].classList.toggle('selected', view.selected === x);
 			ui.pieces[x].style = "";
@@ -669,9 +685,9 @@ function on_update() {
 
 	for (let i = 0; i < 6; ++i)
 		if (ruler[i] === -1)
-			ui.rule[i].classList = `rule ${region_names[i+Persia]} hide`;
+			ui.rule[i].classList = `rule ${space_names[i+Persia]} hide`;
 		else
-			ui.rule[i].classList = `rule ${region_names[i+Persia]} ${player_names[ruler[i]]}`;
+			ui.rule[i].classList = `rule ${space_names[i+Persia]} ${player_names[ruler[i]]}`;
 
 	ui.suit_political.classList.toggle('action', is_suit_action('Political'));
 	ui.suit_intelligence.classList.toggle('action', is_suit_action('Intelligence'));
@@ -753,6 +769,8 @@ function build_ui() {
 		ui.spaces[i] = document.getElementById("svgmap").getElementById(n);
 		ui.spaces[i].space = i;
 		ui.spaces[i].addEventListener("click", on_click_space);
+		ui.spaces[i].addEventListener("mouseenter", on_focus_space);
+		ui.spaces[i].addEventListener("mouseleave", on_blur);
 	}
 
 	for (let c = 1; c < cards.length; ++c) {
