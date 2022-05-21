@@ -420,33 +420,37 @@ function layout_armies(list, xc, yc, maxcol) {
 	let i = 0;
 	for (let row = 0; row < nrow; ++row)
 		for (let col = 0; col < ncol && i < list.length; ++col)
-			place_army(row-nrow+1, col - (ncol/2) - ((nrow-1)/4), list[i++]);
+			place_army(row, col - (ncol/2) - ((nrow-1)/4), list[i++]);
 }
 
-function layout_tribes(list, xc, yc, maxcol) {
-	function place_tribe(y, x, i) {
-		ui.pieces[i].style = `top:${yc+y*16+x*4}px;left:${xc+x*32-y*20}px`;
+function layout_tribes_radial(list, xc, yc, maxcol) {
+	function place_tribe(x, y, i) {
+		ui.pieces[i].style = `top:${Math.round(y)}px;left:${Math.round(x)}px`;
 	}
-	let ncol = Math.min(maxcol, Math.ceil(Math.sqrt(list.length)));
-	let nrow = Math.ceil(list.length / ncol);
-	let i = 0;
-	for (let row = 0; row < nrow; ++row)
-		for (let col = 0; col < ncol && i < list.length; ++col)
-			place_tribe(row, col - (ncol/2) + ((nrow-1)/4), list[i++]);
+	let angle = 2 * Math.PI / Math.max(list.length, 7);
+	let phase = (list.length - 1) * angle / 2;
+	for (let i = 0; i < list.length; ++i) {
+		let x = xc + Math.sin(i * angle - phase) * 46 - 14;
+		let y = yc - Math.cos(i * angle - phase) * 44 - 14;
+		place_tribe(x, y, list[i]);
+	}
 }
 
-function layout_region(r, xc, yc, maxcol) {
+function layout_region_armies(r, xc, yc, maxcol) {
 	let list = [];
 	for (let i = 0; i < 36; ++i)
 		if (view.pieces[i] === r)
 			list.push(i);
-	layout_armies(list, xc - 2, yc - 50, maxcol);
+	layout_armies(list, xc - 4, yc, maxcol);
+}
 
-	list = [];
+function layout_region_tribes(r, xc, yc, maxcol) {
+	let list = [];
 	for (let i = 36; i < view.pieces.length; ++i)
 		if (view.pieces[i] === r)
 			list.push(i);
-	layout_tribes(list, xc, yc + 20, maxcol);
+	if (list.length > 0)
+		layout_tribes_radial(list, xc, yc, maxcol);
 }
 
 function layout_border(r, xc, yc, line) {
@@ -665,7 +669,7 @@ function on_update() {
 
 	for (let i = 0; i < 6; ++i)
 		if (ruler[i] === -1)
-			ui.rule[i].classList = "hide";
+			ui.rule[i].classList = `rule ${region_names[i+Persia]} hide`;
 		else
 			ui.rule[i].classList = `rule ${region_names[i+Persia]} ${player_names[ruler[i]]}`;
 
@@ -676,12 +680,19 @@ function on_update() {
 
 	layout_block_pool();
 
-	layout_region(Persia, 206-16, 426, 5);
-	layout_region(Transcaspia, 254, 152, 10);
-	layout_region(Herat, 456, 383, 6);
-	layout_region(Kabul, 673, 163, 12);
-	layout_region(Kandahar, 732-23, 437, 6);
-	layout_region(Punjab, 929, 306, 3);
+	layout_region_armies(Persia, 204, 466, 5);
+	layout_region_armies(Transcaspia, 252, 227, 6);
+	layout_region_armies(Herat, 454, 458, 6);
+	layout_region_armies(Kabul, 671, 238, 8);
+	layout_region_armies(Kandahar, 730, 477, 5);
+	layout_region_armies(Punjab, 928, 381, 3);
+
+	layout_region_tribes(Persia, 204, 426, 5);
+	layout_region_tribes(Transcaspia, 252, 152+5, 10);
+	layout_region_tribes(Herat, 454, 383, 6);
+	layout_region_tribes(Kabul, 671, 163, 12);
+	layout_region_tribes(Kandahar, 730, 437, 6);
+	layout_region_tribes(Punjab, 928, 306, 3);
 
 	layout_border(Persia_Transcaspia, 188, 320, 0);
 	layout_border(Persia_Herat, 313, 441, 1);
@@ -689,7 +700,7 @@ function on_update() {
 	layout_border(Transcaspia_Kabul, 477, 164, 1);
 	layout_border(Herat_Kabul, 527, 297, 0);
 	layout_border(Herat_Kandahar, 598, 441, 2);
-	layout_border(Kabul_Kandahar, 699, 332, 0);
+	layout_border(Kabul_Kandahar, 699, 338, 0);
 	layout_border(Kabul_Punjab, 859, 211, 2);
 	layout_border(Kandahar_Punjab, 836, 438, 1);
 

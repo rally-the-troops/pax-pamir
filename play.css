@@ -505,12 +505,12 @@ body.shift #tooltip.focus { display: block; }
 	margin: 0 auto 8px auto;
 }
 
-.rule.Transcaspia { left:229px; top:127px; }
-.rule.Punjab { left:904px; top:281px; }
-.rule.Persia { left:181px; top:400px; }
-.rule.Kandahar { left:707px; top:412px; }
-.rule.Kabul { left:648px; top:138px; }
-.rule.Herat { left:431px; top:358px; }
+.rule.Transcaspia { left:227px; top:132px; }
+.rule.Punjab { left:903px; top:281px; }
+.rule.Persia { left:179px; top:400px; }
+.rule.Kandahar { left:705px; top:412px; }
+.rule.Kabul { left:646px; top:138px; }
+.rule.Herat { left:429px; top:358px; }
 
 .rule.Persia { background-image: url(pieces/ruler_persia.svg) }
 .rule.Transcaspia { background-image: url(pieces/ruler_transcaspia.svg) }
