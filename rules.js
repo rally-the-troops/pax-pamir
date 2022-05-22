@@ -3065,7 +3065,10 @@ exports.action = function (state, current, action, arg) {
 
 exports.resign = function (state, current) {
 	load_game(state);
+	logbr();
+	log(`${current} resigned.`);
 	goto_game_over();
+	game.victory = `${current} resigned.`;
 	return save_game();
 }
 
