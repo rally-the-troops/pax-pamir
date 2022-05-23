@@ -2181,15 +2181,15 @@ function check_safe_house() {
 function check_player_safe_house(p) {
 	let x = player_cylinders(p);
 	for (let i = x; i < x + 10; ++i) {
-		if (game.pieces[x] === Safe_House) {
+		if (game.pieces[i] === Safe_House) {
 			if (player_has_safe_house(p)) {
 				set_active(p);
 				logbr();
 				game.state = 'safe_house';
-				game.selected = x;
+				game.selected = i;
 				return true;
 			} else {
-				game.pieces[x] = 0;
+				game.pieces[i] = 0;
 			}
 		}
 	}
@@ -2208,7 +2208,7 @@ states.safe_house = {
 	},
 	card(c) {
 		push_undo();
-		log(`${player_names[game.active]} spy to #{c}.`);
+		log(`${player_names[game.active]} spy to #${c}.`);
 		game.pieces[game.selected] = c;
 		game.selected = -1;
 		check_safe_house();
