@@ -1467,7 +1467,6 @@ states.tax = {
 		for (let p = 0; p < game.players.length; ++p) {
 			if (p !== game.active && can_tax_player(game.active, p, claim)) {
 				gen_action('player_' + p);
-				break;
 			}
 		}
 
