@@ -441,7 +441,7 @@ function layout_tribes_radial(list, xc, yc, maxcol) {
 		ui.pieces[i].style = `top:${Math.round(y)}px;left:${Math.round(x)}px`;
 	}
 	let angle = 2 * Math.PI / Math.max(list.length, 7);
-	let phase = (list.length - 1) * angle / 2;
+	let phase = (list.length <= 3) ? Math.PI * 2 / 7 : (list.length - 1) * angle / 2;
 	for (let i = 0; i < list.length; ++i) {
 		let x = xc + Math.sin(i * angle - phase) * 46 - 14;
 		let y = yc - Math.cos(i * angle - phase) * 44 - 14;
@@ -701,7 +701,7 @@ function on_update() {
 	layout_region_armies(Herat, 454, 458, 6);
 	layout_region_armies(Kabul, 671, 238, 8);
 	layout_region_armies(Kandahar, 730, 477, 5);
-	layout_region_armies(Punjab, 928, 381, 3);
+	layout_region_armies(Punjab, 928+10, 381, 4);
 
 	layout_region_tribes(Persia, 204, 426, 5);
 	layout_region_tribes(Transcaspia, 252, 152+5, 10);
