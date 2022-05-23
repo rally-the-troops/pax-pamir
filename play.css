@@ -435,6 +435,10 @@ body.shift #tooltip.focus { display: block; }
 	height: 48px;
 }
 
+.suit.action {
+	box-shadow: 0 0 0 2px black;
+}
+
 #suit_political { top: 129px; }
 #suit_intelligence { top: 216px; }
 #suit_economic { top: 305px; }
