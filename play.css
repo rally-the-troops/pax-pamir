@@ -107,10 +107,11 @@ body.shift #tooltip.focus { display: block; }
 
 .role {
 	position: relative;
+	cursor: pointer;
 }
 
-.role_name {
-	cursor: pointer;
+.role.active span {
+	text-decoration: underline;
 }
 
 .role_rupees_icon,

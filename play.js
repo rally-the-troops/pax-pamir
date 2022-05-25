@@ -605,7 +605,7 @@ function on_update() {
 			ce.classList.remove("card_back");
 		}
 
-		if (p == player_index[player]) {
+		if (p === player_index[player]) {
 			ui.player[p].gift_2.classList.toggle('action', is_place_gift_action(2));
 			ui.player[p].gift_4.classList.toggle('action', is_place_gift_action(4));
 			ui.player[p].gift_6.classList.toggle('action', is_place_gift_action(6));
@@ -630,14 +630,14 @@ function on_update() {
 			me.appendChild(ce);
 		}
 
-		if (view.players[p].coins == 0) {
+		if (view.players[p].coins === 0) {
 			ui.player[p].coin.classList.add("hide");
 		} else {
 			ui.player[p].coin.classList.remove("hide");
 			ui.player[p].coin.textContent = view.players[p].coins;
 		}
 
-		if (view.players[p].prizes == 0) {
+		if (view.players[p].prizes === 0) {
 			ui.player[p].prize.classList.add("hide");
 		} else {
 			ui.player[p].prize.classList.remove("hide");
@@ -646,6 +646,8 @@ function on_update() {
 			else
 				ui.player[p].prize.textContent = view.players[p].prizes + " prizes";
 		}
+
+		ui.player[p].role.classList.toggle("active", p === player_index[view.active])
 
 		ui.player[p].dial.className = "player_dial " + view.players[p].loyalty + " p" + p;
 
