@@ -2357,6 +2357,14 @@ states.cleanup_hand = {
 	}
 }
 
+function goto_discard_events() {
+	if (is_event_card(game.market_cards[0][0]) || is_event_card(game.market_cards[1][0])) {
+		game.state = 'discard_events';
+	} else {
+		goto_refill_market();
+	}
+}
+
 function do_discard_event(row, c) {
 	game.market_cards[row][0] = 0;
 	logbr();
@@ -2368,14 +2376,22 @@ function do_discard_event(row, c) {
 	}
 }
 
-function goto_discard_events() {
-	if (is_event_card(game.market_cards[0][0])) {
-		do_discard_event(0, game.market_cards[0][0]);
-	} else if (is_event_card(game.market_cards[1][0])) {
-		do_discard_event(1, game.market_cards[1][0]);
-	} else {
-		goto_refill_market();
-	}
+states.discard_events = {
+	inactive: "discard event cards",
+	prompt() {
+		view.prompt = `Discard any event cards in the leftmost column of the market.`;
+		if (is_event_card(game.market_cards[0][0]))
+			gen_action('card', game.market_cards[0][0]);
+		else if (is_event_card(game.market_cards[1][0]))
+			gen_action('card', game.market_cards[1][0]);
+	},
+	card(c) {
+		push_undo();
+		if (c === game.market_cards[0][0])
+			do_discard_event(0, c);
+		else
+			do_discard_event(1, c);
+	},
 }
 
 function discard_instability_cards() {
@@ -2418,6 +2434,8 @@ function goto_refill_market() {
 		}
 	}
 
+	clear_undo();
+
 	// Fill with new cards from left (top row in each column first)
 	for (let col = 0; col < 6; ++col) {
 		for (let row = 0; row < 2; ++row) {
@@ -2426,10 +2444,8 @@ function goto_refill_market() {
 					let c = game.deck.pop();
 					game.market_cards[row][col] = c;
 					if (instability > 0 && is_dominance_check(c)) {
-						logbr();
-						log(`Instability!`);
-						discard_instability_cards();
-						return do_dominance_check('instability');
+						game.state = 'instability';
+						return;
 					}
 				}
 			}
@@ -2437,6 +2453,25 @@ function goto_refill_market() {
 	}
 
 	goto_next_player();
+}
+
+states.instability = {
+	prompt() {
+		view.prompt = "Instability \u2014 perform a Dominance Check immediately.";
+		for (let row = 0; row < 2; ++row) {
+			for (let col = 0; col < 6; ++col) {
+				let c = game.market_cards[row][col];
+				if (is_dominance_check(c))
+					gen_action('card', c);
+			}
+		}
+	},
+	card(c) {
+		logbr();
+		log(`Instability!`);
+		discard_instability_cards();
+		do_dominance_check('instability');
+	}
 }
 
 // EVENTS: IF DISCARDED
