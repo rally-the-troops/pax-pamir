@@ -2916,10 +2916,10 @@ function do_dominance_check(reason) {
 	// Check instant victory
 	let vps = game.players.map(pp => pp.vp).sort((a,b)=>b-a);
 	if (vps[0] >= vps[1] + 4)
-		return goto_game_over();
+		return goto_pause_game_over();
 
 	if (final)
-		return goto_game_over();
+		return goto_pause_game_over();
 
 	game.events = {};
 	for (let p = 0; p < game.players.length; ++p)
@@ -2955,7 +2955,7 @@ function vp_tie(pp) {
 	return pp.vp * 10000 + stars * 100 + pp.coins;
 }
 
-function goto_game_over() {
+function compute_victory() {
 	let vps = game.players.map((pp,i) => [vp_tie(pp),i]).sort((a,b)=>b[0]-a[0]);
 	let result = [];
 	for (let i = 0; i < vps.length; ++i)
@@ -2965,7 +2965,30 @@ function goto_game_over() {
 	game.victory = result.join(" and ") + " won!";
 	logbr();
 	log(game.victory);
+}
+
+function goto_pause_game_over() {
+	compute_victory();
+	if (game.undo && game.undo.length > 0)
+		game.state = 'pause_game_over';
+	else
+		game.state = 'game_over';
+}
+
+function goto_game_over() {
+	compute_victory();
 	game.state = 'game_over';
+}
+
+states.pause_game_over = {
+	inactive: "game over",
+	prompt() {
+		view.prompt = game.victory;
+		gen_action('end_game');
+	},
+	end_game() {
+		game.state = 'game_over';
+	}
 }
 
 // SETUP
