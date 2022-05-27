@@ -536,6 +536,7 @@ function on_update() {
 
 	action_button("pass", "Pass");
 	action_button("next", "Next");
+	action_button("end_game", "End game");
 	confirm_action_button("end_turn_pass", "End turn",
 		"Are you sure you want to END TURN while you still have actions?");
 	action_button("end_turn", "End turn");
