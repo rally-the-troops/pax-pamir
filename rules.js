@@ -46,6 +46,7 @@ const player_names = [
 	"Tan",
 	"Red",
 	"Black",
+	"None"
 ];
 
 const player_index = Object.fromEntries(Object.entries(player_names).map(([k,v])=>[v,k|0]));
@@ -2978,6 +2979,7 @@ function goto_pause_game_over() {
 function goto_game_over() {
 	compute_victory();
 	game.state = 'game_over';
+	game.active = 5;
 }
 
 states.pause_game_over = {
@@ -2988,6 +2990,7 @@ states.pause_game_over = {
 	},
 	end_game() {
 		game.state = 'game_over';
+		game.active = 5;
 	}
 }
 

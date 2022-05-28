@@ -9,7 +9,7 @@
 
 // CONSTANTS
 
-const player_names = [ "Gray", "Blue", "Tan", "Red", "Black" ];
+const player_names = [ "Gray", "Blue", "Tan", "Red", "Black", "None" ];
 const player_index = Object.fromEntries(Object.entries(player_names).map(([k,v])=>[v,k|0]));
 
 const Persia = 201;
