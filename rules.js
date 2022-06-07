@@ -2444,9 +2444,11 @@ function goto_refill_market() {
 				if (game.market_cards[row][col] === 0) {
 					let c = game.deck.pop()
 					game.market_cards[row][col] = c
-					if (instability > 0 && is_dominance_check(c)) {
-						game.state = 'instability'
-						return
+					if (is_dominance_check(c)) {
+						if (++instability > 1) {
+							game.state = 'instability'
+							return
+						}
 					}
 				}
 			}
