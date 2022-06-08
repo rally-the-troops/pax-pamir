@@ -2009,6 +2009,13 @@ function active_can_battle() {
 	return false
 }
 
+function is_safe_house_in_play() {
+	for (let x = 36; x < game.pieces.length; ++x)
+		if (game.pieces[x] === Safe_House)
+			return true
+	return false
+}
+
 states.battle = {
 	prompt() {
 		if (game.where <= 0) {
@@ -2040,14 +2047,18 @@ states.battle = {
 					}
 				}
 			} else {
-				view.prompt = `Remove up to ${game.count} spies on #${where}.`
-				for (let p = 0; p < game.players.length; ++p) {
-					if (p !== game.active && !player_has_indispensable_advisors(p)) {
-						let x = player_cylinders(p)
-						for (let i = x; i < x + 10; ++i)
-							if (game.pieces[i] === where)
-								gen_action('piece', i)
+				if (game.count > 0) {
+					view.prompt = `Remove up to ${game.count} spies on #${where}.`
+					for (let p = 0; p < game.players.length; ++p) {
+						if (p !== game.active && !player_has_indispensable_advisors(p)) {
+							let x = player_cylinders(p)
+							for (let i = x; i < x + 10; ++i)
+								if (game.pieces[i] === where)
+									gen_action('piece', i)
+						}
 					}
+				} else {
+					view.prompt = `Battle on #${game.where} is over \u2014 undo will not be possible.`;
 				}
 			}
 			gen_action('next')
@@ -2085,7 +2096,7 @@ states.battle = {
 				check_region_overthrow(p, where)
 			}
 		}
-		if (--game.count === 0)
+		if (--game.count === 0 && !is_safe_house_in_play())
 			end_action()
 	},
 	next() {
