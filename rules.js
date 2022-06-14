@@ -49,6 +49,13 @@ const player_names = [
 	"None"
 ]
 
+const player_names_by_scenario = {
+	"2P": player_names.slice(0, 2),
+	"3P": player_names.slice(0, 3),
+	"4P": player_names.slice(0, 4),
+	"5P": player_names.slice(0, 5),
+}
+
 const player_index = Object.fromEntries(Object.entries(player_names).map(([k,v])=>[v,k|0]))
 
 const region_names = {
@@ -126,21 +133,7 @@ const scenario_player_count = { "2P": 2, "3P": 3, "4P": 4, "5P": 5 }
 exports.scenarios = [ "3P", "4P", "5P", "2P" ]
 
 exports.roles = function (scenario) {
-	switch (scenario) {
-	case "2P": return player_names.slice(0, 2)
-	case "3P": return player_names.slice(0, 3)
-	case "4P": return player_names.slice(0, 4)
-	case "5P": return player_names.slice(0, 5)
-	}
-}
-
-exports.ready = function (scenario, options, players) {
-	switch (scenario) {
-	case "2P": return players.length === 2
-	case "3P": return players.length === 3
-	case "4P": return players.length === 4
-	case "5P": return players.length === 5
-	}
+	return player_names_by_scenario[scenario]
 }
 
 function random(n) {
