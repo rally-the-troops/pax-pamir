@@ -870,3 +870,12 @@ body.shift #tooltip.focus { display: block; }
 
 .card_back{background-image:url(cards.1x/card_back_116.webp)}
 @media (min-resolution: 97dpi) { .card_back{background-image:url(cards.2x/card_back_116.webp)} }
+
+/* Reposition card tooltips for mobile */
+@media only screen and (max-width: 610px) {
+  #tooltip.card {
+    right: auto;
+    left: 5px;
+    top: 75px;
+  }
+}
