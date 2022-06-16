@@ -2051,7 +2051,7 @@ states.battle = {
 						}
 					}
 				} else {
-					view.prompt = `Battle on #${game.where} is over \u2014 undo will not be possible.`;
+					view.prompt = `Battle on #${game.where} is over \u2014 undo will not be possible.`
 				}
 			}
 			gen_action('next')
@@ -3133,8 +3133,19 @@ exports.resign = function (state, current) {
 	load_game(state)
 	logbr()
 	log(`${current} resigned.`)
-	goto_game_over()
+	game.state = 'game_over'
+	game.active = 5
 	game.victory = `${current} resigned.`
+
+	if (game.players.length === 2) {
+		if (current === player_names[0])
+			game.result = player_names[1]
+		else
+			game.result = player_names[0]
+	} else {
+		game.result = "None"
+	}
+
 	return save_game()
 }
 
