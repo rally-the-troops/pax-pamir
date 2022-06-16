@@ -870,3 +870,23 @@ body.shift #tooltip.focus { display: block; }
 
 .card_back{background-image:url(cards.1x/card_back_116.webp)}
 @media (min-resolution: 97dpi) { .card_back{background-image:url(cards.2x/card_back_116.webp)} }
+
+/* MOBILE PHONE LAYOUT */
+
+@media (max-width: 640px) {
+	#tooltip {
+		top: 75px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
+	}
+}
+
+@media (max-width: 400px) or (max-height: 590px) {
+	#tooltip.card {
+		width: 248px;
+		height: 344px;
+		border-radius: 13px;
+	}
+}
