@@ -641,6 +641,7 @@ function on_update() {
 				ui.player[p].prize.textContent = view.players[p].prizes + " prizes"
 		}
 
+		ui.player[p].role.className = "role " + view.players[p].loyalty;
 		ui.player[p].role.classList.toggle("active", p === player_index[view.active])
 
 		ui.player[p].dial.className = "player_dial " + view.players[p].loyalty + " p" + p

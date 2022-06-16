@@ -132,13 +132,13 @@ body.shift #tooltip.focus { display: block; }
 .role_rupees_text,
 .role_loyalty_text,
 .role_cylinders_text {
-	opacity: 0.8;
+	opacity: 0.9;
 }
 
 .role_loyalty_icon {
 	background-position: 0 -1px;
 	background-size: 24px 24px;
-	opacity: 0.4;
+	opacity: 0.9;
 }
 
 .role_cylinders_icon {
@@ -146,15 +146,23 @@ body.shift #tooltip.focus { display: block; }
 	background-position: 0 3px;
 	background-size: 16px 16px;
 	background-image: url(icons/cylinder.svg);
-	opacity: 0.3;
+	opacity: 0.35;
 }
+
+/*
+#role_Gray .role_cylinders_icon { background-image: url(pieces/cylinder_gray.svg) }
+#role_Blue .role_cylinders_icon { background-image: url(pieces/cylinder_blue.svg) }
+#role_Tan .role_cylinders_icon { background-image: url(pieces/cylinder_tan.svg) }
+#role_Red .role_cylinders_icon { background-image: url(pieces/cylinder_red.svg) }
+#role_Black .role_cylinders_icon { background-image: url(pieces/cylinder_black.svg) }
+*/
 
 .role_rupees_icon {
 	width: 17px;
 	background-position: 0 3px;
 	background-size: 17px 17px;
 	background-image: url(icons/rupee.svg);
-	opacity: 0.4;
+	opacity: 0.5;
 }
 
 .role_loyalty_icon.Afghan { background-image: url(icons/eagle.svg) }
