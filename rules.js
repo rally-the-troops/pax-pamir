@@ -511,8 +511,14 @@ function pay_action_cost(cost, offset) {
 	}
 
 	for (let i = 0; i < cost; i += 2) {
-		if (ra >= 0) game.market_coins[0][ra] ++
-		if (rb >= 0) game.market_coins[1][rb] ++
+		if (ra >= 0) {
+			mark_card_used(game.market_cards[0][ra])
+			game.market_coins[0][ra] ++
+		}
+		if (rb >= 0) {
+			mark_card_used(game.market_cards[1][rb])
+			game.market_coins[1][rb] ++
+		}
 		ra = rightmost_card(0, ra-1)
 		rb = rightmost_card(1, rb-1)
 	}
@@ -959,6 +965,11 @@ function goto_next_player() {
 	goto_actions()
 }
 
+function mark_card_used(c) {
+	if (!game.used_cards.includes(c))
+		game.used_cards.push(c)
+}
+
 states.actions = {
 	prompt() {
 		// Pass / End turn
@@ -1055,10 +1066,10 @@ states.actions = {
 		for (let i = 0; i < col; ++i) {
 			if (game.market_cards[row][i] > 0) {
 				game.market_coins[row][i] += cost_per_card
-				game.used_cards.push(game.market_cards[row][i])
+				mark_card_used(game.market_cards[row][i])
 			} else {
 				game.market_coins[1-row][i] += cost_per_card
-				game.used_cards.push(game.market_cards[1-row][i])
+				mark_card_used(game.market_cards[1-row][i])
 			}
 		}
 		check_public_withdrawal()
