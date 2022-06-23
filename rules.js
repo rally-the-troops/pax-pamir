@@ -137,7 +137,9 @@ exports.roles = function (scenario) {
 }
 
 function random(n) {
-	return ((game.seed = game.seed * 69621 % 0x7fffffff) / 0x7fffffff) * n | 0
+	if (game.rng === 1)
+		return ((game.seed = game.seed * 69621 % 0x7fffffff) / 0x7fffffff) * n | 0
+	return (game.seed = game.seed * 200105 % 34359738337) % n
 }
 
 function shuffle(deck) {
@@ -3136,6 +3138,10 @@ exports.setup = function (seed, scenario, options) {
 			events: {},
 		}
 	}
+
+	// Old RNG for ancient replays
+	if (options.rng)
+		game.rng = options.rng
 
 	prepare_deck()
 
