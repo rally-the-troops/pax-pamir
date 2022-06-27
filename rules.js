@@ -3004,28 +3004,30 @@ function vp_tie(pp) {
 
 function compute_victory() {
 	let vps = game.players.map((pp,i) => [vp_tie(pp),i]).sort((a,b)=>b[0]-a[0])
+	let is_winner = false
 	let result = []
-	for (let i = 0; i < vps.length; ++i)
-		if (vps[i][0] === vps[0][0])
+	for (let i = 0; i < vps.length; ++i) {
+		if (vps[i][0] === vps[0][0]) {
 			result.push(player_names[vps[i][1]])
+			if (vps[i][1] === game.active)
+				is_winner = true
+		}
+	}
 	game.result = result.join(", ")
 	game.victory = result.join(" and ") + " won!"
 	logbr()
 	log(game.victory)
+	return is_winner
 }
 
 function goto_pause_game_over() {
-	compute_victory()
-	if (game.undo && game.undo.length > 0)
+	let is_winner = compute_victory()
+	if (game.undo && game.undo.length > 0 && !is_winner) {
 		game.state = 'pause_game_over'
-	else
+	} else {
 		game.state = 'game_over'
-}
-
-function goto_game_over() {
-	compute_victory()
-	game.state = 'game_over'
-	game.active = 5
+		game.active = 5
+	}
 }
 
 states.pause_game_over = {
