@@ -821,7 +821,7 @@ states.bribe = {
 		if (player.events.courtly_manners)
 			gen_action('courtly_manners')
 		if (game.undo.length === 0)
-			gen_action('refuse')
+			gen_action('cancel')
 	},
 	courtly_manners() {
 		log(`Did not pay bribe.`)
@@ -841,6 +841,10 @@ states.bribe = {
 		set_active(p)
 	},
 	refuse() {
+		// for old replays
+		states.bribe.cancel()
+	},
+	cancel() {
 		game.card = 0
 		game.where = 0
 		resume_actions()
@@ -3161,7 +3165,7 @@ exports.action = function (state, current, action, arg) {
 	load_game(state)
 	let S = states[game.state]
 	if (action in S) {
-		S[action](arg, current)
+		S[action](arg)
 	} else {
 		if (action === 'undo' && game.undo && game.undo.length > 0)
 			pop_undo()

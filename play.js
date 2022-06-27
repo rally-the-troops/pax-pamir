@@ -540,6 +540,7 @@ function on_update() {
 	confirm_action_button("end_turn_pass", "End turn",
 		"Are you sure you want to END TURN while you still have actions?")
 	action_button("end_turn", "End turn")
+	action_button("cancel", "Cancel")
 	action_button("undo", "Undo")
 
 	ui.favored1.className = view.favored
