@@ -143,7 +143,7 @@ body.shift #tooltip.focus { display: block; }
 
 .role_cylinders_icon {
 	width: 16px;
-	background-position: 0 3px;
+	background-position: 0 4px;
 	background-size: 16px 16px;
 	background-image: url(icons/cylinder.svg);
 	opacity: 0.35;
