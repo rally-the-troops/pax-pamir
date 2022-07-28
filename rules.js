@@ -861,7 +861,7 @@ states.waive = {
 			view.prompt = `${player_names[game.phasing]} asks you to waive the bribe to play #${game.card}.`
 		let max_cost = Math.min(game.players[game.phasing].coins - game.reserve, game.count)
 		gen_action('waive')
-		for (let i = 1; i < max_cost; ++i)
+		for (let i = 1; i <= max_cost; ++i)
 			gen_action('offer_' + i)
 		gen_action('refuse')
 	},
