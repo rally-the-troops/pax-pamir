@@ -838,7 +838,10 @@ states.bribe = {
 	},
 	beg() {
 		let p = game.bribe
-		log(`Asked ${player_names[p]} to waive the bribe for #${game.card}.`)
+		if (typeof game.where === 'string')
+			log(`Asked ${player_names[p]} to waive the bribe to use #${game.card} to ${game.where}.`)
+		else
+			log(`Asked ${player_names[p]} to waive the bribe to play #${game.card}.`)
 		game.state = 'waive'
 		set_active(p)
 	},
