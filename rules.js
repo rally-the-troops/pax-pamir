@@ -2228,6 +2228,8 @@ function check_safe_house() {
 			return
 	if (game.actions >= 0)
 		resume_actions()
+	else if (game.where === 'riot')
+		goto_discard_events()
 	else
 		goto_cleanup_hand()
 }
@@ -2622,7 +2624,8 @@ states.riots = {
 	},
 	space(s) {
 		remove_all_tribes_and_armies(s)
-		goto_discard_events()
+		game.where = 'riot'
+		check_leverage()
 	},
 }
 
