@@ -208,6 +208,12 @@ function is_card_action(action, card) {
 	return false
 }
 
+function is_player_action(p) {
+	if (view.actions && view.actions["player_" + p])
+		return true
+	return false
+}
+
 function is_place_gift_action(i) {
 	if (view.actions && view.actions.place_gift && view.actions.place_gift.includes(i))
 		return true
@@ -645,7 +651,10 @@ function on_update() {
 		ui.player[p].role.className = "role " + view.players[p].loyalty;
 		ui.player[p].role.classList.toggle("active", p === player_index[view.active])
 
-		ui.player[p].dial.className = "player_dial " + view.players[p].loyalty + " p" + p
+		let a = ""
+		if (is_player_action(p))
+			a = " action"
+		ui.player[p].dial.className = "player_dial " + view.players[p].loyalty + " p" + p + a
 
 		ui.player[p].role_loy_icon.className = "role_loyalty_icon " + view.players[p].loyalty
 		ui.player[p].role_loy_text.textContent = count_influence_points(p)
@@ -810,6 +819,8 @@ function build_ui() {
 
 	for (let p = 0; p < 5; ++p) {
 		ui.player[p] = build_player_ui(p)
+
+		ui.player[p].dial.addEventListener("click", () => send_action('player_' + p))
 
 		ui.player[p].hand_size.addEventListener("click",
 			() => toggle_hand(p))

@@ -652,6 +652,10 @@ body.shift #tooltip.focus { display: block; }
 	right: 0px;
 }
 
+.player_dial.action {
+	box-shadow: 0 0 0 3px yellow;
+}
+
 .player_hand_size {
 	position: absolute;
 	user-select: none;
