@@ -2595,8 +2595,12 @@ const events_if_discarded = {
 }
 
 function goto_favored_suit_event(suit) {
-	game.state = 'favored_suit'
-	game.where = suit
+	if (!game.events.pashtunwali_values) {
+		game.state = 'favored_suit'
+		game.where = suit
+	} else {
+		goto_discard_events()
+	}
 }
 
 states.favored_suit = {
@@ -2715,10 +2719,6 @@ const events_if_purchased = {
 	},
 
 }
-
-// TODO: other_persuasive_methods
-// TODO: pashtunwali_values
-// TODO: rebuke
 
 function check_public_withdrawal() {
 	// Remove any money placed on card "Public Withdrawal" from the game.
