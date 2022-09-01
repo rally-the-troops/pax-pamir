@@ -1335,7 +1335,11 @@ states.place_spy = {
 	},
 	card(c) {
 		push_undo()
-		logi(`Spy to #${c}.`)
+		let p = find_card_in_court(c)
+		if (p !== game.active)
+			logi(`Spy to #${c} in ${player_names[p]} court.`)
+		else
+			logi(`Spy to #${c}.`)
 		game.pieces[game.selected] = c
 		game.used_pieces.push(game.selected)
 		game.selected = -1
@@ -1828,7 +1832,12 @@ states.move = {
 	card(c) {
 		push_undo()
 		let old = game.pieces[game.selected]
-		logi(`Spy from #${old} to #${c}.`)
+		let pold = find_card_in_court(old)
+		let p = find_card_in_court(c)
+		if (pold !== p)
+			logi(`Spy from #${old} in ${player_names[pold]} court to #${c} in ${player_names[p]} court.`)
+		else
+			logi(`Spy from #${old} to #${c} in ${player_names[p]} court.`)
 		game.pieces[game.selected] = c
 		game.selected = -1
 		if (--game.count === 0)
@@ -2130,7 +2139,8 @@ states.battle = {
 		} else {
 			let p = Math.floor((x - 36) / 10)
 			if (where <= 100) {
-				logi(`Removed ${piece_owner(x)} spy from #${where}.`)
+				let pp = find_card_in_court(where)
+				logi(`Removed ${piece_owner(x)} spy from #${where} in ${player_names[pp]} court.`)
 				if (player_has_safe_house(p))
 					game.pieces[x] = Safe_House
 			} else {
