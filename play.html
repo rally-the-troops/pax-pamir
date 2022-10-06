@@ -26,16 +26,11 @@
 	<div class="menu">
 		<div class="menu_title"><img src="/images/cog.svg"></div>
 		<div class="menu_popup">
-			<div class="menu_item" onclick="window.open('info/rules.html', '_blank')">Rules</div>
-			<div class="menu_item" onclick="window.open('info/pac.html', '_blank')">Player Aid</div>
-			<div class="menu_item" onclick="window.open('info/cards.html', '_blank')">Cards</div>
+			<a class="menu_item" href="info/rules.html" target="_blank")">Rules</a>
+			<a class="menu_item" href="info/pac.html" target="_blank")">Player Aid</a>
+			<a class="menu_item" href="info/cards.html" target="_blank")">Cards</a>
 			<div class="resign menu_separator"></div>
 			<div class="resign menu_item" onclick="confirm_resign()">Resign</div>
-			<div class="debug menu_separator"></div>
-			<div class="debug menu_item" onclick="send_save()">&#x1F41E; Save</div>
-			<div class="debug menu_item" onclick="send_restore()">&#x1F41E; Restore</div>
-			<div class="debug menu_separator"></div>
-			<div class="debug menu_item" onclick="send_restart('2P')">&#x26a0; Restart</div>
 		</div>
 	</div>
 	<div class="icon_button" onclick="toggle_log()"><img src="/images/scroll-quill.svg"></div>
