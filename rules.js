@@ -1072,13 +1072,15 @@ states.actions = {
 
 		let cost = market_cost(col, c)
 		let cost_per_card = cost / col
-		for (let i = 0; i < col; ++i) {
-			if (game.market_cards[row][i] > 0) {
-				game.market_coins[row][i] += cost_per_card
-				mark_card_used(game.market_cards[row][i])
-			} else {
-				game.market_coins[1-row][i] += cost_per_card
-				mark_card_used(game.market_cards[1-row][i])
+		if (cost_per_card > 0) {
+			for (let i = 0; i < col; ++i) {
+				if (game.market_cards[row][i] > 0) {
+					game.market_coins[row][i] += cost_per_card
+					mark_card_used(game.market_cards[row][i])
+				} else {
+					game.market_coins[1-row][i] += cost_per_card
+					mark_card_used(game.market_cards[1-row][i])
+				}
 			}
 		}
 		check_public_withdrawal()
