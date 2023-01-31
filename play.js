@@ -922,11 +922,3 @@ function build_ui() {
 	if (player !== 'Observer')
 		ui.player[top].hand_size.classList.add("hide")
 }
-
-function debug() {
-	function rr(k,v) { return k === 'log' || k === 'players' || k === 'actions' ? undefined : v }
-	console.log("VIEW", JSON.stringify(view, rr, 0))
-	console.log("ACTIONS", JSON.stringify(view.actions, rr, 0))
-	for (let i = 0; i < view.players.length; ++i)
-		console.log("PLAYER", i, JSON.stringify(view.players[i], rr, 0))
-}
