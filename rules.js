@@ -2291,6 +2291,14 @@ states.safe_house = {
 
 // PASSIVE: INSURRECTION
 
+function count_available_afghan_blocks() {
+	let n = 0
+	for (let i = 0; i < 12; ++i)
+		if (game.pieces[i] === 0)
+			n ++
+	return n
+}
+
 function check_insurrection() {
 	let prince = which_player_has_insurrection()
 	if (prince >= 0) {
@@ -2298,11 +2306,26 @@ function check_insurrection() {
 		log(`Prince Akbar Khan`)
 		game.count = 2
 		game.selected = select_afghan_block()
-		set_active(prince)
-		game.state = 'insurrection'
+		if (prince === game.active || count_available_afghan_blocks() >= 2)
+			game.state = 'insurrection'
+		else
+			game.state = 'insurrection_pause'
 	} else {
 		end_dominance_check()
 	}
+}
+
+states.insurrection_pause = {
+	prompt() {
+		let prince = which_player_has_insurrection()
+		view.prompt = `Insurrection \u2014 pass control to ${player_names[prince]}.`
+		gen_action('player_' + prince)
+	},
+	player_0() { set_active(0); game.state = "insurrection" },
+	player_1() { set_active(1); game.state = "insurrection" },
+	player_2() { set_active(2); game.state = "insurrection" },
+	player_3() { set_active(3); game.state = "insurrection" },
+	player_4() { set_active(4); game.state = "insurrection" },
 }
 
 states.insurrection = {
