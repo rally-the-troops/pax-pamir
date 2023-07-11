@@ -2353,7 +2353,7 @@ states.insurrection = {
 		game.pieces[game.selected] = Kabul
 		game.selected = -1
 		if (--game.count > 0)
-			game.selected = select_available_block()
+			game.selected = select_afghan_block()
 	},
 	next() {
 		push_undo()
@@ -3241,8 +3241,6 @@ exports.resign = function (state, current) {
 
 	return save_game()
 }
-
-exports.is_checkpoint = (a, b) => a.phasing !== b.phasing
 
 exports.view = function (state, current) {
 	current = player_index[current]
