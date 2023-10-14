@@ -751,7 +751,7 @@ body.shift #tooltip.focus { display: block; }
 	.player_dial.Afghan.p4 { background-image: url(dials/loyalty_black.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
 	.player_dial.British.p0 { background-image: url(dials/loyalty_gray.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
 	.player_dial.British.p1 { background-image: url(dials/loyalty_blue.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
-	.player_dial.British.p2 { background-image: url(dials/loyalty_tan.2x.opt.pn.opt.png url(dials/loyalty_british.2x.opt.png) }
+	.player_dial.British.p2 { background-image: url(dials/loyalty_tan.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
 	.player_dial.British.p3 { background-image: url(dials/loyalty_red.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
 	.player_dial.British.p4 { background-image: url(dials/loyalty_black.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
 	.player_dial.Russian.p0 { background-image: url(dials/loyalty_gray.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
