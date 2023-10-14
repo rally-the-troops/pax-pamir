@@ -1,5 +1,88 @@
 "use strict"
 
+function remember_position(e) {
+	if (e.parentElement) {
+		let prect = e.parentElement.getBoundingClientRect()
+		let rect = e.getBoundingClientRect()
+		e.my_visible = 1
+		e.my_parent = e.parentElement
+		e.my_px = prect.x
+		e.my_py = prect.y
+		e.my_x = rect.x
+		e.my_y = rect.y
+	} else {
+		e.my_visible = 0
+		e.my_parent = e.parentElement
+		e.my_x = 0
+		e.my_y = 0
+		e.my_z = 0
+	}
+}
+
+function animate_position(e) {
+	if (e.parentElement && e.my_visible) {
+		let prect = e.parentElement.getBoundingClientRect()
+		let rect = e.getBoundingClientRect()
+		let dx, dy
+		if (e.parentElement === e.my_parent) {
+			// animate cylinders within same card...
+			dx = (e.my_x - e.my_px) - (rect.x - prect.x)
+			dy = (e.my_y - e.my_py) - (rect.y - prect.y)
+		} else {
+			dx = e.my_x - rect.x
+			dy = e.my_y - rect.y
+		}
+
+		// fade in
+		if (!e.my_parent) {
+			e.animate(
+				[
+					{ opacity: 0 },
+					{ opacity: 1 }
+				],
+				{ duration: 350, easing: "ease" }
+			)
+		}
+
+		if (dx !== 0 || dy !== 0) {
+			let dist = Math.sqrt((dx * dx) + (dy * dy))
+			let time = Math.max(350, Math.min(1000, dist / 2))
+			e.animate(
+				[
+					{ transform: `translate(${dx}px, ${dy}px)`, },
+					{ transform: "translate(0, 0)", },
+				],
+				{ duration: time, easing: "ease" }
+			)
+		}
+	}
+}
+
+function deep_copy(original) {
+	if (Array.isArray(original)) {
+		let n = original.length
+		let copy = new Array(n)
+		for (let i = 0; i < n; ++i) {
+			let v = original[i]
+			if (typeof v === "object" && v !== null)
+				copy[i] = deep_copy(v)
+			else
+				copy[i] = v
+		}
+		return copy
+	} else {
+		let copy = {}
+		for (let i in original) {
+			let v = original[i]
+			if (typeof v === "object" && v !== null)
+				copy[i] = deep_copy(v)
+			else
+				copy[i] = v
+		}
+		return copy
+	}
+}
+
 // CONSTANTS
 
 const player_names = [ "Gray", "Blue", "Tan", "Red", "Black", "None" ]
@@ -269,7 +352,7 @@ function toggle_open_hands() {
 	open_toggle = !open_toggle
 	for (let p = 0; p < view.players.length; ++p)
 		if (p !== player_index[player])
-			ui.player[p].hand.classList.toggle("hide", open_toggle)
+			ui.player[p].hand.classList.toggle("minimize", open_toggle)
 }
 
 function on_blur() {
@@ -313,7 +396,7 @@ function on_click_cylinder(evt) {
 }
 
 function toggle_hand(p) {
-	ui.player[p].hand.classList.toggle("hide")
+	ui.player[p].hand.classList.toggle("minimize")
 }
 
 // CARD MENU
@@ -494,12 +577,68 @@ function layout_border(r, xc, yc, line) {
 // UPDATE UI
 
 let once = true
+let old_view = null
+
+function is_card_visible(game, c) {
+	for (let row = 0; row < 2; ++row)
+		for (let col = 0; col < 6; ++col)
+			if (game.market_cards[row][col] === c)
+				return true
+	for (let p = 0; p < game.players.length; ++p) {
+		let pp = game.players[p]
+		if (pp.court.includes(c))
+			return true
+		if (pp.hand.includes(c))
+			return true
+		for (let evt in pp.events)
+			if (event_cards[evt] === c)
+				return true
+	}
+	return false
+}
+
+function is_card_on_market(game, row, c) {
+	for (let col = 0; col < 6; ++col)
+		if (game.market_cards[row][col] === c)
+			return true
+	return false
+}
 
 function on_update() {
 	if (once) {
 		build_ui()
 		once = false
 	}
+
+	ui.cards.forEach(remember_position)
+	ui.pieces.forEach(remember_position)
+
+	if (old_view) {
+		let anchor = ui.main.getBoundingClientRect()
+		let anchor_a = ui.market_a.getBoundingClientRect()
+		let anchor_b = ui.market_b.getBoundingClientRect()
+		for (let i = 1; i < cards.length; ++i) {
+			// animate from card deck onto market
+			let anchor_x = Math.min(anchor_a.right, anchor.right - 190)
+			if (!is_card_visible(old_view, i)) {
+				if (is_card_on_market(view, 0, i)) {
+					ui.cards[i].my_visible = 1
+					ui.cards[i].my_x = anchor_x
+					ui.cards[i].my_y = anchor_a.bottom - 260
+				}
+				else if (is_card_on_market(view, 1, i)) {
+					ui.cards[i].my_visible = 1
+					ui.cards[i].my_x = anchor_x
+					ui.cards[i].my_y = anchor_b.bottom - 260
+				}
+			}
+		}
+	} else {
+		for (let e of ui.pieces)
+			e.my_visible = 0
+	}
+
+	old_view = deep_copy(view)
 
 	function update_event_cards(node, events) {
 		for (let evt in events)
@@ -549,6 +688,8 @@ function on_update() {
 	action_button("cancel", "Cancel")
 	action_button("undo", "Undo")
 
+	ui.body.classList.toggle("open", !!view.open)
+
 	ui.favored1.className = view.favored
 	ui.favored2.className = view.favored + " icon"
 
@@ -572,6 +713,10 @@ function on_update() {
 				ui.market_coin[row][col].textContent = ""
 				ui.market_coin[row][col].className = "coin hide"
 			}
+			if (ce)
+				ce.appendChild(ui.market_coin[row][col])
+			else
+				ui.market_coin[row][col].remove()
 		}
 	}
 
@@ -621,7 +766,7 @@ function on_update() {
 		while (me.firstChild)
 			me.removeChild(me.firstChild)
 		if (p === player_index[player])
-			me.classList.remove("hide")
+			me.classList.remove("minimize")
 		for (let i = 0; i < pp.hand.length; ++i) {
 			let ce = ui.cards[pp.hand[i]]
 			if (p !== player_index[player] && !view.open)
@@ -668,7 +813,7 @@ function on_update() {
 		ui.player[p].score.style.left = (VP_OFFSET[p][0] + VP_TRACK[view.players[p].vp][0]) + "px"
 		ui.player[p].score.style.top = (VP_OFFSET[p][1] + VP_TRACK[view.players[p].vp][1]) + "px"
 
-		for (let i = 0; i < 10; ++i) {
+		for (let i = 9; i >= 0; --i) {
 			let x = 36 + p * 10 + i
 			let s = view.pieces[x]
 			if (s === 0 || s === Safe_House)
@@ -736,6 +881,9 @@ function on_update() {
 			e.classList.toggle("action", is_card_action(action, c))
 		}
 	}
+
+	ui.pieces.forEach(animate_position)
+	ui.cards.forEach(animate_position)
 }
 
 // BUILD UI
@@ -824,8 +972,7 @@ function build_ui() {
 
 		ui.player[p].dial.addEventListener("click", () => send_action('player_' + p))
 
-		ui.player[p].hand_size.addEventListener("click",
-			() => toggle_hand(p))
+		ui.player[p].hand_size.addEventListener("click", () => toggle_hand(p))
 
 		for (let i = 0; i < 10; ++i) {
 			let x = 36 + p * 10 + i
@@ -850,10 +997,14 @@ function build_ui() {
 		document.querySelector(`#board .rule.Punjab`),
 	]
 
+	ui.body = document.querySelector("body")
+	ui.main = document.querySelector("main")
 	ui.prompt = document.getElementById("prompt")
 	ui.deck_info = document.getElementById("deck_info")
 	ui.board = document.getElementById("board")
 	ui.market = document.getElementById("market")
+	ui.market_a = document.getElementById("market_a")
+	ui.market_b = document.getElementById("market_b")
 	ui.status = document.getElementById("status")
 	ui.tooltip = document.getElementById("tooltip")
 	ui.favored1 = document.getElementById("favored_suit_marker")

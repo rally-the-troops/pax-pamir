@@ -189,6 +189,7 @@ body.shift #tooltip.focus { display: block; }
 	background-repeat: no-repeat;
 	border: 1px solid #4d452b;
 	box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+	transition: filter 500ms ease;
 }
 
 #tooltip.card {
@@ -203,6 +204,7 @@ body.shift #tooltip.focus { display: block; }
 
 .card .spyrow {
 	position: absolute;
+	pointer-events: none;
 	display: flex;
 	flex-wrap: wrap;
 	width: 168px;
@@ -278,9 +280,9 @@ body.shift #tooltip.focus { display: block; }
 
 /* PIECES */
 
-#board div {
-	transition: top 500ms, left 500ms;
-}
+.card { z-index: 10 }
+.block { z-index: 20 }
+.cylinder { z-index: 20 }
 
 .coin {
 	position: absolute;
@@ -306,6 +308,7 @@ body.shift #tooltip.focus { display: block; }
 	background-size: contain;
 	background-repeat: no-repeat;
 	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+	pointer-events: auto;
 }
 
 #board .cylinder {
@@ -586,12 +589,29 @@ body.shift #tooltip.focus { display: block; }
 	padding: 15px;
 	margin: 15px auto 0 auto;
 	gap: 15px;
-	min-height: 260px;
+	min-height: calc(260px + 30px);
 	max-width: min(calc(100% - 20px), 1260px);
 }
 
-.hand.hide {
-	display: none;
+.hand .card {
+	z-index: auto;
+}
+
+.hand.minimize + .player_court {
+	margin-top: calc(-15px - 195px);
+}
+
+/* hide backs when minimized hands */
+/*
+body.open .hand.minimize .card {
+	pointer-events: none;
+	background-image: url(cards/card_back_116.jpg);
+	filter: none;
+}
+*/
+
+body.open .hand.minimize .card {
+	filter: brightness(60%);
 }
 
 .player_area {
@@ -603,6 +623,7 @@ body.shift #tooltip.focus { display: block; }
 }
 
 .player_court {
+	position: relative;
 	display: flex;
 	padding: 10px 15px;
 	min-height: 283px;
@@ -613,6 +634,7 @@ body.shift #tooltip.focus { display: block; }
 	background-repeat: no-repeat;
 	background-size: 100%;
 	background-position: center bottom;
+	transition: margin-top 500ms ease;
 }
 
 #player_court_0 { background-color: #b7b2b0; background-image: url(backgrounds/mountains_gray.jpg) }
@@ -899,4 +921,9 @@ body.shift #tooltip.focus { display: block; }
 		height: 344px;
 		border-radius: 13px;
 	}
+}
+
+@media (max-width: 1200px) {
+	.hand.minimize + .player_court { margin-top: -290px; }
+	body.open .hand.minimize + .player_court { margin-top: -290px; }
 }
