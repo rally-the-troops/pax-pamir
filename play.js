@@ -12,7 +12,7 @@ function remember_position(e) {
 		e.my_y = rect.y
 	} else {
 		e.my_visible = 0
-		e.my_parent = e.parentElement
+		e.my_parent = null
 		e.my_x = 0
 		e.my_y = 0
 		e.my_z = 0
@@ -40,13 +40,13 @@ function animate_position(e) {
 					{ opacity: 0 },
 					{ opacity: 1 }
 				],
-				{ duration: 350, easing: "ease" }
+				{ duration: 500, easing: "ease" }
 			)
 		}
 
 		if (dx !== 0 || dy !== 0) {
 			let dist = Math.sqrt((dx * dx) + (dy * dy))
-			let time = Math.max(350, Math.min(1000, dist / 2))
+			let time = Math.max(500, Math.min(1000, dist / 2))
 			e.animate(
 				[
 					{ transform: `translate(${dx}px, ${dy}px)`, },
@@ -285,7 +285,7 @@ function is_piece_road(i) {
 	return (view.pieces[i] >= 301 && view.pieces[i] <= 309)
 }
 
-function is_card_action(action, card) {
+function is_action(action, card) {
 	if (view.actions && view.actions[action] && view.actions[action].includes(card))
 		return true
 	return false
@@ -401,51 +401,67 @@ function toggle_hand(p) {
 
 // CARD MENU
 
-const card_action_menu = [
-	'play_left',
-	'play_right',
-]
+function show_popup_menu(evt, menu_id, target_id, title) {
+	let menu = document.getElementById(menu_id)
 
-let current_popup_card = 0
+	menu.className = cards[target_id].suit
 
-function show_popup_menu(evt, list) {
-	document.querySelectorAll("#popup div").forEach(e => e.classList.remove('enabled'))
-	for (let item of list) {
-		let e = document.getElementById("menu_" + item)
-		e.classList.add('enabled')
+	let show = false
+	for (let item of menu.querySelectorAll("li")) {
+		let action = item.dataset.action
+		if (action) {
+			if (is_action(action, target_id)) {
+				show = true
+				item.classList.add("action")
+				item.classList.remove("disabled")
+				item.onclick = function () {
+					send_action(action, target_id)
+					hide_popup_menu()
+					evt.stopPropagation()
+				}
+			} else {
+				item.classList.remove("action")
+				item.classList.add("disabled")
+				item.onclick = null
+			}
+		}
 	}
-	let popup = document.getElementById("popup")
-	popup.style.display = 'block'
-	popup.style.left = (evt.clientX-50) + "px"
-	popup.style.top = (evt.clientY-12) + "px"
-	ui.cards[current_popup_card].classList.add("selected")
-	ui.popup_label.textContent = cards[current_popup_card].name
+
+	if (show) {
+		menu.onmouseleave = hide_popup_menu
+		menu.style.display = "block"
+		if (title) {
+			let item = menu.querySelector("li.title")
+			if (item) {
+				item.onclick = hide_popup_menu
+				item.textContent = title
+			}
+		}
+
+		let w = menu.clientWidth
+		let h = menu.clientHeight
+		let x = Math.max(5, Math.min(evt.clientX - w / 2, window.innerWidth - w - 5))
+		let y = Math.max(5, Math.min(evt.clientY - 12, window.innerHeight - h - 40))
+		menu.style.left = x + "px"
+		menu.style.top = y + "px"
+
+		return true
+	}
+
+	return false
 }
 
 function hide_popup_menu() {
-	let popup = document.getElementById("popup")
-	popup.style.display = 'none'
-	if (current_popup_card) {
-		ui.cards[current_popup_card].classList.remove("selected")
-		current_popup_card = 0
-	}
-}
-
-function popup_action(action) {
-	send_action(action, current_popup_card)
-	hide_popup_menu()
+	document.getElementById("popup").style.display = "none"
 }
 
 function on_click_card(evt) {
 	let c = evt.target.card
-	if (is_card_action('card', c)) {
+	if (is_action('card', c)) {
 		send_action('card', c)
 	} else {
-		let menu = card_action_menu.filter(a => is_card_action(a, c))
-		if (menu.length > 0) {
-			current_popup_card = c
-			show_popup_menu(evt, menu)
-		}
+		show_popup_menu(evt, "popup", c, cards[c].name)
+		evt.stopPropagation()
 	}
 }
 
@@ -721,7 +737,11 @@ function on_update() {
 	}
 
 	for (let i = 1; i < cards.length; ++i) {
-		ui.cards[i].classList.toggle('action', is_card_action('card', i))
+		ui.cards[i].classList.toggle('action',
+			is_action('card', i) ||
+			is_action('play_left', i) ||
+			is_action('play_right', i)
+		)
 	}
 
 	for (let i = 201; i <= 206; ++i) {
@@ -878,7 +898,7 @@ function on_update() {
 		for (let i = 0; i < ui.card_action_index[action].length; ++i) {
 			let c = ui.card_action_index[action][i]
 			let e = ui.card_action_element[action][i]
-			e.classList.toggle("action", is_card_action(action, c))
+			e.classList.toggle("action", is_action(action, c))
 		}
 	}
 
@@ -1073,3 +1093,5 @@ function build_ui() {
 	if (player !== 'Observer')
 		ui.player[top].hand_size.classList.add("hide")
 }
+
+scroll_with_middle_mouse("main")

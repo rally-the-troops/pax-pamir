@@ -1,4 +1,4 @@
-main { background-color: slategray; }
+html { background-color: slategray; }
 header { background-color: silver; }
 #role_Gray { background-color: #b7b2b0; }
 #role_Blue { background-color: #95b4ca; }
@@ -34,7 +34,7 @@ main {
 #tooltip {
 	pointer-events: none;
 	position: fixed;
-	z-index: 100;
+	z-index: 600;
 	right: 240px;
 	top: 60px;
 	box-shadow: 0 0 20px black;
@@ -57,25 +57,6 @@ body.shift #tooltip.focus { display: block; }
 	font-style: italic;
 }
 
-#popup {
-	position: fixed;
-	user-select: none;
-	background-color: white;
-	left: 10px;
-	top: 100px;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.3);
-	z-index: 300;
-	min-width: 20ex;
-	white-space: nowrap;
-	display: none;
-	border: 1px solid black;
-}
-#popup div { padding: 3pt 8pt; color: gray; display: none; }
-#popup div.enabled { color: black; display: block; }
-#popup div.enabled:hover { background-color: black; color: white; }
-#popup div.always { display: block; }
-#popup #menu_label { border-bottom: 1px solid silver; }
-
 #banner {
 	cursor: pointer;
 	display: flex;
@@ -96,6 +77,24 @@ body.shift #tooltip.focus { display: block; }
 	background-position: center;
 	filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
+
+#popup { box-shadow: 2px 2px 4px #0004; }
+
+#popup.Intelligence li { background-color: hsl(215, 55%, 90%) }
+#popup.Intelligence li.title { background-color: hsl(215, 55%, 68%) }
+#popup.Intelligence li.action:hover { background-color: hsl(215, 55%, 28%) }
+
+#popup.Military li { background-color: hsl(354, 55%, 90%) }
+#popup.Military li.title { background-color: hsl(354, 55%, 68%) }
+#popup.Military li.action:hover { background-color: hsl(354, 55%, 28%) }
+
+#popup.Economic li { background-color: hsl(31, 76%, 90%) }
+#popup.Economic li.title { background-color: hsl(31, 76%, 63%) }
+#popup.Economic li.action:hover { background-color: hsl(31, 76%, 23%) }
+
+#popup.Political li { background-color: hsl(299, 30%, 90%) }
+#popup.Political li.title { background-color: hsl(299, 30%, 63%) }
+#popup.Political li.action:hover { background-color: hsl(299, 30%, 28%) }
 
 #favored_suit_banner.Political { background-image: url(icons/suit_political.svg) }
 #favored_suit_banner.Intelligence { background-image: url(icons/suit_intelligence.svg) }
@@ -576,9 +575,9 @@ body.shift #tooltip.focus { display: block; }
 	justify-content: center;
 	align-items: center;
 	padding: 0 25px;
-	gap: 15px;
 	margin: 15px auto;
-	max-width: min(calc(100% - 30px), 1260px);
+	gap: 15px;
+	min-width: 1280px;
 }
 
 .hand {
@@ -587,10 +586,9 @@ body.shift #tooltip.focus { display: block; }
 	box-sizing: border-box;
 	justify-content: start;
 	padding: 15px;
-	margin: 15px auto 0 auto;
+	margin: 15px 15px 0 15px;
 	gap: 15px;
 	min-height: calc(260px + 30px);
-	max-width: min(calc(100% - 20px), 1260px);
 }
 
 .hand .card {
@@ -601,15 +599,6 @@ body.shift #tooltip.focus { display: block; }
 	margin-top: calc(-15px - 195px);
 }
 
-/* hide backs when minimized hands */
-/*
-body.open .hand.minimize .card {
-	pointer-events: none;
-	background-image: url(cards/card_back_116.jpg);
-	filter: none;
-}
-*/
-
 body.open .hand.minimize .card {
 	filter: brightness(60%);
 }
@@ -617,9 +606,8 @@ body.open .hand.minimize .card {
 .player_area {
 	box-sizing: border-box;
 	margin: 15px auto;
-	min-width: min(100%, 1280px);
-	width: fit-content;
-	max-width: 100%;
+	min-width: 1280px;
+	max-width: fit-content;
 }
 
 .player_court {
@@ -905,9 +893,9 @@ body.open .hand.minimize .card {
 
 /* MOBILE PHONE LAYOUT */
 
-@media (max-width: 640px) {
+@media (max-width: 800px) {
 	#tooltip {
-		top: 75px;
+		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
@@ -915,15 +903,10 @@ body.open .hand.minimize .card {
 	}
 }
 
-@media (max-width: 400px) or (max-height: 590px) {
+@media (max-width: 400px) or (max-height: 600px) {
 	#tooltip.card {
 		width: 248px;
 		height: 344px;
 		border-radius: 13px;
 	}
-}
-
-@media (max-width: 1200px) {
-	.hand.minimize + .player_court { margin-top: -290px; }
-	body.open .hand.minimize + .player_court { margin-top: -290px; }
 }

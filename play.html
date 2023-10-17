@@ -2,41 +2,40 @@
 <!-- vim:set nowrap: -->
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover">
+<meta name="theme-color" content="#444">
 <meta charset="UTF-8">
 <title>PAX PAMIR</title>
 <link rel="icon" href="favicon.svg">
 <link rel="stylesheet" href="/fonts/fonts.css">
-<link rel="stylesheet" href="/common/play.css">
+<link rel="stylesheet" href="/common/client.css">
 <link rel="stylesheet" href="play.css">
-<script defer src="/common/play.js"></script>
+<script defer src="/common/client.js"></script>
 <script defer src="cards.js"></script>
 <script defer src="play.js"></script>
 </head>
 <body>
 
-<div id="popup" onmouseleave="hide_popup_menu()">
-<div id="popup_label" class="always">Actions</div>
-<div id="menu_play_left" onclick="popup_action('play_left')">Play to left side</div>
-<div id="menu_play_right" onclick="popup_action('play_right')">Play to right side</div>
-</div>
+<menu id="popup">
+	<li class="title">CARD
+	<li class="separator">
+	<li data-action="play_left"> &#x2b05; Play to left side
+	<li data-action="play_right"> &#x27a1; Play to right side
+</menu>
 
 <header>
 	<div id="toolbar">
-	<div class="menu">
-		<div class="menu_title"><img src="/images/cog.svg"></div>
-		<div class="menu_popup">
-			<a class="menu_item" href="info/rules.html" target="_blank")">Rules</a>
-			<a class="menu_item" href="info/pac.html" target="_blank")">Player Aid</a>
-			<a class="menu_item" href="info/cards.html" target="_blank")">Cards</a>
-			<div class="resign menu_separator"></div>
-			<div class="resign menu_item" onclick="confirm_resign()">Resign</div>
-		</div>
+		<details>
+			<summary><img src="/images/cog.svg"></summary>
+			<menu>
+				<li><a href="info/rules.html" target="_blank")">Rules</a>
+				<li><a href="info/pac.html" target="_blank")">Player Aid</a>
+				<li><a href="info/cards.html" target="_blank")">Cards</a>
+				<li class="resign separator">
+				<li class="resign" onclick="confirm_resign()">Resign
+			</menu>
+		</details>
 	</div>
-	<div class="icon_button" onclick="toggle_log()"><img src="/images/scroll-quill.svg"></div>
-	</div>
-	<div id="prompt"></div>
-	<div id="actions"></div>
 </header>
 
 <aside>
@@ -113,7 +112,7 @@
 
 <div id="tooltip" class="hide"></div>
 
-<main>
+<main data-min-zoom="1" data-max-zoom="2" onclick="hide_popup_menu()">
 
 <div id="market">
 	<div id="market_a">
