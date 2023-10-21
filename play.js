@@ -445,10 +445,10 @@ function show_popup_menu(evt, menu_id, target_id, title) {
 		menu.style.left = x + "px"
 		menu.style.top = y + "px"
 
-		return true
+		evt.stopPropagation()
+	} else {
+		menu.style.display = "none"
 	}
-
-	return false
 }
 
 function hide_popup_menu() {
@@ -461,7 +461,6 @@ function on_click_card(evt) {
 		send_action('card', c)
 	} else {
 		show_popup_menu(evt, "popup", c, cards[c].name)
-		evt.stopPropagation()
 	}
 }
 
