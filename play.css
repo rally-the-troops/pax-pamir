@@ -1,4 +1,4 @@
-html { background-color: slategray; }
+body { background-color: slategray; }
 header { background-color: silver; }
 #role_Gray { background-color: #b7b2b0; }
 #role_Blue { background-color: #95b4ca; }
@@ -25,10 +25,6 @@ header { background-color: silver; }
 main {
 	position: relative;
 	scrollbar-width: auto;
-}
-
-.action {
-	cursor: pointer;
 }
 
 #tooltip {
@@ -61,7 +57,6 @@ body.shift #tooltip.focus { display: block; }
 	cursor: pointer;
 	display: flex;
 	justify-content: space-between;
-	user-select: none;
 	border-bottom: 1px solid black;
 	background-color: #856781;
 	height: 40px;
@@ -297,7 +292,6 @@ body.shift #tooltip.focus { display: block; }
 	line-height: 50px;
 	text-align: center;
 	text-shadow: 0 0 8px black;
-	user-select: none;
 	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
 }
 
@@ -668,7 +662,6 @@ body.open .hand.minimize .card {
 
 .player_hand_size {
 	position: absolute;
-	user-select: none;
 	top: 19px;
 	left: -3px;
 	width: 36px;
@@ -691,7 +684,6 @@ body.open .hand.minimize .card {
 
 .player_dial .prize {
 	position: absolute;
-	user-select: none;
 	top: 94px;
 	left: 135px;
 	height: 26px;

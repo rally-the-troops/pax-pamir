@@ -336,15 +336,15 @@ let ui = {
 }
 
 function scroll_to_map() {
-	ui.board.scrollIntoView({behavior:'smooth'})
+	scroll_into_view(ui.board)
 }
 
 function scroll_to_market() {
-	ui.market.scrollIntoView({behavior:'smooth'})
+	scroll_into_view(ui.market)
 }
 
 function scroll_to_player(p) {
-	ui.player[p].area.scrollIntoView({behavior:'smooth'})
+	scroll_into_view(ui.player[p].area)
 }
 
 let open_toggle = true
@@ -365,7 +365,7 @@ function on_focus_card_tip(c) {
 }
 
 function on_click_card_tip(c) {
-	ui.cards[c].scrollIntoView({behavior:'smooth'})
+	scroll_into_view(ui.cards[c])
 }
 
 function on_focus_card(evt) {
@@ -1094,4 +1094,3 @@ function build_ui() {
 		ui.player[top].hand_size.classList.add("hide")
 }
 
-scroll_with_middle_mouse("main")
