@@ -886,6 +886,9 @@ body.open .hand.minimize .card {
 /* MOBILE PHONE LAYOUT */
 
 @media (max-width: 800px) {
+	#banner {
+		display: none;
+	}
 	#tooltip {
 		top: 0;
 		left: 0;
@@ -896,6 +899,9 @@ body.open .hand.minimize .card {
 }
 
 @media (max-width: 400px) or (max-height: 600px) {
+	#banner {
+		display: none;
+	}
 	#tooltip.card {
 		width: 248px;
 		height: 344px;
