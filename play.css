@@ -45,32 +45,25 @@ body.shift #tooltip.focus { display: block; }
 
 #deck_info {
 	position: absolute;
-	right: 8px;
-	bottom: 5px;
-	white-space: pre-line;
-	font-family: "Source Serif SmText", "Georgia", serif;
-	font-size: 12px;
-	font-style: italic;
-}
-
-#banner {
-	cursor: pointer;
 	display: flex;
-	justify-content: space-between;
-	border-bottom: 1px solid black;
-	background-color: #856781;
-	height: 40px;
+	flex-direction: column;
+	justify-content: start;
+	align-items: end;
+	font-family: var(--font-small);
+	font-style: italic;
+	font-size: 14px;
+	width: 100px;
+	top: 8px;
+	right: 4px;
+	gap: 5px;
 }
 
-#banner > div {
-	flex-grow: 1;
+#deck_info img {
+	display: block;
 }
 
-.icon {
-	background-repeat: no-repeat;
-	background-size: auto 25px;
-	background-position: center;
-	filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+#deck_info img.hide {
+	display: none;
 }
 
 #popup { box-shadow: 2px 2px 4px #0004; }
@@ -91,21 +84,16 @@ body.shift #tooltip.focus { display: block; }
 #popup.Political li.title { background-color: hsl(299, 30%, 63%) }
 #popup.Political li.action:hover { background-color: hsl(299, 30%, 28%) }
 
-#favored_suit_banner.Political { background-image: url(icons/suit_political.svg) }
-#favored_suit_banner.Intelligence { background-image: url(icons/suit_intelligence.svg) }
-#favored_suit_banner.Economic { background-image: url(icons/suit_economic.svg) }
-#favored_suit_banner.Military { background-image: url(icons/suit_military.svg) }
-
-#map_banner { background-image: url(icons/treasure-map.svg) }
-#hand_banner { background-image: url(icons/hand.svg) }
-
 .role {
-	position: relative;
 	cursor: pointer;
 }
 
-.role.active span {
-	text-decoration: underline;
+.role_stat {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: end;
+	align-items: center;
+	gap: 4px;
 }
 
 .role_rupees_icon,
@@ -116,8 +104,6 @@ body.shift #tooltip.focus { display: block; }
 .role_cylinders_text {
 	width: 24px;
 	height: 24px;
-	position: absolute;
-	cursor: pointer;
 	top: 2px;
 	text-align: right;
 	background-repeat: no-repeat;
@@ -433,26 +419,33 @@ body.shift #tooltip.focus { display: block; }
 
 .suit {
 	position: absolute;
-	border: 3px solid transparent;
+	box-sizing: border-box;
+	border: 8px solid transparent;
 	border-radius: 50%;
-	left: 31px;
-	width: 48px;
-	height: 48px;
+	left: 33px;
+	width: 50px;
+	height: 50px;
+	background-clip: padding-box;
 }
 
 .suit.action {
-	box-shadow: 0 0 0 2px black;
+	box-shadow: 0 0 0 3px white, inset 0 0 0 3px white;
 }
 
-#suit_political { top: 129px; }
-#suit_intelligence { top: 216px; }
-#suit_economic { top: 305px; }
-#suit_military { top: 394px; }
+#suit_political { top: 131px; }
+#suit_intelligence { top: 218px; }
+#suit_economic { top: 307px; }
+#suit_military { top: 396px; }
 
-#suit_political.action { border-color: orchid; }
-#suit_intelligence.action { border-color: deepskyblue; }
-#suit_economic.action { border-color: orange; }
-#suit_military.action { border-color: orangered; }
+#suit_political.favored { background-color: #8c198c; }
+#suit_intelligence.favored { background-color: #3370bf; }
+#suit_economic.favored { background-color: #cc6e0c; }
+#suit_military.favored { background-color: #bf1c2b; }
+
+#suit_political.action { background-color: #8c198c; }
+#suit_intelligence.action { background-color: #3370bf; }
+#suit_economic.action { background-color: #cc6e0c; }
+#suit_military.action { background-color: #bf1c2b; }
 
 /* MARKET BOARD */
 
@@ -714,7 +707,7 @@ body.open .hand.minimize .card {
 /* IMAGES */
 
 #market { background-image: url(market.1x.jpg) }
-#board { background-image: url(board_fg.svg), url(board_bg.1x.jpg) }
+#board { background-image: url(board_fg.1x.webp), url(board_bg.1x.jpg) }
 
 .player_dial.p0 { background-image: url(dials/loyalty_gray.1x.opt.png) }
 .player_dial.p1 { background-image: url(dials/loyalty_blue.1x.opt.png) }
@@ -739,7 +732,7 @@ body.open .hand.minimize .card {
 
 @media (min-resolution: 97dpi) {
 	#market { background-image: url(market.2x.jpg) }
-	#board { background-image: url(board_fg.svg), url(board_bg.2x.jpg) }
+	#board { background-image: url(board_fg.2x.webp), url(board_bg.2x.jpg) }
 
 	.player_dial.p0 { background-image: url(dials/loyalty_gray.2x.opt.png) }
 	.player_dial.p1 { background-image: url(dials/loyalty_blue.2x.opt.png) }
@@ -886,9 +879,6 @@ body.open .hand.minimize .card {
 /* MOBILE PHONE LAYOUT */
 
 @media (max-width: 800px) {
-	#banner {
-		display: none;
-	}
 	#tooltip {
 		top: 0;
 		left: 0;
@@ -899,9 +889,6 @@ body.open .hand.minimize .card {
 }
 
 @media (max-width: 400px) or (max-height: 600px) {
-	#banner {
-		display: none;
-	}
 	#tooltip.card {
 		width: 248px;
 		height: 344px;

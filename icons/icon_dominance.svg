@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36" viewBox="0 0 36 36">
+<defs>
+<clipPath id="c"><rect x="6" y="2" rx="4" width="23" height="32" /></clipPath>
+</defs>
+<g transform="rotate(4 18 18)">
+<rect x="5" y="1" rx="5" width="25" height="34" fill="#8d0e1a" />
+<image clip-path="url(#c)" x="5" y="1" width="25" height="34" xlink:href="../cards/card_101.png" />
+</g>
+</svg>

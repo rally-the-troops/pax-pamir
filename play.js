@@ -336,15 +336,28 @@ let ui = {
 }
 
 function scroll_to_map() {
-	scroll_into_view(ui.board)
+	scroll_into_view_if_needed(ui.board)
 }
 
 function scroll_to_market() {
-	scroll_into_view(ui.market)
+	scroll_into_view_if_needed(ui.market)
 }
 
 function scroll_to_player(p) {
-	scroll_into_view(ui.player[p].area)
+	scroll_into_view_if_needed(ui.player[p].area)
+}
+
+function on_suit_button() {
+	if (is_suit_action("Political"))
+		send_action("suit", "Political")
+	else if (is_suit_action("Intelligence"))
+		send_action("suit", "Intelligence")
+	else if (is_suit_action("Economic"))
+		send_action("suit", "Economic")
+	else if (is_suit_action("Military"))
+		send_action("suit", "Military")
+	else
+		scroll_into_view_if_needed(ui.board)
 }
 
 let open_toggle = true
@@ -499,7 +512,7 @@ function on_log(text) {
 
 function layout_block_pool() {
 	function place_block_pool(i, x, y) {
-		ui.pieces[i].style = `top:${27+y*48}px;left:${1070+26+x*(26+35)}px`
+		ui.pieces[i].style = `top:${40+y*47}px;left:${1105+x*45}px`
 	}
 	for (let k = 0, i = 0; i < 12; ++i) {
 		if (view.pieces[i] === 0) {
@@ -671,7 +684,9 @@ function on_update() {
 
 	ui.prompt.innerHTML = view.prompt.replace(/#(\d+)/g, sub_card_name)
 
-	ui.deck_info.textContent = `${view.cards[0]}x Draw Deck, ${view.cards[1]}x Dominance Check`
+	ui.deck_count.textContent = view.cards[0]
+	for (let i = 0; i < 4; ++i)
+		ui.dom_info[i].classList.toggle("hide", i >= view.cards[1])
 
 	action_button("loyalty_afghan", "Afghan")
 	action_button("loyalty_british", "British")
@@ -706,7 +721,11 @@ function on_update() {
 	ui.body.classList.toggle("open", !!view.open)
 
 	ui.favored1.className = view.favored
-	ui.favored2.className = view.favored + " icon"
+	ui.suit_political.classList.toggle("favored", view.favored === "Political")
+	ui.suit_intelligence.classList.toggle("favored", view.favored === "Intelligence")
+	ui.suit_economic.classList.toggle("favored", view.favored === "Economic")
+	ui.suit_military.classList.toggle("favored", view.favored === "Military")
+	ui.favored2.src = "icons/suit_" + view.favored.toLowerCase() + ".svg"
 
 	for (let row = 0; row < 2; ++row) {
 		for (let col = 0; col < 6; ++col) {
@@ -1019,7 +1038,15 @@ function build_ui() {
 	ui.body = document.querySelector("body")
 	ui.main = document.querySelector("main")
 	ui.prompt = document.getElementById("prompt")
-	ui.deck_info = document.getElementById("deck_info")
+
+	ui.deck_count = document.getElementById("deck_count")
+	ui.dom_info = [
+		document.getElementById("dom_info_1"),
+		document.getElementById("dom_info_2"),
+		document.getElementById("dom_info_3"),
+		document.getElementById("dom_info_4")
+	]
+
 	ui.board = document.getElementById("board")
 	ui.market = document.getElementById("market")
 	ui.market_a = document.getElementById("market_a")
@@ -1027,7 +1054,7 @@ function build_ui() {
 	ui.status = document.getElementById("status")
 	ui.tooltip = document.getElementById("tooltip")
 	ui.favored1 = document.getElementById("favored_suit_marker")
-	ui.favored2 = document.getElementById("favored_suit_banner")
+	ui.favored2 = document.getElementById("favored_suit_icon")
 	ui.popup_label = document.getElementById("popup_label")
 	ui.global_events = document.getElementById("global_events")
 
@@ -1092,4 +1119,3 @@ function build_ui() {
 	if (player !== 'Observer')
 		ui.player[top].hand_size.classList.add("hide")
 }
-

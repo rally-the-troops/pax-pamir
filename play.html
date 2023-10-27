@@ -35,78 +35,79 @@
 				<li class="resign" onclick="confirm_resign()">Resign
 			</menu>
 		</details>
+		<button id="suit_button" onclick="on_suit_button()"><img id="favored_suit_icon" src="icons/suit_political.svg"></button>
 	</div>
 </header>
 
 <aside>
 	<div id="roles">
-		<div id="banner" class="Political">
-			<div id="favored_suit_banner" class="icon" onclick="scroll_to_market()" onmouseenter="ui.status.textContent='Scroll to Market'" onmouseleave="on_blur()"></div>
-			<div id="map_banner"  class="icon"onclick="scroll_to_map()" onmouseenter="ui.status.textContent='Scroll to Map'" onmouseleave="on_blur()"></div>
-			<div id="hand_banner" class="icon" onclick="toggle_open_hands()" onmouseenter="ui.status.textContent='Hide/show hands'" onmouseleave="on_blur()"></div>
-		</div>
 
 		<div class="role hide" onclick="scroll_to_player(0)" id="role_Gray">
-			<div class="role_name"><span>Gray</span>
-				<div class="role_rupees_icon" id="rupees_0_icon"></div>
+			<div class="role_name"><span>Gray</span></div>
+			<div class="role_stat">
 				<div class="role_rupees_text" id="rupees_0_text">15</div>
-				<div class="role_cylinders_icon" id="cylinders_0_icon"></div>
+				<div class="role_rupees_icon" id="rupees_0_icon"></div>
 				<div class="role_cylinders_text" id="cylinders_0_text">15</div>
-				<div class="role_loyalty_icon" id="loyalty_0_icon"></div>
+				<div class="role_cylinders_icon" id="cylinders_0_icon"></div>
 				<div class="role_loyalty_text" id="loyalty_0_text">15</div>
-				<div class="role_user">-</div>
+				<div class="role_loyalty_icon" id="loyalty_0_icon"></div>
 			</div>
+			<div class="role_user">-</div>
 		</div>
 
 		<div class="role hide" onclick="scroll_to_player(1)" id="role_Blue">
-			<div class="role_name"><span>Blue</span>
-				<div class="role_rupees_icon" id="rupees_1_icon"></div>
+			<div class="role_name"><span>Blue</span></div>
+			<div class="role_stat">
 				<div class="role_rupees_text" id="rupees_1_text">15</div>
-				<div class="role_cylinders_icon" id="cylinders_1_icon"></div>
+				<div class="role_rupees_icon" id="rupees_1_icon"></div>
 				<div class="role_cylinders_text" id="cylinders_1_text">15</div>
-				<div class="role_loyalty_icon" id="loyalty_1_icon"></div>
+				<div class="role_cylinders_icon" id="cylinders_1_icon"></div>
 				<div class="role_loyalty_text" id="loyalty_1_text">15</div>
-				<div class="role_user">-</div>
+				<div class="role_loyalty_icon" id="loyalty_1_icon"></div>
 			</div>
+			<div class="role_user">-</div>
 		</div>
 
 		<div class="role hide" onclick="scroll_to_player(2)" id="role_Tan">
-			<div class="role_name"><span>Tan</span>
-				<div class="role_rupees_icon" id="rupees_2_icon"></div>
+			<div class="role_name"><span>Tan</span></div>
+			<div class="role_stat">
 				<div class="role_rupees_text" id="rupees_2_text">15</div>
-				<div class="role_cylinders_icon" id="cylinders_2_icon"></div>
+				<div class="role_rupees_icon" id="rupees_2_icon"></div>
 				<div class="role_cylinders_text" id="cylinders_2_text">15</div>
-				<div class="role_loyalty_icon" id="loyalty_2_icon"></div>
+				<div class="role_cylinders_icon" id="cylinders_2_icon"></div>
 				<div class="role_loyalty_text" id="loyalty_2_text">15</div>
-				<div class="role_user">-</div>
+				<div class="role_loyalty_icon" id="loyalty_2_icon"></div>
 			</div>
+			<div class="role_user">-</div>
 		</div>
 
 		<div class="role hide" onclick="scroll_to_player(3)" id="role_Red">
-			<div class="role_name"><span>Red</span>
-				<div class="role_rupees_icon" id="rupees_3_icon"></div>
+			<div class="role_name"><span>Red</span></div>
+			<div class="role_stat">
 				<div class="role_rupees_text" id="rupees_3_text">15</div>
-				<div class="role_cylinders_icon" id="cylinders_3_icon"></div>
+				<div class="role_rupees_icon" id="rupees_3_icon"></div>
 				<div class="role_cylinders_text" id="cylinders_3_text">15</div>
-				<div class="role_loyalty_icon" id="loyalty_3_icon"></div>
+				<div class="role_cylinders_icon" id="cylinders_3_icon"></div>
 				<div class="role_loyalty_text" id="loyalty_3_text">15</div>
-				<div class="role_user">-</div>
+				<div class="role_loyalty_icon" id="loyalty_3_icon"></div>
 			</div>
+			<div class="role_user">-</div>
 		</div>
 
 		<div class="role hide" onclick="scroll_to_player(4)" id="role_Black">
-			<div class="role_name"><span>Black</span>
-				<div class="role_rupees_icon" id="rupees_4_icon"></div>
+			<div class="role_name"><span>Black</span></div>
+			<div class="role_stat">
 				<div class="role_rupees_text" id="rupees_4_text">15</div>
-				<div class="role_cylinders_icon" id="cylinders_4_icon"></div>
+				<div class="role_rupees_icon" id="rupees_4_icon"></div>
 				<div class="role_cylinders_text" id="cylinders_4_text">15</div>
-				<div class="role_loyalty_icon" id="loyalty_4_icon"></div>
+				<div class="role_cylinders_icon" id="cylinders_4_icon"></div>
 				<div class="role_loyalty_text" id="loyalty_4_text">15</div>
-				<div class="role_user">-</div>
+				<div class="role_loyalty_icon" id="loyalty_4_icon"></div>
 			</div>
+			<div class="role_user">-</div>
 		</div>
-
 	</div>
+
 	<div id="log"></div>
 </aside>
 
@@ -182,6 +183,17 @@
 <div class="hide rule Kabul"></div>
 <div class="hide rule Kandahar"></div>
 <div class="hide rule Punjab"></div>
+
+	<div id="deck_info">
+		<div style="display:flex;align-items:center;">
+			<div id="deck_count"></div>
+			<img height="22" src="icons/icon_deck.png">
+			<img height="22" id="dom_info_1" src="icons/icon_dominance.png">
+		</div>
+		<img height="22" id="dom_info_2" src="icons/icon_dominance.png">
+		<img height="22" id="dom_info_3" src="icons/icon_dominance.png">
+		<img height="22" id="dom_info_4" src="icons/icon_dominance.png">
+	</div>
 
 <svg id="svgmap" width="1280px" height="630px" viewBox="0 0 1280 630">
 <g transform="translate(-1,632) scale(0.78125,-0.78125)">
@@ -335,8 +347,6 @@
 <div id="suit_intelligence" class="suit"></div>
 <div id="suit_economic" class="suit"></div>
 <div id="suit_military" class="suit"></div>
-
-<div id="deck_info"></div>
 
 </div>
 
