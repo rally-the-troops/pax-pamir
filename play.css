@@ -397,26 +397,7 @@ body.shift #tooltip.focus { display: block; }
 		drop-shadow(2px 0 0 black)
 }
 
-/* FAVORED SUIT MARKER AND SPACES */
-
-#favored_suit_marker {
-	position: absolute;
-	pointer-events: none;
-	width: 32px;
-	height: 70px;
-	background-image: url(pieces/favored_suit_marker.svg);
-	background-size: contain;
-	background-repeat: no-repeat;
-	left: 42px;
-	filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
-	transition: 500ms;
-	transform-origin: bottom center;
-}
-
-#favored_suit_marker.Political { top: 112px; }
-#favored_suit_marker.Intelligence { top: 200px; }
-#favored_suit_marker.Economic { top: 289px; }
-#favored_suit_marker.Military { top: 378px; }
+/* FAVORED SUIT SPACES */
 
 .suit {
 	position: absolute;

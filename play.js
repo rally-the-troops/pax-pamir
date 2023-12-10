@@ -720,11 +720,11 @@ function on_update() {
 
 	ui.body.classList.toggle("open", !!view.open)
 
-	ui.favored1.className = view.favored
 	ui.suit_political.classList.toggle("favored", view.favored === "Political")
 	ui.suit_intelligence.classList.toggle("favored", view.favored === "Intelligence")
 	ui.suit_economic.classList.toggle("favored", view.favored === "Economic")
 	ui.suit_military.classList.toggle("favored", view.favored === "Military")
+
 	ui.favored2.src = "icons/suit_" + view.favored.toLowerCase() + ".svg"
 
 	for (let row = 0; row < 2; ++row) {
@@ -1053,7 +1053,6 @@ function build_ui() {
 	ui.market_b = document.getElementById("market_b")
 	ui.status = document.getElementById("status")
 	ui.tooltip = document.getElementById("tooltip")
-	ui.favored1 = document.getElementById("favored_suit_marker")
 	ui.favored2 = document.getElementById("favored_suit_icon")
 	ui.popup_label = document.getElementById("popup_label")
 	ui.global_events = document.getElementById("global_events")
