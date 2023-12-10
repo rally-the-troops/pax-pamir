@@ -401,6 +401,7 @@ body.shift #tooltip.focus { display: block; }
 
 #favored_suit_marker {
 	position: absolute;
+	pointer-events: none;
 	width: 32px;
 	height: 70px;
 	background-image: url(pieces/favored_suit_marker.svg);
@@ -709,51 +710,51 @@ body.open .hand.minimize .card {
 #market { background-image: url(market.1x.jpg) }
 #board { background-image: url(board_fg.1x.webp), url(board_bg.1x.jpg) }
 
-.player_dial.p0 { background-image: url(dials/loyalty_gray.1x.opt.png) }
-.player_dial.p1 { background-image: url(dials/loyalty_blue.1x.opt.png) }
-.player_dial.p2 { background-image: url(dials/loyalty_tan.1x.opt.png) }
-.player_dial.p3 { background-image: url(dials/loyalty_red.1x.opt.png) }
-.player_dial.p4 { background-image: url(dials/loyalty_black.1x.opt.png) }
-.player_dial.Afghan.p0 { background-image: url(dials/loyalty_gray.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
-.player_dial.Afghan.p1 { background-image: url(dials/loyalty_blue.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
-.player_dial.Afghan.p2 { background-image: url(dials/loyalty_tan.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
-.player_dial.Afghan.p3 { background-image: url(dials/loyalty_red.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
-.player_dial.Afghan.p4 { background-image: url(dials/loyalty_black.1x.opt.png), url(dials/loyalty_afghan.1x.opt.png) }
-.player_dial.British.p0 { background-image: url(dials/loyalty_gray.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
-.player_dial.British.p1 { background-image: url(dials/loyalty_blue.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
-.player_dial.British.p2 { background-image: url(dials/loyalty_tan.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
-.player_dial.British.p3 { background-image: url(dials/loyalty_red.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
-.player_dial.British.p4 { background-image: url(dials/loyalty_black.1x.opt.png), url(dials/loyalty_british.1x.opt.png) }
-.player_dial.Russian.p0 { background-image: url(dials/loyalty_gray.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
-.player_dial.Russian.p1 { background-image: url(dials/loyalty_blue.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
-.player_dial.Russian.p2 { background-image: url(dials/loyalty_tan.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
-.player_dial.Russian.p3 { background-image: url(dials/loyalty_red.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
-.player_dial.Russian.p4 { background-image: url(dials/loyalty_black.1x.opt.png), url(dials/loyalty_russian.1x.opt.png) }
+.player_dial.p0 { background-image: url(dials/loyalty_gray.1x.webp) }
+.player_dial.p1 { background-image: url(dials/loyalty_blue.1x.webp) }
+.player_dial.p2 { background-image: url(dials/loyalty_tan.1x.webp) }
+.player_dial.p3 { background-image: url(dials/loyalty_red.1x.webp) }
+.player_dial.p4 { background-image: url(dials/loyalty_black.1x.webp) }
+.player_dial.Afghan.p0 { background-image: url(dials/loyalty_gray.1x.webp), url(dials/loyalty_afghan.1x.webp) }
+.player_dial.Afghan.p1 { background-image: url(dials/loyalty_blue.1x.webp), url(dials/loyalty_afghan.1x.webp) }
+.player_dial.Afghan.p2 { background-image: url(dials/loyalty_tan.1x.webp), url(dials/loyalty_afghan.1x.webp) }
+.player_dial.Afghan.p3 { background-image: url(dials/loyalty_red.1x.webp), url(dials/loyalty_afghan.1x.webp) }
+.player_dial.Afghan.p4 { background-image: url(dials/loyalty_black.1x.webp), url(dials/loyalty_afghan.1x.webp) }
+.player_dial.British.p0 { background-image: url(dials/loyalty_gray.1x.webp), url(dials/loyalty_british.1x.webp) }
+.player_dial.British.p1 { background-image: url(dials/loyalty_blue.1x.webp), url(dials/loyalty_british.1x.webp) }
+.player_dial.British.p2 { background-image: url(dials/loyalty_tan.1x.webp), url(dials/loyalty_british.1x.webp) }
+.player_dial.British.p3 { background-image: url(dials/loyalty_red.1x.webp), url(dials/loyalty_british.1x.webp) }
+.player_dial.British.p4 { background-image: url(dials/loyalty_black.1x.webp), url(dials/loyalty_british.1x.webp) }
+.player_dial.Russian.p0 { background-image: url(dials/loyalty_gray.1x.webp), url(dials/loyalty_russian.1x.webp) }
+.player_dial.Russian.p1 { background-image: url(dials/loyalty_blue.1x.webp), url(dials/loyalty_russian.1x.webp) }
+.player_dial.Russian.p2 { background-image: url(dials/loyalty_tan.1x.webp), url(dials/loyalty_russian.1x.webp) }
+.player_dial.Russian.p3 { background-image: url(dials/loyalty_red.1x.webp), url(dials/loyalty_russian.1x.webp) }
+.player_dial.Russian.p4 { background-image: url(dials/loyalty_black.1x.webp), url(dials/loyalty_russian.1x.webp) }
 
 @media (min-resolution: 97dpi) {
 	#market { background-image: url(market.2x.jpg) }
 	#board { background-image: url(board_fg.2x.webp), url(board_bg.2x.jpg) }
 
-	.player_dial.p0 { background-image: url(dials/loyalty_gray.2x.opt.png) }
-	.player_dial.p1 { background-image: url(dials/loyalty_blue.2x.opt.png) }
-	.player_dial.p2 { background-image: url(dials/loyalty_tan.2x.opt.png) }
-	.player_dial.p3 { background-image: url(dials/loyalty_red.2x.opt.png) }
-	.player_dial.p4 { background-image: url(dials/loyalty_black.2x.opt.png) }
-	.player_dial.Afghan.p0 { background-image: url(dials/loyalty_gray.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
-	.player_dial.Afghan.p1 { background-image: url(dials/loyalty_blue.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
-	.player_dial.Afghan.p2 { background-image: url(dials/loyalty_tan.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
-	.player_dial.Afghan.p3 { background-image: url(dials/loyalty_red.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
-	.player_dial.Afghan.p4 { background-image: url(dials/loyalty_black.2x.opt.png), url(dials/loyalty_afghan.2x.opt.png) }
-	.player_dial.British.p0 { background-image: url(dials/loyalty_gray.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
-	.player_dial.British.p1 { background-image: url(dials/loyalty_blue.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
-	.player_dial.British.p2 { background-image: url(dials/loyalty_tan.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
-	.player_dial.British.p3 { background-image: url(dials/loyalty_red.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
-	.player_dial.British.p4 { background-image: url(dials/loyalty_black.2x.opt.png), url(dials/loyalty_british.2x.opt.png) }
-	.player_dial.Russian.p0 { background-image: url(dials/loyalty_gray.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
-	.player_dial.Russian.p1 { background-image: url(dials/loyalty_blue.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
-	.player_dial.Russian.p2 { background-image: url(dials/loyalty_tan.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
-	.player_dial.Russian.p3 { background-image: url(dials/loyalty_red.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
-	.player_dial.Russian.p4 { background-image: url(dials/loyalty_black.2x.opt.png), url(dials/loyalty_russian.2x.opt.png) }
+	.player_dial.p0 { background-image: url(dials/loyalty_gray.2x.webp) }
+	.player_dial.p1 { background-image: url(dials/loyalty_blue.2x.webp) }
+	.player_dial.p2 { background-image: url(dials/loyalty_tan.2x.webp) }
+	.player_dial.p3 { background-image: url(dials/loyalty_red.2x.webp) }
+	.player_dial.p4 { background-image: url(dials/loyalty_black.2x.webp) }
+	.player_dial.Afghan.p0 { background-image: url(dials/loyalty_gray.2x.webp), url(dials/loyalty_afghan.2x.webp) }
+	.player_dial.Afghan.p1 { background-image: url(dials/loyalty_blue.2x.webp), url(dials/loyalty_afghan.2x.webp) }
+	.player_dial.Afghan.p2 { background-image: url(dials/loyalty_tan.2x.webp), url(dials/loyalty_afghan.2x.webp) }
+	.player_dial.Afghan.p3 { background-image: url(dials/loyalty_red.2x.webp), url(dials/loyalty_afghan.2x.webp) }
+	.player_dial.Afghan.p4 { background-image: url(dials/loyalty_black.2x.webp), url(dials/loyalty_afghan.2x.webp) }
+	.player_dial.British.p0 { background-image: url(dials/loyalty_gray.2x.webp), url(dials/loyalty_british.2x.webp) }
+	.player_dial.British.p1 { background-image: url(dials/loyalty_blue.2x.webp), url(dials/loyalty_british.2x.webp) }
+	.player_dial.British.p2 { background-image: url(dials/loyalty_tan.2x.webp), url(dials/loyalty_british.2x.webp) }
+	.player_dial.British.p3 { background-image: url(dials/loyalty_red.2x.webp), url(dials/loyalty_british.2x.webp) }
+	.player_dial.British.p4 { background-image: url(dials/loyalty_black.2x.webp), url(dials/loyalty_british.2x.webp) }
+	.player_dial.Russian.p0 { background-image: url(dials/loyalty_gray.2x.webp), url(dials/loyalty_russian.2x.webp) }
+	.player_dial.Russian.p1 { background-image: url(dials/loyalty_blue.2x.webp), url(dials/loyalty_russian.2x.webp) }
+	.player_dial.Russian.p2 { background-image: url(dials/loyalty_tan.2x.webp), url(dials/loyalty_russian.2x.webp) }
+	.player_dial.Russian.p3 { background-image: url(dials/loyalty_red.2x.webp), url(dials/loyalty_russian.2x.webp) }
+	.player_dial.Russian.p4 { background-image: url(dials/loyalty_black.2x.webp), url(dials/loyalty_russian.2x.webp) }
 }
 
 /* CARD IMAGES */
