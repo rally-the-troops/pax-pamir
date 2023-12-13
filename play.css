@@ -48,13 +48,13 @@ body.shift #tooltip.focus { display: block; }
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
-	align-items: end;
+	align-items: start;
 	font-family: var(--font-small);
 	font-style: italic;
 	font-size: 14px;
 	width: 100px;
-	top: 8px;
-	right: 4px;
+	top: 18px;
+	left: 1076px;
 	gap: 5px;
 }
 

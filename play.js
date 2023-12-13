@@ -512,7 +512,7 @@ function on_log(text) {
 
 function layout_block_pool() {
 	function place_block_pool(i, x, y) {
-		ui.pieces[i].style = `top:${40+y*47}px;left:${1105+x*45}px`
+		ui.pieces[i].style = `top:${40+y*47}px;left:${1120+x*45}px`
 	}
 	for (let k = 0, i = 0; i < 12; ++i) {
 		if (view.pieces[i] === 0) {
