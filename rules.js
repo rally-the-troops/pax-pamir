@@ -1467,6 +1467,8 @@ function can_tax_player(active, p, claim) {
 	let okay = claim
 	let shelter = 0
 	let court = game.players[p].court
+	if (court.length === 0)
+		return false
 	for (let i = 0; i < court.length; ++i) {
 		let c = court[i]
 		if (!okay && player_rules_region(active, cards[c].region))
