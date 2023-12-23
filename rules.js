@@ -3224,26 +3224,6 @@ exports.action = function (state, current, action, arg) {
 	return save_game()
 }
 
-exports.resign = function (state, current) {
-	load_game(state)
-	logbr()
-	log(`${current} resigned.`)
-	game.state = 'game_over'
-	game.active = 5
-	game.victory = `${current} resigned.`
-
-	if (game.players.length === 2) {
-		if (current === player_names[0])
-			game.result = player_names[1]
-		else
-			game.result = player_names[0]
-	} else {
-		game.result = "None"
-	}
-
-	return save_game()
-}
-
 exports.view = function (state, current) {
 	current = player_index[current]
 	load_game(state)
