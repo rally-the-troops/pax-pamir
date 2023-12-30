@@ -102,7 +102,7 @@ body.shift #tooltip.focus { display: block; }
 .role_loyalty_text,
 .role_cylinders_icon,
 .role_cylinders_text {
-	width: 24px;
+	width: 18px;
 	height: 24px;
 	top: 2px;
 	text-align: right;
