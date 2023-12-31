@@ -102,7 +102,6 @@ body.shift #tooltip.focus { display: block; }
 .role_loyalty_text,
 .role_cylinders_icon,
 .role_cylinders_text {
-	width: 18px;
 	height: 24px;
 	top: 2px;
 	text-align: right;
@@ -112,10 +111,12 @@ body.shift #tooltip.focus { display: block; }
 .role_rupees_text,
 .role_loyalty_text,
 .role_cylinders_text {
+	width: 18px;
 	opacity: 0.9;
 }
 
 .role_loyalty_icon {
+	width: 24px;
 	background-position: 0 -1px;
 	background-size: 24px 24px;
 	opacity: 0.9;
@@ -148,13 +149,6 @@ body.shift #tooltip.focus { display: block; }
 .role_loyalty_icon.Afghan { background-image: url(icons/eagle.svg) }
 .role_loyalty_icon.British { background-image: url(icons/lion.svg) }
 .role_loyalty_icon.Russian { background-image: url(icons/bear.svg) }
-
-.role_loyalty_icon { right: 5px; }
-.role_loyalty_text { right: 32px; }
-.role_cylinders_icon { right: 55px; }
-.role_cylinders_text { right: 74px; }
-.role_rupees_icon { right: 100px; }
-.role_rupees_text { right: 119px; }
 
 /* CARDS */
 
