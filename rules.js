@@ -3003,12 +3003,6 @@ function do_dominance_check(reason) {
 			assign_vp([3, 1], score, score.slice())
 	}
 
-	// Clear the board.
-	if (success) {
-		for (let i = 0; i < 36; ++i)
-			game.pieces[i] = 0
-	}
-
 	// Check instant victory
 	let vps = game.players.map(pp => pp.vp).sort((a,b)=>b-a)
 	if (vps[0] >= vps[1] + 4)
@@ -3016,6 +3010,12 @@ function do_dominance_check(reason) {
 
 	if (final)
 		return goto_pause_game_over()
+
+	// Clear the board.
+	if (success) {
+		for (let i = 0; i < 36; ++i)
+			game.pieces[i] = 0
+	}
 
 	game.events = {}
 	for (let p = 0; p < game.players.length; ++p)
