@@ -2907,10 +2907,6 @@ function assign_vp(points, score, sorted) {
 
 function count_dominance_cards() {
 	let n = 0
-	for (let row = 0; row < 2; ++row)
-		for (let col = 0; col < 6; ++col)
-			if (is_dominance_check(game.market_cards[row][col]))
-				++n
 	for (let i = 0; i < game.deck.length; ++i)
 		if (is_dominance_check(game.deck[i]))
 			++n
