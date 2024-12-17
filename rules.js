@@ -903,6 +903,46 @@ function end_bribe() {
 		do_play_2()
 }
 
+// PING
+
+states.ping = {
+	inactive: "ping",
+	prompt() {
+		view.prompt = "Choose which player to respond to chat?"
+		for (let p = 0; p < game.players.length; ++p)
+			if (p !== game.active)
+				gen_action('player_' + p)
+		view.actions.undo = 1
+	},
+	player_0() { do_ping_player(0) },
+	player_1() { do_ping_player(1) },
+	player_2() { do_ping_player(2) },
+	player_3() { do_ping_player(3) },
+	player_4() { do_ping_player(4) },
+	undo() {
+		states.pong.resume()
+	},
+}
+
+function do_ping_player(p) {
+	game.active = p
+	game.state = "pong"
+}
+
+states.pong = {
+	inactive: "ping",
+	prompt() {
+		view.prompt = player_names[game.ping.active] + " has requested your response in chat."
+		view.actions.resume = 1
+		view.actions.undo = 0
+	},
+	resume() {
+		game.active = game.ping.active
+		game.state = game.ping.state
+		delete game.ping
+	},
+}
+
 // STARTING LOYALTY
 
 states.loyalty = {
@@ -1060,6 +1100,14 @@ states.actions = {
 		if (bonus)
 			view.prompt += ` You may take bonus actions.`
 
+		// Ping another player
+		if (game.players.length > 2)
+			gen_action('ping')
+	},
+
+	ping() {
+		game.ping = { active: game.active, state: game.state }
+		game.state = "ping"
 	},
 
 	// Purchase card from market
@@ -3252,10 +3300,12 @@ exports.view = function (state, current) {
 		view.actions = {}
 		states[game.state].prompt()
 		view.prompt = player_names[game.active] + ": " + view.prompt
-		if (game.undo && game.undo.length > 0)
-			view.actions.undo = 1
-		else
-			view.actions.undo = 0
+		if (view.actions.undo === undefined) {
+			if (game.undo && game.undo.length > 0)
+				view.actions.undo = 1
+			else
+				view.actions.undo = 0
+		}
 	}
 
 	save_game()

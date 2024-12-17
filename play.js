@@ -709,6 +709,10 @@ function on_update() {
 	action_button("player_3", "Red")
 	action_button("player_4", "Black")
 
+	action_button("resume", "Resume")
+
+	action_button("ping", "Ping")
+
 	action_button("pass", "Pass")
 	action_button("next", "Next")
 	action_button("end_game", "End game")
