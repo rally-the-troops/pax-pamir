@@ -3242,7 +3242,11 @@ exports.setup = function (seed, scenario, options) {
 
 	// Starting loyalty, starting with a random player.
 	game.state = 'loyalty'
-	game.active = random(player_count)
+
+	if (options.tournament)
+		game.active = 0
+	else
+		game.active = random(player_count)
 
 	return save_game()
 }
