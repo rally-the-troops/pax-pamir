@@ -2564,6 +2564,7 @@ function goto_refill_market() {
 			}
 		}
 	}
+	check_public_withdrawal()
 
 	// Instability ...
 	let instability = 0
