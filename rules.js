@@ -3283,7 +3283,6 @@ exports.view = function (state, current) {
 
 	view = {
 		log: game.log,
-		active: player_names[game.active],
 		prompt: null,
 		favored: game.favored,
 		events: game.events,

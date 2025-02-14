@@ -838,7 +838,6 @@ function on_update() {
 		ui.player[p].role.classList.toggle("Afghan", view.players[p].loyalty == "Afghan")
 		ui.player[p].role.classList.toggle("British", view.players[p].loyalty == "British")
 		ui.player[p].role.classList.toggle("Russian", view.players[p].loyalty == "Russian")
-		ui.player[p].role.classList.toggle("active", p === player_index[view.active])
 
 		let a = ""
 		if (is_player_action(p))
